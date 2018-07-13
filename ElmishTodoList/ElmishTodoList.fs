@@ -15,9 +15,10 @@ module App =
     type Model = 
         {
             Contacts: Contact list
+            SelectedContact: Contact option
         }
 
-    type Msg = NoMsg
+    type Msg = Select of Contact
 
     let initModel = 
         {
@@ -27,13 +28,15 @@ module App =
                     { Name = "Jim"; IsFavorite = true }
                     { Name = "John"; IsFavorite = false }
                     { Name = "Frank"; IsFavorite = true }
-                ]
+                ];
+            SelectedContact = None
         }
 
     let init () = initModel, Cmd.none
 
-
-    let update (msg: Model) model = model, Cmd.none
+    let update msg model =
+        match msg with
+        | Select contact -> { model with SelectedContact = Some contact }, Cmd.none
 
     let cellView name isFavorite =
         View.StackLayout(
@@ -51,11 +54,19 @@ module App =
                     [
                         View.ListView(
                             verticalOptions=LayoutOptions.FillAndExpand,
+                            itemTapped=(fun i -> model.Contacts.[i] |> Select |> dispatch),
                             items=
                                 [
                                     for contact in model.Contacts do
                                         yield cellView contact.Name contact.IsFavorite
                                 ]
+                        )
+                        View.Label(
+                            horizontalTextAlignment=TextAlignment.Center,
+                            text=
+                                match model.SelectedContact with
+                                | None -> "No contact selected"
+                                | Some contact -> contact.Name + " selected"
                         )
                     ]
             ) 
