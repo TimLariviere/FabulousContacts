@@ -17,7 +17,8 @@
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
     <AndroidUseLatestPlatformSdk>true</AndroidUseLatestPlatformSdk>
     <TargetFrameworkVersion>v8.1</TargetFrameworkVersion>
-    <NuGetPackageImportStamp></NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
@@ -41,12 +42,33 @@
     <AndroidManagedSymbols>true</AndroidManagedSymbols>
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
   </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)/Xamarin/Android/Xamarin.Android.FSharp.targets" Condition="Exists('$(MSBuildExtensionsPath)/Xamarin/Android/Xamarin.Android.FSharp.targets')" />
+  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.Core.UI.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Core.UI.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.Core.UI/build/MonoAndroid81/Xamarin.Android.Support.Core.UI.targets')" />
+  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.Compat.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Compat.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.Compat/build/MonoAndroid81/Xamarin.Android.Support.Compat.targets')" />
+  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.Annotations.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Annotations.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.Annotations/build/MonoAndroid81/Xamarin.Android.Support.Annotations.targets')" />
+  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Arch.Core.Common.1.0.0.1/build/MonoAndroid80/Xamarin.Android.Arch.Core.Common.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Arch.Core.Common.1.0.0.1/build/MonoAndroid80/Xamarin.Android.Arch.Core.Common.targets')" />
+  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Arch.Core.Runtime.1.0.0.1/build/MonoAndroid80/Xamarin.Android.Arch.Core.Runtime.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Arch.Core.Runtime.1.0.0.1/build/MonoAndroid80/Xamarin.Android.Arch.Core.Runtime.targets')" />
+  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Arch.Lifecycle.Common.1.0.3.1/build/MonoAndroid80/Xamarin.Android.Arch.Lifecycle.Common.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Arch.Lifecycle.Common.1.0.3.1/build/MonoAndroid80/Xamarin.Android.Arch.Lifecycle.Common.targets')" />
+  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Arch.Lifecycle.Runtime.1.0.3.1/build/MonoAndroid80/Xamarin.Android.Arch.Lifecycle.Runtime.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Arch.Lifecycle.Runtime.1.0.3.1/build/MonoAndroid80/Xamarin.Android.Arch.Lifecycle.Runtime.targets')" />
+  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.Core.Utils.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Core.Utils.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.Core.Utils.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Core.Utils.targets')" />
+  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.Fragment.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Fragment.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.Fragment.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Fragment.targets')" />
+  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.Media.Compat.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Media.Compat.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.Media.Compat.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Media.Compat.targets')" />
+  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.Transition.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Transition.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.Transition.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Transition.targets')" />
+  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.v4.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v4.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.v4.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v4.targets')" />
+  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.v7.CardView.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v7.CardView.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.v7.CardView.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v7.CardView.targets')" />
+  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.v7.Palette.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v7.Palette.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.v7.Palette.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v7.Palette.targets')" />
+  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.v7.RecyclerView.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v7.RecyclerView.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.v7.RecyclerView.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v7.RecyclerView.targets')" />
+  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.Vector.Drawable.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Vector.Drawable.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.Vector.Drawable.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Vector.Drawable.targets')" />
+  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.Animated.Vector.Drawable.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Animated.Vector.Drawable.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.Animated.Vector.Drawable.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Animated.Vector.Drawable.targets')" />
+  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.v7.AppCompat.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v7.AppCompat.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.v7.AppCompat.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v7.AppCompat.targets')" />
+  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.Design.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Design.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.Design.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Design.targets')" />
+  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.v7.MediaRouter.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v7.MediaRouter.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.v7.MediaRouter.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v7.MediaRouter.targets')" />
+  <Import Project="$(SolutionDir)/packages/Xamarin.Forms.3.0.0.482510/build/netstandard1.0/Xamarin.Forms.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Forms.3.0.0.482510/build/netstandard1.0/Xamarin.Forms.targets')" />
+  <Import Project="../.nuget/NuGet.targets" />
   <ItemGroup>
     <None Include="Properties\AndroidManifest.xml" />
     <Compile Include="Properties\AssemblyInfo.fs" />
     <Compile Include="MainActivity.fs" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Assets\AboutAssets.txt" />
     <None Include="Resources\AboutResources.txt" />
     <AndroidResource Include="Resources\layout\Tabbar.axml" />
@@ -65,11 +87,7 @@
     <AndroidResource Include="Resources\mipmap-xxhdpi\launcher_foreground.png" />
     <AndroidResource Include="Resources\mipmap-xxxhdpi\Icon.png" />
     <AndroidResource Include="Resources\mipmap-xxxhdpi\launcher_foreground.png" />
-    <Folder Include="Resources\drawable\" />
-    <Folder Include="Resources\drawable-hdpi\" />
-    <Folder Include="Resources\drawable-xhdpi\" />
-    <Folder Include="Resources\drawable-xxhdpi\" />
-    <Folder Include="Resources\drawable-xxxhdpi\" />
+    <AndroidResource Include="Resources\drawable\star.png" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -188,27 +206,4 @@
       <Name>ElmishTodoList</Name>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)/Xamarin/Android/Xamarin.Android.FSharp.targets" Condition="Exists('$(MSBuildExtensionsPath)/Xamarin/Android/Xamarin.Android.FSharp.targets')" />
-  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.Core.UI.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Core.UI.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.Core.UI/build/MonoAndroid81/Xamarin.Android.Support.Core.UI.targets')" />
-  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.Compat.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Compat.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.Compat/build/MonoAndroid81/Xamarin.Android.Support.Compat.targets')" />
-  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.Annotations.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Annotations.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.Annotations/build/MonoAndroid81/Xamarin.Android.Support.Annotations.targets')" />
-  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Arch.Core.Common.1.0.0.1/build/MonoAndroid80/Xamarin.Android.Arch.Core.Common.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Arch.Core.Common.1.0.0.1/build/MonoAndroid80/Xamarin.Android.Arch.Core.Common.targets')" />
-  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Arch.Core.Runtime.1.0.0.1/build/MonoAndroid80/Xamarin.Android.Arch.Core.Runtime.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Arch.Core.Runtime.1.0.0.1/build/MonoAndroid80/Xamarin.Android.Arch.Core.Runtime.targets')" />
-  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Arch.Lifecycle.Common.1.0.3.1/build/MonoAndroid80/Xamarin.Android.Arch.Lifecycle.Common.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Arch.Lifecycle.Common.1.0.3.1/build/MonoAndroid80/Xamarin.Android.Arch.Lifecycle.Common.targets')" />
-  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Arch.Lifecycle.Runtime.1.0.3.1/build/MonoAndroid80/Xamarin.Android.Arch.Lifecycle.Runtime.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Arch.Lifecycle.Runtime.1.0.3.1/build/MonoAndroid80/Xamarin.Android.Arch.Lifecycle.Runtime.targets')" />
-  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.Core.Utils.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Core.Utils.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.Core.Utils.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Core.Utils.targets')" />
-  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.Fragment.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Fragment.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.Fragment.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Fragment.targets')" />
-  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.Media.Compat.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Media.Compat.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.Media.Compat.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Media.Compat.targets')" />
-  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.Transition.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Transition.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.Transition.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Transition.targets')" />
-  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.v4.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v4.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.v4.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v4.targets')" />
-  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.v7.CardView.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v7.CardView.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.v7.CardView.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v7.CardView.targets')" />
-  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.v7.Palette.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v7.Palette.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.v7.Palette.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v7.Palette.targets')" />
-  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.v7.RecyclerView.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v7.RecyclerView.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.v7.RecyclerView.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v7.RecyclerView.targets')" />
-  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.Vector.Drawable.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Vector.Drawable.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.Vector.Drawable.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Vector.Drawable.targets')" />
-  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.Animated.Vector.Drawable.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Animated.Vector.Drawable.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.Animated.Vector.Drawable.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Animated.Vector.Drawable.targets')" />
-  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.v7.AppCompat.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v7.AppCompat.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.v7.AppCompat.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v7.AppCompat.targets')" />
-  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.Design.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Design.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.Design.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Design.targets')" />
-  <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.v7.MediaRouter.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v7.MediaRouter.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.v7.MediaRouter.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v7.MediaRouter.targets')" />
-  <Import Project="$(SolutionDir)/packages/Xamarin.Forms.3.0.0.482510/build/netstandard1.0/Xamarin.Forms.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Forms.3.0.0.482510/build/netstandard1.0/Xamarin.Forms.targets')" />
-  <Import Project="../.nuget/NuGet.targets" />
 </Project>

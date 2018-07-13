@@ -9,6 +9,7 @@ module App =
     type Contact =
         {
             Name: string
+            IsFavorite: bool
         }
 
     type Model = 
@@ -22,10 +23,10 @@ module App =
         {
             Contacts =
                 [
-                    { Name = "John" }
-                    { Name = "James Montemagno" }
-                    { Name = "Jim Bennett" }
-                    { Name = "Frank A. Krueger" }
+                    { Name = "James"; IsFavorite = true }
+                    { Name = "Jim"; IsFavorite = true }
+                    { Name = "John"; IsFavorite = false }
+                    { Name = "Frank"; IsFavorite = true }
                 ]
         }
 
@@ -33,6 +34,15 @@ module App =
 
 
     let update (msg: Model) model = model, Cmd.none
+
+    let cellView name isFavorite =
+        View.StackLayout(
+            orientation=StackOrientation.Horizontal,
+            children=[
+                View.Label(text=name, horizontalOptions=LayoutOptions.StartAndExpand, verticalTextAlignment=TextAlignment.Center, margin=new Thickness(20., 0.))
+                View.Image(source="star.png", isVisible=isFavorite, verticalOptions=LayoutOptions.Center, margin=new Thickness(0., 0., 20., 0.), heightRequest=25., widthRequest=25.)
+            ]
+        )
 
     let view (model: Model) dispatch =
         View.ContentPage(
@@ -44,7 +54,7 @@ module App =
                             items=
                                 [
                                     for contact in model.Contacts do
-                                        yield View.Label(text=contact.Name)
+                                        yield cellView contact.Name contact.IsFavorite
                                 ]
                         )
                     ]
