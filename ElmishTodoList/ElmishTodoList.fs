@@ -15,10 +15,9 @@ module App =
     type Model = 
         {
             Contacts: Contact list
-            SelectedContact: Contact option
         }
 
-    type Msg = Select of Contact
+    type Msg = ToggleFavorite of Contact
 
     let initModel = 
         {
@@ -28,15 +27,17 @@ module App =
                     { Name = "Jim"; IsFavorite = true }
                     { Name = "John"; IsFavorite = false }
                     { Name = "Frank"; IsFavorite = true }
-                ];
-            SelectedContact = None
+                ]
         }
 
     let init () = initModel, Cmd.none
 
     let update msg model =
         match msg with
-        | Select contact -> { model with SelectedContact = Some contact }, Cmd.none
+        | ToggleFavorite contact ->
+            let newContact = { contact with IsFavorite = not contact.IsFavorite }
+            let newContacts = model.Contacts |> List.map (fun c -> if c = contact then newContact else c)
+            { model with Contacts = newContacts }, Cmd.none
 
     let cellView name isFavorite =
         View.StackLayout(
@@ -54,19 +55,12 @@ module App =
                     [
                         View.ListView(
                             verticalOptions=LayoutOptions.FillAndExpand,
-                            itemTapped=(fun i -> model.Contacts.[i] |> Select |> dispatch),
+                            itemTapped=(fun i -> model.Contacts.[i] |> ToggleFavorite |> dispatch),
                             items=
                                 [
                                     for contact in model.Contacts do
                                         yield cellView contact.Name contact.IsFavorite
                                 ]
-                        )
-                        View.Label(
-                            horizontalTextAlignment=TextAlignment.Center,
-                            text=
-                                match model.SelectedContact with
-                                | None -> "No contact selected"
-                                | Some contact -> contact.Name + " selected"
                         )
                     ]
             ) 
