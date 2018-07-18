@@ -17,7 +17,7 @@
     </NuGetPackageImportStamp>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <RestorePackages>true</RestorePackages>
-    <SelectedDevice>iPhone 8 iOS 11.4</SelectedDevice>
+    <SelectedDevice>Simulator</SelectedDevice>
     <TargetiOSDevice />
     <DefaultDevice>iPhone 8 iOS 11.4</DefaultDevice>
   </PropertyGroup>
