@@ -6,14 +6,28 @@ open UIKit
 open Foundation
 open Xamarin.Forms
 open Xamarin.Forms.Platform.iOS
+open System.IO
+open SQLite
 
 [<Register ("AppDelegate")>]
 type AppDelegate () =
     inherit FormsApplicationDelegate ()
 
+    let getDbPathAsync() = async {
+        let docFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal)
+        let libFolder = Path.Combine(docFolder, "..", "Library", "Databases")
+
+        if Directory.Exists(libFolder) = false then
+            Directory.CreateDirectory(libFolder) |> ignore
+        else
+            ()
+
+        return Path.Combine(libFolder, "TodoSQLite.db3")
+    }
+
     override this.FinishedLaunching (app, options) =
         Forms.Init()
-        let appcore = new ElmishTodoList.App()
+        let appcore = new ElmishTodoList.App(getDbPathAsync)
         this.LoadApplication (appcore)
         base.FinishedLaunching(app, options)
 

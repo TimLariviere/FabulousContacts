@@ -4,6 +4,7 @@ open System.Diagnostics
 open Elmish.XamarinForms
 open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
+open SQLite
 
 module Style =
     let mkFormLabel text =
@@ -30,9 +31,43 @@ module Style =
 module Data = 
     type Contact =
         {
+            Id: int
             Name: string
             IsFavorite: bool
         }
+
+    type ContactObject() =
+        [<PrimaryKey>][<AutoIncrement>]
+        member val Id = 0 with get, set
+        member val Name = "" with get, set
+        member val IsFavorite = false with get, set
+
+    let convertToObject (item: Contact) =
+        let obj = ContactObject()
+        obj.Id <- item.Id
+        obj.Name <- item.Name
+        obj.IsFavorite <- item.IsFavorite
+        obj
+
+    let convertToModel (obj: ContactObject) : Contact =
+        {
+            Id = obj.Id
+            Name = obj.Name
+            IsFavorite = obj.IsFavorite
+        }
+
+    let connect getDbPathAsync = async {
+        let! dbPath = getDbPathAsync()
+        let db = new SQLiteAsyncConnection(dbPath)
+        do! db.CreateTableAsync<ContactObject>() |> Async.AwaitTask |> Async.Ignore
+        return db
+    }
+
+    let loadAllContacts dbPath = async {
+        let! database = connect dbPath
+        let! objs = database.Table<ContactObject>().ToListAsync() |> Async.AwaitTask
+        return objs |> Seq.toList |> List.map convertToModel
+    }
 
 module App =
     open Data
@@ -40,62 +75,66 @@ module App =
 
     type Model = 
         {
-            Contacts: Contact list
+            Contacts: Contact list option
             SelectedContact: Contact option
             Name: string
             IsFavorite: bool
         }
 
-    type Msg = | Select of Contact
+    type Msg = | ContactsLoaded of Contact list | Select of Contact
                | UpdateName of string | UpdateIsFavorite of bool
                | SaveContact of Contact * name: string * isFavorite: bool | DeleteContact of Contact
 
     let initModel = 
         {
-            Contacts =
-                [
-                    { Name = "James"; IsFavorite = true }
-                    { Name = "Jim"; IsFavorite = true }
-                    { Name = "John"; IsFavorite = false }
-                    { Name = "Frank"; IsFavorite = true }
-                ];
+            Contacts = None;
             SelectedContact = None;
             Name = ""
             IsFavorite = false
         }
 
-    let init () = initModel, Cmd.none
+    let loadAsync database = async {
+        let! contacts = loadAllContacts database
+        return ContactsLoaded contacts
+    }
 
-    let update msg model =
+    let init getDbPathAsync () = initModel, Cmd.ofAsyncMsg (loadAsync getDbPathAsync)
+
+    let update getDbPathAsync msg model =
         match msg with
+        | ContactsLoaded contacts -> { model with Contacts = Some contacts }, Cmd.none
         | Select contact -> { model with SelectedContact = Some contact; Name = contact.Name; IsFavorite = contact.IsFavorite }, Cmd.none
         | UpdateName name -> { model with Name = name }, Cmd.none
         | UpdateIsFavorite isFavorite -> { model with IsFavorite = isFavorite }, Cmd.none
         | SaveContact (contact, name, isFavorite) ->
             let newContact = { contact with Name = name; IsFavorite = isFavorite }
-            let newContacts = model.Contacts |> List.map (fun c -> if c = model.SelectedContact.Value then newContact else c)
-            { model with Contacts = newContacts; SelectedContact = None; Name = ""; IsFavorite = false }, Cmd.none
+            let newContacts = model.Contacts.Value |> List.map (fun c -> if c = model.SelectedContact.Value then newContact else c)
+            { model with Contacts = Some newContacts; SelectedContact = None; Name = ""; IsFavorite = false }, Cmd.none
         | DeleteContact contact ->
-            let newContacts = model.Contacts |> List.filter (fun c -> c <> contact)
-            { model with Contacts = newContacts; SelectedContact = None; Name = ""; IsFavorite = false }, Cmd.none
+            let newContacts = model.Contacts.Value |> List.filter (fun c -> c <> contact)
+            { model with Contacts = Some newContacts; SelectedContact = None; Name = ""; IsFavorite = false }, Cmd.none
 
-    let view (model: Model) dispatch =
+    let view getDbPathAsync (model: Model) dispatch =
         let mainPage =
             View.ContentPage(
                 title="My Contacts",
                 content=View.StackLayout(
                     children=
-                        [
-                            View.ListView(
-                                verticalOptions=LayoutOptions.FillAndExpand,
-                                itemTapped=(fun i -> model.Contacts.[i] |> Select |> dispatch),
-                                items=
-                                    [
-                                        for contact in model.Contacts do
-                                            yield mkCellView contact.Name contact.IsFavorite
-                                    ]
-                            )
-                        ]
+                        match model.Contacts with
+                        | None | Some [] ->
+                            [ View.Label(text="Aucun contact", horizontalOptions=LayoutOptions.Center, verticalOptions=LayoutOptions.CenterAndExpand) ]
+                        | Some contacts ->
+                            [
+                                View.ListView(
+                                    verticalOptions=LayoutOptions.FillAndExpand,
+                                    itemTapped=(fun i -> contacts.[i] |> Select |> dispatch),
+                                    items=
+                                        [
+                                            for contact in contacts do
+                                                yield mkCellView contact.Name contact.IsFavorite
+                                        ]
+                                )
+                            ]
                 ) 
             )
 
@@ -123,12 +162,13 @@ module App =
                 | Some _ -> [ mainPage; itemPage ]
         )
 
-    // Note, this declaration is needed if you enable LiveUpdate
-    let program = Program.mkProgram init update view
-
-type App () as app = 
+type App (getDbPathAsync: unit -> Async<string>) as app = 
     inherit Application ()
 
+    let init = App.init getDbPathAsync
+    let update = App.update getDbPathAsync
+    let view = App.view getDbPathAsync
+
     let runner = 
-        App.program
+        Program.mkProgram init update view
         |> Program.runWithDynamicView app
