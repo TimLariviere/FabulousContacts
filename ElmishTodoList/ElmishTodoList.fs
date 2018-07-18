@@ -1,103 +1,13 @@
 ﻿namespace ElmishTodoList
 
-open System.Diagnostics
 open Elmish.XamarinForms
 open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
-open SQLite
-
-module Style =
-    let mkFormLabel text =
-        View.Label(text=text, margin=new Thickness(20., 40., 20., 20.))
-
-    let mkFormEntry text textChanged =
-        View.Entry(text=text, textChanged=textChanged, margin=new Thickness(20., 0., 20., 0.))
-
-    let mkFormSwitch isToggled toggled =
-        View.Switch(isToggled=isToggled, toggled=toggled, margin=new Thickness(20., 0., 20., 0.))
-
-    let mkDestroyButton text command =
-        View.Button(text=text, command=command, backgroundColor=Color.Red, textColor=Color.White, margin=new Thickness(20., 40., 20., 20.))
-
-    let mkCellView name isFavorite =
-        View.StackLayout(
-            orientation=StackOrientation.Horizontal,
-            children=[
-                View.Label(text=name, horizontalOptions=LayoutOptions.StartAndExpand, verticalTextAlignment=TextAlignment.Center, margin=new Thickness(20., 0.))
-                View.Image(source="star.png", isVisible=isFavorite, verticalOptions=LayoutOptions.Center, margin=new Thickness(0., 0., 20., 0.), heightRequest=25., widthRequest=25.)
-            ]
-        )
-
-module Models =
-    type Contact =
-        {
-            Id: int
-            Name: string
-            IsFavorite: bool
-        }
-    with static member NewContact = { Id = 0; Name = ""; IsFavorite = false }
-
-module Data =
-    open Models
-
-    type ContactObject() =
-        [<PrimaryKey>][<AutoIncrement>]
-        member val Id = 0 with get, set
-        member val Name = "" with get, set
-        member val IsFavorite = false with get, set
-
-    let convertToObject (item: Contact) =
-        let obj = ContactObject()
-        obj.Id <- item.Id
-        obj.Name <- item.Name
-        obj.IsFavorite <- item.IsFavorite
-        obj
-
-    let convertToModel (obj: ContactObject) : Contact =
-        {
-            Id = obj.Id
-            Name = obj.Name
-            IsFavorite = obj.IsFavorite
-        }
-
-    let connect dbPath = async {
-        let db = new SQLiteAsyncConnection(dbPath)
-        do! db.CreateTableAsync<ContactObject>() |> Async.AwaitTask |> Async.Ignore
-        return db
-    }
-
-    let loadAllContacts dbPath = async {
-        let! database = connect dbPath
-        let! objs = database.Table<ContactObject>().ToListAsync() |> Async.AwaitTask
-        return objs |> Seq.toList |> List.map convertToModel
-    }
-
-    let insertContact dbPath contact = async {
-        let! database = connect dbPath
-        let obj = convertToObject contact
-        do! database.InsertAsync(obj) |> Async.AwaitTask |> Async.Ignore
-        let! rowIdObj = database.ExecuteScalarAsync("select last_insert_rowid()", [||]) |> Async.AwaitTask
-        let rowId = rowIdObj |> int
-        return { contact with Id = rowId }
-    }
-
-    let updateContact dbPath contact = async {
-        let! database = connect dbPath
-        let obj = convertToObject contact
-        do! database.UpdateAsync(obj) |> Async.AwaitTask |> Async.Ignore
-        return contact
-    }
-
-    let deleteContact dbPath contact = async {
-        let! database = connect dbPath
-        let obj = convertToObject contact
-        do! database.DeleteAsync(obj) |> Async.AwaitTask |> Async.Ignore
-    }
+open ElmishTodoList.Style
+open ElmishTodoList.Models
+open ElmishTodoList.Repository
 
 module App =
-    open Data
-    open Style
-    open Models
 
     type Model = 
         {
@@ -177,7 +87,7 @@ module App =
             View.ContentPage(
                 title="My Contacts",
                 toolbarItems=[
-                    View.ToolbarItem(order=ToolbarItemOrder.Primary, text="Add", command=(fun() -> AddNewContact |> dispatch))
+                    mkToolbarButton "Add" (fun() -> AddNewContact |> dispatch)
                 ],
                 content=View.StackLayout(
                     children=
@@ -200,10 +110,16 @@ module App =
             )
 
         let itemPage =
+            let isDeleteButtonVisible =
+                match model.SelectedContact with
+                | None -> false
+                | Some x when x.Id = 0 -> false
+                | Some x -> true
+
             View.ContentPage(
                 title=(if model.Name = "" then "New Contact" else model.Name),
                 toolbarItems=[
-                    View.ToolbarItem(order=ToolbarItemOrder.Primary, text="Save", command=(fun() -> (model.SelectedContact.Value, model.Name, model.IsFavorite) |> SaveContact |> dispatch))
+                    mkToolbarButton "Save" (fun() -> (model.SelectedContact.Value, model.Name, model.IsFavorite) |> SaveContact |> dispatch)
                 ],
                 content=View.StackLayout(
                     children=[
@@ -211,7 +127,7 @@ module App =
                         mkFormEntry model.Name (fun e -> e.NewTextValue |> UpdateName |> dispatch)
                         mkFormLabel "Is Favorite"
                         mkFormSwitch model.IsFavorite (fun e -> e.Value |> UpdateIsFavorite |> dispatch)
-                        mkDestroyButton "Delete" (fun () -> model.SelectedContact.Value |> DeleteContact |> dispatch)
+                        mkDestroyButton "Delete" (fun () -> model.SelectedContact.Value |> DeleteContact |> dispatch) isDeleteButtonVisible
                     ]
                 )
             )

@@ -1,11 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
   </PropertyGroup>
-
   <ItemGroup>
+    <Compile Include="Style.fs" />
+    <Compile Include="Models.fs" />
+    <Compile Include="Repository.fs" />
     <Compile Include="ElmishTodoList.fs" />
   </ItemGroup>
   <ItemGroup>
@@ -14,7 +15,8 @@
     <PackageReference Include="Xamarin.Essentials" Version="0.6.0-preview" />
     <PackageReference Include="Elmish.XamarinForms" Version="0.14.8" />
     <PackageReference Include="FSharp.Core" Version="4.5.0" />
-    <PackageReference Update="FSharp.Core" Version="4.5.0" /> <!-- workaround for VSMac bug https://github.com/mono/monodevelop/pull/5137 --> 
+    <PackageReference Update="FSharp.Core" Version="4.5.0" />
+    <!-- workaround for VSMac bug https://github.com/mono/monodevelop/pull/5137 -->
     <PackageReference Include="FsPickler" Version="5.2" />
     <PackageReference Include="FsPickler.Json" Version="5.2" />
   </ItemGroup>
