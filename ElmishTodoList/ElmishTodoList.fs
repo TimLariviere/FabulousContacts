@@ -35,6 +35,7 @@ module Models =
             Name: string
             IsFavorite: bool
         }
+    with static member NewContact = { Id = 0; Name = ""; IsFavorite = false }
 
 module Data =
     open Models
@@ -59,8 +60,7 @@ module Data =
             IsFavorite = obj.IsFavorite
         }
 
-    let connect getDbPathAsync = async {
-        let! dbPath = getDbPathAsync()
+    let connect dbPath = async {
         let db = new SQLiteAsyncConnection(dbPath)
         do! db.CreateTableAsync<ContactObject>() |> Async.AwaitTask |> Async.Ignore
         return db
@@ -70,6 +70,28 @@ module Data =
         let! database = connect dbPath
         let! objs = database.Table<ContactObject>().ToListAsync() |> Async.AwaitTask
         return objs |> Seq.toList |> List.map convertToModel
+    }
+
+    let insertContact dbPath contact = async {
+        let! database = connect dbPath
+        let obj = convertToObject contact
+        do! database.InsertAsync(obj) |> Async.AwaitTask |> Async.Ignore
+        let! rowIdObj = database.ExecuteScalarAsync("select last_insert_rowid()", [||]) |> Async.AwaitTask
+        let rowId = rowIdObj |> int
+        return { contact with Id = rowId }
+    }
+
+    let updateContact dbPath contact = async {
+        let! database = connect dbPath
+        let obj = convertToObject contact
+        do! database.UpdateAsync(obj) |> Async.AwaitTask |> Async.Ignore
+        return contact
+    }
+
+    let deleteContact dbPath contact = async {
+        let! database = connect dbPath
+        let obj = convertToObject contact
+        do! database.DeleteAsync(obj) |> Async.AwaitTask |> Async.Ignore
     }
 
 module App =
@@ -85,9 +107,10 @@ module App =
             IsFavorite: bool
         }
 
-    type Msg = | ContactsLoaded of Contact list | Select of Contact
+    type Msg = | ContactsLoaded of Contact list | Select of Contact | AddNewContact
                | UpdateName of string | UpdateIsFavorite of bool
                | SaveContact of Contact * name: string * isFavorite: bool | DeleteContact of Contact
+               | ContactAdded of Contact | ContactUpdated of Contact | ContactDeleted of Contact
 
     let initModel = 
         {
@@ -97,31 +120,65 @@ module App =
             IsFavorite = false
         }
 
-    let loadAsync database = async {
-        let! contacts = loadAllContacts database
+    let loadAsync dbPath = async {
+        let! contacts = loadAllContacts dbPath
         return ContactsLoaded contacts
     }
 
-    let init getDbPathAsync () = initModel, Cmd.ofAsyncMsg (loadAsync getDbPathAsync)
+    let saveAsync dbPath contact = async {
+        match contact.Id with
+        | 0 ->
+            let! insertedContact = insertContact dbPath contact
+            return ContactAdded insertedContact
+        | _ ->
+            let! updatedContact = updateContact dbPath contact
+            return ContactUpdated updatedContact
+    }
 
-    let update getDbPathAsync msg model =
+    let deleteAsync dbPath contact = async {
+        do! deleteContact dbPath contact
+        return ContactDeleted contact
+    }
+
+    let updateModelAndNavBack model newContacts =
+        { model with Contacts = Some newContacts; SelectedContact = None; Name = ""; IsFavorite = false }, Cmd.none
+
+    let init dbPath () = initModel, Cmd.ofAsyncMsg (loadAsync dbPath)
+
+    let update dbPath msg model =
         match msg with
-        | ContactsLoaded contacts -> { model with Contacts = Some contacts }, Cmd.none
-        | Select contact -> { model with SelectedContact = Some contact; Name = contact.Name; IsFavorite = contact.IsFavorite }, Cmd.none
-        | UpdateName name -> { model with Name = name }, Cmd.none
-        | UpdateIsFavorite isFavorite -> { model with IsFavorite = isFavorite }, Cmd.none
+        | ContactsLoaded contacts ->
+            { model with Contacts = Some contacts }, Cmd.none
+        | Select contact ->
+            { model with SelectedContact = Some contact; Name = contact.Name; IsFavorite = contact.IsFavorite }, Cmd.none
+        | AddNewContact ->
+            { model with SelectedContact = Some Contact.NewContact; Name = ""; IsFavorite = false }, Cmd.none
+        | UpdateName name ->
+            { model with Name = name }, Cmd.none
+        | UpdateIsFavorite isFavorite ->
+            { model with IsFavorite = isFavorite }, Cmd.none
         | SaveContact (contact, name, isFavorite) ->
             let newContact = { contact with Name = name; IsFavorite = isFavorite }
-            let newContacts = model.Contacts.Value |> List.map (fun c -> if c = model.SelectedContact.Value then newContact else c)
-            { model with Contacts = Some newContacts; SelectedContact = None; Name = ""; IsFavorite = false }, Cmd.none
+            model, Cmd.ofAsyncMsg (saveAsync dbPath newContact)
         | DeleteContact contact ->
+            model, Cmd.ofAsyncMsg (deleteAsync dbPath contact)
+        | ContactAdded contact -> 
+            let newContacts = model.Contacts.Value @ [ contact ]
+            updateModelAndNavBack model newContacts
+        | ContactUpdated contact -> 
+            let newContacts = model.Contacts.Value |> List.map (fun c -> if c.Id = contact.Id then contact else c)
+            updateModelAndNavBack model newContacts
+        | ContactDeleted contact ->
             let newContacts = model.Contacts.Value |> List.filter (fun c -> c <> contact)
-            { model with Contacts = Some newContacts; SelectedContact = None; Name = ""; IsFavorite = false }, Cmd.none
+            updateModelAndNavBack model newContacts
 
-    let view getDbPathAsync (model: Model) dispatch =
+    let view dbPath (model: Model) dispatch =
         let mainPage =
             View.ContentPage(
                 title="My Contacts",
+                toolbarItems=[
+                    View.ToolbarItem(order=ToolbarItemOrder.Primary, text="Add", command=(fun() -> AddNewContact |> dispatch))
+                ],
                 content=View.StackLayout(
                     children=
                         match model.Contacts with
@@ -144,7 +201,7 @@ module App =
 
         let itemPage =
             View.ContentPage(
-                title="Item",
+                title=(if model.Name = "" then "New Contact" else model.Name),
                 toolbarItems=[
                     View.ToolbarItem(order=ToolbarItemOrder.Primary, text="Save", command=(fun() -> (model.SelectedContact.Value, model.Name, model.IsFavorite) |> SaveContact |> dispatch))
                 ],
@@ -166,12 +223,12 @@ module App =
                 | Some _ -> [ mainPage; itemPage ]
         )
 
-type App (getDbPathAsync: unit -> Async<string>) as app = 
+type App (dbPath) as app = 
     inherit Application ()
 
-    let init = App.init getDbPathAsync
-    let update = App.update getDbPathAsync
-    let view = App.view getDbPathAsync
+    let init = App.init dbPath
+    let update = App.update dbPath
+    let view = App.view dbPath
 
     let runner = 
         Program.mkProgram init update view

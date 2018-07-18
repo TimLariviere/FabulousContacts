@@ -13,7 +13,7 @@ open SQLite
 type AppDelegate () =
     inherit FormsApplicationDelegate ()
 
-    let getDbPathAsync() = async {
+    let getDbPath() =
         let docFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal)
         let libFolder = Path.Combine(docFolder, "..", "Library", "Databases")
 
@@ -22,12 +22,12 @@ type AppDelegate () =
         else
             ()
 
-        return Path.Combine(libFolder, "TodoSQLite.db3")
-    }
+        Path.Combine(libFolder, "Contacts.db3")
 
     override this.FinishedLaunching (app, options) =
         Forms.Init()
-        let appcore = new ElmishTodoList.App(getDbPathAsync)
+        let dbPath = getDbPath()
+        let appcore = new ElmishTodoList.App(dbPath)
         this.LoadApplication (appcore)
         base.FinishedLaunching(app, options)
 
