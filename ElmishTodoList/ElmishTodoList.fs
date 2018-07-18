@@ -28,13 +28,16 @@ module Style =
             ]
         )
 
-module Data = 
+module Models =
     type Contact =
         {
             Id: int
             Name: string
             IsFavorite: bool
         }
+
+module Data =
+    open Models
 
     type ContactObject() =
         [<PrimaryKey>][<AutoIncrement>]
@@ -72,6 +75,7 @@ module Data =
 module App =
     open Data
     open Style
+    open Models
 
     type Model = 
         {
