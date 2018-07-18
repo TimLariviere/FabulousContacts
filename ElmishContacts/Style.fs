@@ -1,4 +1,4 @@
-﻿namespace ElmishTodoList
+﻿namespace ElmishContacts
 
 open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms

@@ -1,4 +1,4 @@
-﻿namespace ElmishTodoList
+﻿namespace ElmishContacts
 
 open SQLite
 

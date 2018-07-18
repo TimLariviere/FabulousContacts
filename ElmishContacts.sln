@@ -3,18 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.10
 MinimumVisualStudioVersion = 10.0.40219.1
-
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "ElmishTodoList", "ElmishTodoList\ElmishTodoList.fsproj", "{AD454E78-7578-4EB2-99EA-1F3F6F21A950}"
+Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "ElmishContacts", "ElmishContacts\ElmishContacts.fsproj", "{AD454E78-7578-4EB2-99EA-1F3F6F21A950}"
 EndProject
-
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ElmishTodoList.Android", "ElmishTodoList.Android\ElmishTodoList.Android.fsproj", "{972B4228-1B72-4B7A-8CC2-2161D0C23AB0}"
+Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "ElmishContacts.Android", "ElmishContacts.Android\ElmishContacts.Android.fsproj", "{972B4228-1B72-4B7A-8CC2-2161D0C23AB0}"
 EndProject
-
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ElmishTodoList.iOS", "ElmishTodoList.iOS\ElmishTodoList.iOS.fsproj", "{2F7DD06D-101D-43C4-BF2A-895B004B174D}"
+Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "ElmishContacts.iOS", "ElmishContacts.iOS\ElmishContacts.iOS.fsproj", "{2F7DD06D-101D-43C4-BF2A-895B004B174D}"
 EndProject
-
-
-
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Ad-Hoc|Any CPU = Ad-Hoc|Any CPU

@@ -1,2 +1,2 @@
-# ElmishTodoList
-Simple TodoList app using Elmish.XamarinForms
+# ElmishContacts
+Simple Contacts app using Elmish.XamarinForms

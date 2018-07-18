@@ -1,5 +1,5 @@
 ﻿// Copyright 2018 Elmish.XamarinForms contributors. See LICENSE.md for license.
-namespace ElmishTodoList.iOS
+namespace ElmishContacts.iOS
 
 open System
 open UIKit
@@ -27,7 +27,7 @@ type AppDelegate () =
     override this.FinishedLaunching (app, options) =
         Forms.Init()
         let dbPath = getDbPath()
-        let appcore = new ElmishTodoList.App(dbPath)
+        let appcore = new ElmishContacts.App(dbPath)
         this.LoadApplication (appcore)
         base.FinishedLaunching(app, options)
 

@@ -1,4 +1,4 @@
-﻿namespace ElmishTodoList.Android
+﻿namespace ElmishContacts.Droid
 
 open System.Reflection
 open System.Runtime.CompilerServices
@@ -6,17 +6,17 @@ open System.Runtime.InteropServices
 open Android.App
 
 // the name of the type here needs to match the name inside the ResourceDesigner attribute
-type Resources = ElmishTodoList.Android.Resource
-[<assembly: Android.Runtime.ResourceDesigner("ElmishTodoList.Android.Resources", IsApplication=true)>]
+type Resources = ElmishContacts.Droid.Resource
+[<assembly: Android.Runtime.ResourceDesigner("ElmishContacts.Droid.Resources", IsApplication=true)>]
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[<assembly: AssemblyTitle("ElmishTodoList.Android")>]
+[<assembly: AssemblyTitle("ElmishContacts.Android")>]
 [<assembly: AssemblyDescription("")>]
 [<assembly: AssemblyConfiguration("")>]
 [<assembly: AssemblyCompany("")>]
-[<assembly: AssemblyProduct("ElmishTodoList.Android")>]
+[<assembly: AssemblyProduct("ElmishContacts.Android")>]
 [<assembly: AssemblyCopyright("Copyright ©  2014")>]
 [<assembly: AssemblyTrademark("")>]
 [<assembly: AssemblyCulture("")>]

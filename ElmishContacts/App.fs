@@ -1,11 +1,11 @@
-﻿namespace ElmishTodoList
+﻿namespace ElmishContacts
 
 open Elmish.XamarinForms
 open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
-open ElmishTodoList.Style
-open ElmishTodoList.Models
-open ElmishTodoList.Repository
+open ElmishContacts.Style
+open ElmishContacts.Models
+open ElmishContacts.Repository
 
 module App =
 

@@ -1,4 +1,4 @@
-﻿namespace ElmishTodoList
+﻿namespace ElmishContacts
 
 module Models =
     type Contact =
