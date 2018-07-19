@@ -83,55 +83,65 @@ module App =
             updateModelAndNavBack model newContacts
 
     let view dbPath (model: Model) dispatch =
+        let mkCachedCellView name isFavorite =
+            dependsOn (name, isFavorite) (fun _ (cName, cIsFavorite) -> mkCellView cName cIsFavorite)
+
         let mainPage =
-            View.ContentPage(
-                title="My Contacts",
-                toolbarItems=[
-                    mkToolbarButton "Add" (fun() -> AddNewContact |> dispatch)
-                ],
-                content=View.StackLayout(
-                    children=
-                        match model.Contacts with
-                        | None | Some [] ->
-                            [ View.Label(text="Aucun contact", horizontalOptions=LayoutOptions.Center, verticalOptions=LayoutOptions.CenterAndExpand) ]
-                        | Some contacts ->
-                            [
-                                View.ListView(
-                                    verticalOptions=LayoutOptions.FillAndExpand,
-                                    itemTapped=(fun i -> contacts.[i] |> Select |> dispatch),
-                                    items=
-                                        [
-                                            for contact in contacts do
-                                                yield mkCellView contact.Name contact.IsFavorite
-                                        ]
-                                )
-                            ]
-                ) 
-            )
-
-        let itemPage =
-            let isDeleteButtonVisible =
-                match model.SelectedContact with
-                | None -> false
-                | Some x when x.Id = 0 -> false
-                | Some x -> true
-
-            View.ContentPage(
-                title=(if model.Name = "" then "New Contact" else model.Name),
-                toolbarItems=[
-                    mkToolbarButton "Save" (fun() -> (model.SelectedContact.Value, model.Name, model.IsFavorite) |> SaveContact |> dispatch)
-                ],
-                content=View.StackLayout(
-                    children=[
-                        mkFormLabel "Name"
-                        mkFormEntry model.Name (fun e -> e.NewTextValue |> UpdateName |> dispatch)
-                        mkFormLabel "Is Favorite"
-                        mkFormSwitch model.IsFavorite (fun e -> e.Value |> UpdateIsFavorite |> dispatch)
-                        mkDestroyButton "Delete" (fun () -> model.SelectedContact.Value |> DeleteContact |> dispatch) isDeleteButtonVisible
-                    ]
+            dependsOn model.Contacts (fun model mContacts ->
+                View.ContentPage(
+                    title="Elmish Contacts",
+                    toolbarItems=[
+                        mkToolbarButton "Add" (fun() -> AddNewContact |> dispatch)
+                    ],
+                    content=View.StackLayout(
+                        children=
+                            match mContacts with
+                            | None ->
+                                [ mkCentralLabel "Loading..." ]
+                            | Some [] ->
+                                [ mkCentralLabel "No contact" ]
+                            | Some contacts ->
+                                [
+                                    View.ListView(
+                                        verticalOptions=LayoutOptions.FillAndExpand,
+                                        itemTapped=(fun i -> contacts.[i] |> Select |> dispatch),
+                                        items=
+                                            [
+                                                for contact in contacts do
+                                                    yield mkCachedCellView contact.Name contact.IsFavorite
+                                            ]
+                                    )
+                                ]
+                    ) 
                 )
             )
 
+        let itemPage =
+            dependsOn (model.SelectedContact, model.Name, model.IsFavorite) (fun model (mSelectedContact, mName, mIsFavorite) ->
+                let isDeleteButtonVisible =
+                    match mSelectedContact with
+                    | None -> false
+                    | Some x when x.Id = 0 -> false
+                    | Some x -> true
+
+                View.ContentPage(
+                    title=(if mName = "" then "New Contact" else mName),
+                    toolbarItems=[
+                        mkToolbarButton "Save" (fun() -> (mSelectedContact.Value, mName, mIsFavorite) |> SaveContact |> dispatch)
+                    ],
+                    content=View.StackLayout(
+                        children=[
+                            mkFormLabel "Name"
+                            mkFormEntry mName (fun e -> e.NewTextValue |> UpdateName |> dispatch)
+                            mkFormLabel "Is Favorite"
+                            mkFormSwitch mIsFavorite (fun e -> e.Value |> UpdateIsFavorite |> dispatch)
+                            mkDestroyButton "Delete" (fun () -> mSelectedContact.Value |> DeleteContact |> dispatch) isDeleteButtonVisible
+                        ]
+                    )
+                )
+            )
+        
+      
         View.NavigationPage(
             pages=
                 match model.SelectedContact with

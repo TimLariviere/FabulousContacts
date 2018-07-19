@@ -4,6 +4,9 @@ open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
 
 module Style =
+    let mkCentralLabel text =
+        View.Label(text=text, horizontalOptions=LayoutOptions.Center, verticalOptions=LayoutOptions.CenterAndExpand)
+
     let mkFormLabel text =
         View.Label(text=text, margin=new Thickness(20., 30., 20., 20.))
 
