@@ -9,12 +9,14 @@ module Repository =
         [<PrimaryKey>][<AutoIncrement>]
         member val Id = 0 with get, set
         member val Name = "" with get, set
+        member val Address = "" with get, set
         member val IsFavorite = false with get, set
 
     let convertToObject (item: Contact) =
         let obj = ContactObject()
         obj.Id <- item.Id
         obj.Name <- item.Name
+        obj.Address <- item.Address
         obj.IsFavorite <- item.IsFavorite
         obj
 
@@ -22,6 +24,7 @@ module Repository =
         {
             Id = obj.Id
             Name = obj.Name
+            Address = obj.Address
             IsFavorite = obj.IsFavorite
         }
 

@@ -8,6 +8,7 @@ open Xamarin.Forms
 open Xamarin.Forms.Platform.iOS
 open System.IO
 open SQLite
+open Xamarin
 
 [<Register ("AppDelegate")>]
 type AppDelegate () =
@@ -26,6 +27,7 @@ type AppDelegate () =
 
     override this.FinishedLaunching (app, options) =
         Forms.Init()
+        FormsMaps.Init()
         let dbPath = getDbPath()
         let appcore = new ElmishContacts.App(dbPath)
         this.LoadApplication (appcore)

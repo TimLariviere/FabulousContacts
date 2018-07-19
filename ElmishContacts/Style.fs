@@ -22,11 +22,19 @@ module Style =
     let mkToolbarButton text command =
         View.ToolbarItem(order=ToolbarItemOrder.Primary, text=text, command=command)
 
-    let mkCellView name isFavorite =
+    let mkCellView name address isFavorite =
         View.StackLayout(
             orientation=StackOrientation.Horizontal,
             children=[
-                View.Label(text=name, horizontalOptions=LayoutOptions.StartAndExpand, verticalTextAlignment=TextAlignment.Center, margin=new Thickness(20., 0.))
+                View.StackLayout(
+                    spacing=5.,
+                    horizontalOptions=LayoutOptions.FillAndExpand,
+                    margin=new Thickness(20., 2.),
+                    children=[
+                        View.Label(text=name, fontSize=18.)
+                        View.Label(text=address, fontSize=12.)
+                    ]
+                )
                 View.Image(source="star.png", isVisible=isFavorite, verticalOptions=LayoutOptions.Center, margin=new Thickness(0., 0., 20., 0.), heightRequest=25., widthRequest=25.)
             ]
         )

@@ -6,28 +6,36 @@ open Xamarin.Forms
 open ElmishContacts.Style
 open ElmishContacts.Models
 open ElmishContacts.Repository
+open Xamarin.Forms.Maps
 
 module App =
-
     type Model = 
         {
             Contacts: Contact list option
             SelectedContact: Contact option
             Name: string
+            Address: string
             IsFavorite: bool
+            IsMapShowing: bool
+            Pins: ContactPin list option
         }
 
-    type Msg = | ContactsLoaded of Contact list | Select of Contact | AddNewContact
-               | UpdateName of string | UpdateIsFavorite of bool
-               | SaveContact of Contact * name: string * isFavorite: bool | DeleteContact of Contact
+    type Msg = | ContactsLoaded of Contact list
+               | Select of Contact | AddNewContact | ShowMap
+               | UpdateName of string | UpdateAddress of string | UpdateIsFavorite of bool
+               | SaveContact of Contact * name: string * address: string * isFavorite: bool | DeleteContact of Contact
                | ContactAdded of Contact | ContactUpdated of Contact | ContactDeleted of Contact
+               | PinsLoaded of ContactPin list
 
     let initModel = 
         {
-            Contacts = None;
-            SelectedContact = None;
+            Contacts = None
+            SelectedContact = None
             Name = ""
+            Address = ""
             IsFavorite = false
+            IsMapShowing = false
+            Pins = None
         }
 
     let loadAsync dbPath = async {
@@ -50,8 +58,30 @@ module App =
         return ContactDeleted contact
     }
 
+    let loadPinsAsync (contacts: Contact list) = async {
+        let geocoder = Geocoder()
+
+        let gettingPositions =
+            contacts
+            |> List.map (fun c -> async {
+                let! positions = geocoder.GetPositionsForAddressAsync(c.Address) |> Async.AwaitTask
+                let position = positions |> Seq.tryHead
+                return (c, position)
+            })
+            |> Async.Parallel
+
+        let! contactsAndPositions = gettingPositions
+
+        let pins = contactsAndPositions
+                   |> Array.filter (fun (_, p) -> Option.isSome p)
+                   |> Array.map (fun (c, p) -> { Position = p.Value; Label = c.Name; PinType = PinType.Place; Address = c.Address})
+                   |> Array.toList
+
+        return PinsLoaded pins
+    }
+
     let updateModelAndNavBack model newContacts =
-        { model with Contacts = Some newContacts; SelectedContact = None; Name = ""; IsFavorite = false }, Cmd.none
+        { model with Contacts = Some newContacts; SelectedContact = None; Name = ""; Address = ""; IsFavorite = false }, Cmd.none
 
     let init dbPath () = initModel, Cmd.ofAsyncMsg (loadAsync dbPath)
 
@@ -60,15 +90,19 @@ module App =
         | ContactsLoaded contacts ->
             { model with Contacts = Some contacts }, Cmd.none
         | Select contact ->
-            { model with SelectedContact = Some contact; Name = contact.Name; IsFavorite = contact.IsFavorite }, Cmd.none
+            { model with SelectedContact = Some contact; Name = contact.Name; Address = contact.Address; IsFavorite = contact.IsFavorite }, Cmd.none
         | AddNewContact ->
-            { model with SelectedContact = Some Contact.NewContact; Name = ""; IsFavorite = false }, Cmd.none
+            { model with SelectedContact = Some Contact.NewContact; Name = ""; Address = ""; IsFavorite = false }, Cmd.none
+        | ShowMap ->
+            { model with IsMapShowing = true }, Cmd.ofAsyncMsg (loadPinsAsync model.Contacts.Value)
         | UpdateName name ->
             { model with Name = name }, Cmd.none
+        | UpdateAddress address ->
+            { model with Address = address }, Cmd.none
         | UpdateIsFavorite isFavorite ->
             { model with IsFavorite = isFavorite }, Cmd.none
-        | SaveContact (contact, name, isFavorite) ->
-            let newContact = { contact with Name = name; IsFavorite = isFavorite }
+        | SaveContact (contact, name, address, isFavorite) ->
+            let newContact = { contact with Name = name; Address = address; IsFavorite = isFavorite }
             model, Cmd.ofAsyncMsg (saveAsync dbPath newContact)
         | DeleteContact contact ->
             model, Cmd.ofAsyncMsg (deleteAsync dbPath contact)
@@ -81,10 +115,12 @@ module App =
         | ContactDeleted contact ->
             let newContacts = model.Contacts.Value |> List.filter (fun c -> c <> contact)
             updateModelAndNavBack model newContacts
+        | PinsLoaded pins ->
+            { model with Pins = Some pins }, Cmd.none
 
     let view dbPath (model: Model) dispatch =
-        let mkCachedCellView name isFavorite =
-            dependsOn (name, isFavorite) (fun _ (cName, cIsFavorite) -> mkCellView cName cIsFavorite)
+        let mkCachedCellView name address isFavorite =
+            dependsOn (name, address, isFavorite) (fun _ (cName, cAddress, cIsFavorite) -> mkCellView cName cAddress cIsFavorite)
 
         let mainPage =
             dependsOn model.Contacts (fun model mContacts ->
@@ -108,8 +144,12 @@ module App =
                                         items=
                                             [
                                                 for contact in contacts do
-                                                    yield mkCachedCellView contact.Name contact.IsFavorite
+                                                    yield mkCachedCellView contact.Name contact.Address contact.IsFavorite
                                             ]
+                                    )
+                                    View.Button(
+                                        text="Show contacts on map",
+                                        command=(fun () -> ShowMap |> dispatch)
                                     )
                                 ]
                     ) 
@@ -117,7 +157,7 @@ module App =
             )
 
         let itemPage =
-            dependsOn (model.SelectedContact, model.Name, model.IsFavorite) (fun model (mSelectedContact, mName, mIsFavorite) ->
+            dependsOn (model.SelectedContact, model.Name, model.Address, model.IsFavorite) (fun model (mSelectedContact, mName, mAddress, mIsFavorite) ->
                 let isDeleteButtonVisible =
                     match mSelectedContact with
                     | None -> false
@@ -127,12 +167,14 @@ module App =
                 View.ContentPage(
                     title=(if mName = "" then "New Contact" else mName),
                     toolbarItems=[
-                        mkToolbarButton "Save" (fun() -> (mSelectedContact.Value, mName, mIsFavorite) |> SaveContact |> dispatch)
+                        mkToolbarButton "Save" (fun() -> (mSelectedContact.Value, mName, mAddress, mIsFavorite) |> SaveContact |> dispatch)
                     ],
                     content=View.StackLayout(
                         children=[
                             mkFormLabel "Name"
                             mkFormEntry mName (fun e -> e.NewTextValue |> UpdateName |> dispatch)
+                            mkFormLabel "Address"
+                            mkFormEntry mAddress (fun e -> e.NewTextValue |> UpdateAddress |> dispatch)
                             mkFormLabel "Is Favorite"
                             mkFormSwitch mIsFavorite (fun e -> e.Value |> UpdateIsFavorite |> dispatch)
                             mkDestroyButton "Delete" (fun () -> mSelectedContact.Value |> DeleteContact |> dispatch) isDeleteButtonVisible
@@ -141,12 +183,33 @@ module App =
                 )
             )
         
+        let mapPage =
+            let paris = Position(48.8566, 2.3522)
+
+            View.ContentPage(
+                content=
+                    match model.Pins with
+                    | None ->
+                        mkCentralLabel "Loading..."
+                    | Some pins ->
+                        View.Map(
+                            hasZoomEnabled=true,
+                            hasScrollEnabled=true,
+                            requestedRegion=MapSpan.FromCenterAndRadius(paris, Distance.FromKilometers(25.)),
+                            pins=[
+                                for pin in pins do
+                                    yield View.Pin(position=pin.Position, label=pin.Label, pinType=pin.PinType, address=pin.Address)
+                            ]
+                        )
+            )
       
         View.NavigationPage(
             pages=
-                match model.SelectedContact with
-                | None -> [ mainPage ]
-                | Some _ -> [ mainPage; itemPage ]
+                match (model.SelectedContact, model.IsMapShowing) with
+                | (None, false) -> [ mainPage ]
+                | (None, true) -> [ mainPage; mapPage ]
+                | (Some _, false) -> [ mainPage; itemPage ]
+                | (Some _, true) -> [ mainPage; mapPage; itemPage ]
         )
 
 type App (dbPath) as app = 
