@@ -20,7 +20,7 @@ module App =
             Pins: ContactPin list option
         }
 
-    type Msg = | ContactsLoaded of Contact list
+    type Msg = | ContactsLoaded of Contact list | NavigationPopped
                | Select of Contact | AddNewContact | ShowMap
                | UpdateName of string | UpdateAddress of string | UpdateIsFavorite of bool
                | SaveContact of Contact * name: string * address: string * isFavorite: bool | DeleteContact of Contact
@@ -81,12 +81,21 @@ module App =
     }
 
     let updateModelAndNavBack model newContacts =
-        { model with Contacts = Some newContacts; SelectedContact = None; Name = ""; Address = ""; IsFavorite = false }, Cmd.none
+        { model with Contacts = Some newContacts; SelectedContact = None; Name = ""; Address = ""; IsFavorite = false }, Cmd.ofMsg NavigationPopped
+
+    let updateModelAfterNavPopped model =
+            match (model.SelectedContact, model.IsMapShowing) with
+            | (None, false) -> model, Cmd.none
+            | (None, true) -> { model with IsMapShowing = false }, Cmd.none
+            | (Some _, false) -> { model with SelectedContact = None; Name = ""; Address = ""; IsFavorite = false }, Cmd.none
+            | (Some _, true) -> { model with SelectedContact = None; Name = ""; Address = ""; IsFavorite = false }, Cmd.ofAsyncMsg (loadPinsAsync model.Contacts.Value)
 
     let init dbPath () = initModel, Cmd.ofAsyncMsg (loadAsync dbPath)
 
     let update dbPath msg model =
         match msg with
+        | NavigationPopped ->
+            updateModelAfterNavPopped model
         | ContactsLoaded contacts ->
             { model with Contacts = Some contacts }, Cmd.none
         | Select contact ->
@@ -204,6 +213,7 @@ module App =
             )
       
         View.NavigationPage(
+            popped=(fun e -> NavigationPopped |> dispatch),
             pages=
                 match (model.SelectedContact, model.IsMapShowing) with
                 | (None, false) -> [ mainPage ]
