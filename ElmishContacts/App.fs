@@ -127,6 +127,10 @@ module App =
         | PinsLoaded pins ->
             { model with Pins = Some pins }, Cmd.none
 
+    let test (groupedContacts: (string * Contact list) list) (gIndex: int, iIndex: int) =
+        groupedContacts.[gIndex]
+        |> (fun (gName, items) -> items.[iIndex])
+
     let view dbPath (model: Model) dispatch =
         let mkCachedCellView name address isFavorite =
             dependsOn (name, address, isFavorite) (fun _ (cName, cAddress, cIsFavorite) -> mkCellView cName cAddress cIsFavorite)
@@ -134,7 +138,7 @@ module App =
         let mainPage =
             dependsOn model.Contacts (fun model mContacts ->
                 View.ContentPage(
-                    title="Elmish Contacts",
+                    title="ElmContact",
                     toolbarItems=[
                         mkToolbarButton "Add" (fun() -> AddNewContact |> dispatch)
                     ],
@@ -146,14 +150,22 @@ module App =
                             | Some [] ->
                                 [ mkCentralLabel "No contact" ]
                             | Some contacts ->
+                                let groupedContacts =
+                                    contacts
+                                    |> List.groupBy (fun c -> c.Name.[0].ToString())
+                                
                                 [
-                                    View.ListView(
+                                    View.ListViewGrouped(
                                         verticalOptions=LayoutOptions.FillAndExpand,
-                                        itemTapped=(fun i -> contacts.[i] |> Select |> dispatch),
+                                        itemTapped=(test groupedContacts >> Select >> dispatch),
                                         items=
                                             [
-                                                for contact in contacts do
-                                                    yield mkCachedCellView contact.Name contact.Address contact.IsFavorite
+                                                for (groupName, items) in groupedContacts do
+                                                    yield View.Label groupName, [
+                                                        for contact in items do
+                                                            yield mkCachedCellView contact.Name contact.Address contact.IsFavorite
+                                                    ]
+
                                             ]
                                     )
                                     View.Button(
@@ -215,8 +227,10 @@ module App =
             )
 
 
-      
+
         View.NavigationPage(
+            barTextColor=Color.White,
+            barBackgroundColor=Color.FromHex("#3080b1"),
             popped=(fun e -> NavigationPopped |> dispatch),
             pages=
                 match (model.SelectedContact, model.IsMapShowing) with
