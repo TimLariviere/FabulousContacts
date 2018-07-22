@@ -191,26 +191,30 @@ module App =
                     )
                 )
             )
-        
-        let mapPage =
-            let paris = Position(48.8566, 2.3522)
 
-            View.ContentPage(
-                content=
-                    match model.Pins with
-                    | None ->
-                        mkCentralLabel "Loading..."
-                    | Some pins ->
-                        View.Map(
-                            hasZoomEnabled=true,
-                            hasScrollEnabled=true,
-                            requestedRegion=MapSpan.FromCenterAndRadius(paris, Distance.FromKilometers(25.)),
-                            pins=[
-                                for pin in pins do
-                                    yield View.Pin(position=pin.Position, label=pin.Label, pinType=pin.PinType, address=pin.Address)
-                            ]
-                        )
+        let mapPage =
+            dependsOn model.Pins (fun model (mPins) ->
+                let paris = Position(48.8566, 2.3522)
+
+                View.ContentPage(
+                    content=
+                        match mPins with
+                        | None ->
+                            mkCentralLabel "Loading..."
+                        | Some pins ->
+                            View.Map(
+                                hasZoomEnabled=true,
+                                hasScrollEnabled=true,
+                                requestedRegion=MapSpan.FromCenterAndRadius(paris, Distance.FromKilometers(25.)),
+                                pins=[
+                                    for pin in pins do
+                                        yield View.Pin(position=pin.Position, label=pin.Label, pinType=pin.PinType, address=pin.Address)
+                                ]
+                            )
+                )
             )
+
+
       
         View.NavigationPage(
             popped=(fun e -> NavigationPopped |> dispatch),
