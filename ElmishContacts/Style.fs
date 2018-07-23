@@ -22,6 +22,9 @@ module Style =
     let mkToolbarButton text command =
         View.ToolbarItem(order=ToolbarItemOrder.Primary, text=text, command=command)
 
+    let mkGroupView name =
+        View.Label(text=name, verticalTextAlignment=TextAlignment.Center, margin=Thickness(20., 5.))
+
     let mkCellView name address isFavorite =
         View.StackLayout(
             orientation=StackOrientation.Horizontal,
@@ -29,7 +32,7 @@ module Style =
                 View.StackLayout(
                     spacing=5.,
                     horizontalOptions=LayoutOptions.FillAndExpand,
-                    margin=new Thickness(20., 2.),
+                    margin=Thickness(20., 5.),
                     children=[
                         View.Label(text=name, fontSize=18.)
                         View.Label(text=address, fontSize=12.)

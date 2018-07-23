@@ -94,9 +94,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Elmish.XamarinForms.Maps">
-      <HintPath>..\packages\Elmish.XamarinForms.Maps.0.14.8\lib\netstandard2.0\Elmish.XamarinForms.Maps.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Mono.Android" />
     <Reference Include="System" />
@@ -192,12 +189,6 @@
     <Reference Include="Xamarin.Forms.Xaml">
       <HintPath>$(SolutionDir)/packages/Xamarin.Forms.3.0.0.482510/lib/MonoAndroid10/Xamarin.Forms.Xaml.dll</HintPath>
     </Reference>
-    <Reference Include="FSharp.Core">
-      <HintPath>$(SolutionDir)/packages/FSharp.Core.4.5.0/lib/netstandard1.6/FSharp.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Elmish.XamarinForms.LiveUpdate">
-      <HintPath>$(SolutionDir)/packages/Elmish.XamarinForms.LiveUpdate.0.14.4/lib/netstandard2.0/Elmish.XamarinForms.LiveUpdate.dll</HintPath>
-    </Reference>
     <Reference Include="FsPickler">
       <HintPath>$(SolutionDir)/packages/FsPickler.5.2/lib/netstandard2.0/FsPickler.dll</HintPath>
     </Reference>
@@ -209,9 +200,6 @@
     </Reference>
     <Reference Include="Xamarin.Essentials">
       <HintPath>$(SolutionDir)/packages/Xamarin.Essentials.0.6.0-preview/lib/monoandroid71/Xamarin.Essentials.dll</HintPath>
-    </Reference>
-    <Reference Include="Elmish.XamarinForms">
-      <HintPath>..\packages\Elmish.XamarinForms.0.14.8\lib\netstandard2.0\Elmish.XamarinForms.dll</HintPath>
     </Reference>
     <Reference Include="SQLitePCLRaw.core">
       <HintPath>..\packages\SQLitePCLRaw.core.1.1.5\lib\MonoAndroid\SQLitePCLRaw.core.dll</HintPath>
@@ -242,6 +230,18 @@
     </Reference>
     <Reference Include="Xamarin.GooglePlayServices.Tasks">
       <HintPath>..\packages\Xamarin.GooglePlayServices.Tasks.42.1021.1\lib\MonoAndroid70\Xamarin.GooglePlayServices.Tasks.dll</HintPath>
+    </Reference>
+    <Reference Include="Elmish.XamarinForms">
+      <HintPath>..\packages\Elmish.XamarinForms.0.15.2\lib\netstandard2.0\Elmish.XamarinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Elmish.XamarinForms.LiveUpdate">
+      <HintPath>..\packages\Elmish.XamarinForms.LiveUpdate.0.15.2\lib\netstandard2.0\Elmish.XamarinForms.LiveUpdate.dll</HintPath>
+    </Reference>
+    <Reference Include="Elmish.XamarinForms.Maps">
+      <HintPath>..\packages\Elmish.XamarinForms.Maps.0.15.2\lib\netstandard2.0\Elmish.XamarinForms.Maps.dll</HintPath>
+    </Reference>
+    <Reference Include="FSharp.Core">
+      <HintPath>..\packages\FSharp.Core.4.5.1\lib\netstandard1.6\FSharp.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

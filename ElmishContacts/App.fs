@@ -127,7 +127,7 @@ module App =
         | PinsLoaded pins ->
             { model with Pins = Some pins }, Cmd.none
 
-    let test (groupedContacts: (string * Contact list) list) (gIndex: int, iIndex: int) =
+    let findContactIn (groupedContacts: (string * Contact list) list) (gIndex: int, iIndex: int) =
         groupedContacts.[gIndex]
         |> (fun (gName, items) -> items.[iIndex])
 
@@ -152,20 +152,21 @@ module App =
                             | Some contacts ->
                                 let groupedContacts =
                                     contacts
-                                    |> List.groupBy (fun c -> c.Name.[0].ToString())
+                                    |> List.groupBy (fun c -> c.Name.[0].ToString().ToLower())
                                 
                                 [
                                     View.ListViewGrouped(
+                                        rowHeight=55,
                                         verticalOptions=LayoutOptions.FillAndExpand,
-                                        itemTapped=(test groupedContacts >> Select >> dispatch),
+                                        itemTapped=(findContactIn groupedContacts >> Select >> dispatch),
                                         items=
                                             [
                                                 for (groupName, items) in groupedContacts do
-                                                    yield View.Label groupName, [
-                                                        for contact in items do
-                                                            yield mkCachedCellView contact.Name contact.Address contact.IsFavorite
-                                                    ]
-
+                                                    yield mkGroupView groupName,
+                                                            [
+                                                                for contact in items do
+                                                                    yield mkCachedCellView contact.Name contact.Address contact.IsFavorite
+                                                            ]
                                             ]
                                     )
                                     View.Button(

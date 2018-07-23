@@ -10,13 +10,13 @@
     <Compile Include="App.fs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Elmish.XamarinForms.Maps" Version="0.14.8" />
+    <PackageReference Include="Elmish.XamarinForms.Maps" Version="0.15.2" />
     <PackageReference Include="sqlite-net-pcl" Version="1.4.118" />
     <PackageReference Include="Xamarin.Forms" Version="3.0.0.482510" />
     <PackageReference Include="Xamarin.Essentials" Version="0.6.0-preview" />
-    <PackageReference Include="Elmish.XamarinForms" Version="0.14.8" />
+    <PackageReference Include="Elmish.XamarinForms" Version="0.15.2" />
     <PackageReference Include="FSharp.Core" Version="4.5.0" />
-    <PackageReference Update="FSharp.Core" Version="4.5.0" />
+    <PackageReference Update="FSharp.Core" Version="4.5.1" />
     <!-- workaround for VSMac bug https://github.com/mono/monodevelop/pull/5137 -->
     <PackageReference Include="FsPickler" Version="5.2" />
     <PackageReference Include="FsPickler.Json" Version="5.2" />
