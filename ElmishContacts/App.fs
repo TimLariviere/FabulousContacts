@@ -3,242 +3,116 @@
 open Elmish.XamarinForms
 open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
-open ElmishContacts.Style
 open ElmishContacts.Models
-open ElmishContacts.Repository
-open Xamarin.Forms.Maps
 
 module App =
     type Model = 
         {
-            Contacts: Contact list option
-            SelectedContact: Contact option
-            Name: string
-            Address: string
-            IsFavorite: bool
-            IsMapShowing: bool
-            Pins: ContactPin list option
+            MainPageModel: MainPage.Model
+            ItemPageModel: ItemPage.Model option
+            MapPageModel: MapPage.Model option
         }
 
-    type Msg = | ContactsLoaded of Contact list | NavigationPopped
-               | Select of Contact | AddNewContact | ShowMap
-               | UpdateName of string | UpdateAddress of string | UpdateIsFavorite of bool
-               | SaveContact of Contact * name: string * address: string * isFavorite: bool | DeleteContact of Contact
-               | ContactAdded of Contact | ContactUpdated of Contact | ContactDeleted of Contact
-               | PinsLoaded of ContactPin list
+    type Msg = | MainPageMsg of MainPage.Msg
+               | ItemPageMsg of ItemPage.Msg
+               | MapPageMsg of MapPage.Msg
+               | GoToItem of Contact option
+               | GoToMap
+               | UpdateMainWithContactAdded of Contact
+               | UpdateMainWithContactUpdated of Contact
+               | UpdateMainWithContactDeleted of Contact
+               | NavigationPopped
 
-    let initModel = 
+    let init dbPath () = 
+        let mainModel, mainMsg = MainPage.init dbPath ()
         {
-            Contacts = None
-            SelectedContact = None
-            Name = ""
-            Address = ""
-            IsFavorite = false
-            IsMapShowing = false
-            Pins = None
-        }
-
-    let loadAsync dbPath = async {
-        let! contacts = loadAllContacts dbPath
-        return ContactsLoaded contacts
-    }
-
-    let saveAsync dbPath contact = async {
-        match contact.Id with
-        | 0 ->
-            let! insertedContact = insertContact dbPath contact
-            return ContactAdded insertedContact
-        | _ ->
-            let! updatedContact = updateContact dbPath contact
-            return ContactUpdated updatedContact
-    }
-
-    let deleteAsync dbPath contact = async {
-        do! deleteContact dbPath contact
-        return ContactDeleted contact
-    }
-
-    let loadPinsAsync (contacts: Contact list) = async {
-        let geocoder = Geocoder()
-
-        let gettingPositions =
-            contacts
-            |> List.map (fun c -> async {
-                let! positions = geocoder.GetPositionsForAddressAsync(c.Address) |> Async.AwaitTask
-                let position = positions |> Seq.tryHead
-                return (c, position)
-            })
-            |> Async.Parallel
-
-        let! contactsAndPositions = gettingPositions
-
-        let pins = contactsAndPositions
-                   |> Array.filter (fun (_, p) -> Option.isSome p)
-                   |> Array.map (fun (c, p) -> { Position = p.Value; Label = c.Name; PinType = PinType.Place; Address = c.Address})
-                   |> Array.toList
-
-        return PinsLoaded pins
-    }
-
-    let updateModelAndNavBack model newContacts =
-        { model with Contacts = Some newContacts; SelectedContact = None; Name = ""; Address = ""; IsFavorite = false }, Cmd.ofMsg NavigationPopped
-
-    let updateModelAfterNavPopped model =
-            match (model.SelectedContact, model.IsMapShowing) with
-            | (None, false) -> model, Cmd.none
-            | (None, true) -> { model with IsMapShowing = false }, Cmd.none
-            | (Some _, false) -> { model with SelectedContact = None; Name = ""; Address = ""; IsFavorite = false }, Cmd.none
-            | (Some _, true) -> { model with SelectedContact = None; Name = ""; Address = ""; IsFavorite = false }, Cmd.ofAsyncMsg (loadPinsAsync model.Contacts.Value)
-
-    let init dbPath () = initModel, Cmd.ofAsyncMsg (loadAsync dbPath)
+            MainPageModel = mainModel
+            ItemPageModel = None
+            MapPageModel = None
+        }, Cmd.batch [ (Cmd.map MainPageMsg mainMsg) ]
 
     let update dbPath msg model =
         match msg with
-        | NavigationPopped ->
-            updateModelAfterNavPopped model
-        | ContactsLoaded contacts ->
-            { model with Contacts = Some contacts }, Cmd.none
-        | Select contact ->
-            { model with SelectedContact = Some contact; Name = contact.Name; Address = contact.Address; IsFavorite = contact.IsFavorite }, Cmd.none
-        | AddNewContact ->
-            { model with SelectedContact = Some Contact.NewContact; Name = ""; Address = ""; IsFavorite = false }, Cmd.none
-        | ShowMap ->
-            { model with IsMapShowing = true }, Cmd.ofAsyncMsg (loadPinsAsync model.Contacts.Value)
-        | UpdateName name ->
-            { model with Name = name }, Cmd.none
-        | UpdateAddress address ->
-            { model with Address = address }, Cmd.none
-        | UpdateIsFavorite isFavorite ->
-            { model with IsFavorite = isFavorite }, Cmd.none
-        | SaveContact (contact, name, address, isFavorite) ->
-            let newContact = { contact with Name = name; Address = address; IsFavorite = isFavorite }
-            model, Cmd.ofAsyncMsg (saveAsync dbPath newContact)
-        | DeleteContact contact ->
-            model, Cmd.ofAsyncMsg (deleteAsync dbPath contact)
-        | ContactAdded contact -> 
-            let newContacts = model.Contacts.Value @ [ contact ]
-            updateModelAndNavBack model newContacts
-        | ContactUpdated contact -> 
-            let newContacts = model.Contacts.Value |> List.map (fun c -> if c.Id = contact.Id then contact else c)
-            updateModelAndNavBack model newContacts
-        | ContactDeleted contact ->
-            let newContacts = model.Contacts.Value |> List.filter (fun c -> c <> contact)
-            updateModelAndNavBack model newContacts
-        | PinsLoaded pins ->
-            { model with Pins = Some pins }, Cmd.none
+        | MainPageMsg msg ->
+            let m, cmd, externalMsg = MainPage.update dbPath msg model.MainPageModel
 
-    let findContactIn (groupedContacts: (string * Contact list) list) (gIndex: int, iIndex: int) =
-        groupedContacts.[gIndex]
-        |> (fun (gName, items) -> items.[iIndex])
+            let cmd2 =
+                match externalMsg with
+                | MainPage.ExternalMsg.NoOp ->
+                    Cmd.none
+                | MainPage.ExternalMsg.Select contact ->
+                    Cmd.ofMsg (GoToItem (Some contact))
+                | MainPage.ExternalMsg.AddNewContact ->
+                    Cmd.ofMsg (GoToItem None)
+                | MainPage.ExternalMsg.ShowMap ->
+                    Cmd.ofMsg GoToMap
+
+            { model with MainPageModel = m }, Cmd.batch [ (Cmd.map MainPageMsg cmd); cmd2 ]
+
+        | ItemPageMsg msg ->
+            let m, cmd, externalMsg = ItemPage.update dbPath msg model.ItemPageModel.Value
+
+            let cmd2 =
+                match externalMsg with
+                | ItemPage.ExternalMsg.NoOp ->
+                    Cmd.none
+                | ItemPage.ExternalMsg.GoBackAfterContactAdded contact ->
+                    Cmd.ofMsg (UpdateMainWithContactAdded contact)
+                | ItemPage.ExternalMsg.GoBackAfterContactUpdated contact ->
+                    Cmd.ofMsg (UpdateMainWithContactUpdated contact)
+                | ItemPage.ExternalMsg.GoBackAfterContactDeleted contact ->
+                    Cmd.ofMsg (UpdateMainWithContactDeleted contact)
+
+            { model with ItemPageModel = Some m }, Cmd.batch [ (Cmd.map ItemPageMsg cmd); cmd2 ]
+
+        | MapPageMsg msg ->
+            let m, cmd, externalMsg = MapPage.update msg model.MapPageModel.Value
+
+            let cmd2 =
+                match externalMsg with
+                | MapPage.ExternalMsg.NoOp ->
+                    Cmd.none
+
+            { model with MapPageModel = Some m }, Cmd.batch [ (Cmd.map MainPageMsg cmd); cmd2 ]
+
+        | NavigationPopped ->
+            match (model.ItemPageModel, model.MapPageModel) with
+            | None, None -> model, Cmd.none
+            | Some _, None -> { model with ItemPageModel = None }, Cmd.none
+            | None, Some _ -> { model with MapPageModel = None }, Cmd.none
+            | Some _, Some _ -> { model with ItemPageModel = None }, Cmd.none
+
+        | GoToItem contact ->
+            let m, cmd = ItemPage.init contact
+            { model with ItemPageModel = Some m }, (Cmd.map ItemPageMsg cmd)
+
+        | GoToMap ->
+            let m, cmd = MapPage.init dbPath
+            { model with MapPageModel = Some m }, (Cmd.map MapPageMsg cmd)
 
     let view dbPath (model: Model) dispatch =
-        let mkCachedCellView name address isFavorite =
-            dependsOn (name, address, isFavorite) (fun _ (cName, cAddress, cIsFavorite) -> mkCellView cName cAddress cIsFavorite)
-
-        let mainPage =
-            dependsOn model.Contacts (fun model mContacts ->
-                View.ContentPage(
-                    title="ElmContact",
-                    toolbarItems=[
-                        mkToolbarButton "Add" (fun() -> AddNewContact |> dispatch)
-                    ],
-                    content=View.StackLayout(
-                        children=
-                            match mContacts with
-                            | None ->
-                                [ mkCentralLabel "Loading..." ]
-                            | Some [] ->
-                                [ mkCentralLabel "No contact" ]
-                            | Some contacts ->
-                                let groupedContacts =
-                                    contacts
-                                    |> List.groupBy (fun c -> c.Name.[0].ToString().ToLower())
-                                
-                                [
-                                    View.ListViewGrouped(
-                                        rowHeight=55,
-                                        verticalOptions=LayoutOptions.FillAndExpand,
-                                        itemTapped=(findContactIn groupedContacts >> Select >> dispatch),
-                                        items=
-                                            [
-                                                for (groupName, items) in groupedContacts do
-                                                    yield mkGroupView groupName,
-                                                            [
-                                                                for contact in items do
-                                                                    yield mkCachedCellView contact.Name contact.Address contact.IsFavorite
-                                                            ]
-                                            ]
-                                    )
-                                    View.Button(
-                                        text="Show contacts on map",
-                                        command=(fun () -> ShowMap |> dispatch)
-                                    )
-                                ]
-                    ) 
-                )
-            )
+        let mainPage = MainPage.view model.MainPageModel (MainPageMsg >> dispatch)
 
         let itemPage =
-            dependsOn (model.SelectedContact, model.Name, model.Address, model.IsFavorite) (fun model (mSelectedContact, mName, mAddress, mIsFavorite) ->
-                let isDeleteButtonVisible =
-                    match mSelectedContact with
-                    | None -> false
-                    | Some x when x.Id = 0 -> false
-                    | Some x -> true
-
-                View.ContentPage(
-                    title=(if mName = "" then "New Contact" else mName),
-                    toolbarItems=[
-                        mkToolbarButton "Save" (fun() -> (mSelectedContact.Value, mName, mAddress, mIsFavorite) |> SaveContact |> dispatch)
-                    ],
-                    content=View.StackLayout(
-                        children=[
-                            mkFormLabel "Name"
-                            mkFormEntry mName (fun e -> e.NewTextValue |> UpdateName |> dispatch)
-                            mkFormLabel "Address"
-                            mkFormEntry mAddress (fun e -> e.NewTextValue |> UpdateAddress |> dispatch)
-                            mkFormLabel "Is Favorite"
-                            mkFormSwitch mIsFavorite (fun e -> e.Value |> UpdateIsFavorite |> dispatch)
-                            mkDestroyButton "Delete" (fun () -> mSelectedContact.Value |> DeleteContact |> dispatch) isDeleteButtonVisible
-                        ]
-                    )
-                )
-            )
+            match model.ItemPageModel with
+            | None -> View.Label()
+            | Some iModel -> ItemPage.view iModel (ItemPageMsg >> dispatch)
 
         let mapPage =
-            dependsOn model.Pins (fun model (mPins) ->
-                let paris = Position(48.8566, 2.3522)
-
-                View.ContentPage(
-                    content=
-                        match mPins with
-                        | None ->
-                            mkCentralLabel "Loading..."
-                        | Some pins ->
-                            View.Map(
-                                hasZoomEnabled=true,
-                                hasScrollEnabled=true,
-                                requestedRegion=MapSpan.FromCenterAndRadius(paris, Distance.FromKilometers(25.)),
-                                pins=[
-                                    for pin in pins do
-                                        yield View.Pin(position=pin.Position, label=pin.Label, pinType=pin.PinType, address=pin.Address)
-                                ]
-                            )
-                )
-            )
-
-
+            match model.MapPageModel with
+            | None -> View.Label()
+            | Some mModel -> MapPage.view mModel (MapPageMsg >> dispatch)
 
         View.NavigationPage(
             barTextColor=Color.White,
             barBackgroundColor=Color.FromHex("#3080b1"),
             popped=(fun e -> NavigationPopped |> dispatch),
             pages=
-                match (model.SelectedContact, model.IsMapShowing) with
-                | (None, false) -> [ mainPage ]
-                | (None, true) -> [ mainPage; mapPage ]
-                | (Some _, false) -> [ mainPage; itemPage ]
-                | (Some _, true) -> [ mainPage; mapPage; itemPage ]
+                match (model.ItemPageModel, model.MapPageModel) with
+                | (None, None) -> [ mainPage ]
+                | (None, Some _) -> [ mainPage; mapPage ]
+                | (Some _, None) -> [ mainPage; itemPage ]
+                | (Some _, Some _) -> [ mainPage; mapPage; itemPage ]
         )
 
 type App (dbPath) as app = 
