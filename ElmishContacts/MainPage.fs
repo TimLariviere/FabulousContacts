@@ -12,6 +12,9 @@ module MainPage =
                | ContactSelected of Contact
                | AddNewContactTapped
                | ShowMapTapped
+               | ContactAdded of Contact
+               | ContactUpdated of Contact
+               | ContactDeleted of Contact
 
     type ExternalMsg = | NoOp
                        | Select of Contact
@@ -43,6 +46,15 @@ module MainPage =
         | ContactSelected contact -> model, Cmd.none, (ExternalMsg.Select contact)
         | AddNewContactTapped -> model, Cmd.none, ExternalMsg.AddNewContact
         | ShowMapTapped -> model, Cmd.none, ExternalMsg.ShowMap
+        | ContactAdded contact ->
+            let newContacts = model.Contacts.Value @ [ contact ]
+            { model with Contacts = Some newContacts }, Cmd.none, ExternalMsg.NoOp
+        | ContactUpdated contact ->
+            let newContacts = model.Contacts.Value |> List.map (fun c -> if c = contact then contact else c)
+            { model with Contacts = Some newContacts }, Cmd.none, ExternalMsg.NoOp
+        | ContactDeleted contact ->
+            let newContacts = model.Contacts.Value |> List.filter (fun c -> c <> contact)
+            { model with Contacts = Some newContacts }, Cmd.none, ExternalMsg.NoOp
 
     let view model dispatch =
         dependsOn model.Contacts (fun model mContacts ->
@@ -61,7 +73,7 @@ module MainPage =
                         | Some contacts ->
                             let groupedContacts =
                                 contacts
-                                |> List.groupBy (fun c -> c.Name.[0].ToString().ToLower())
+                                |> List.groupBy (fun c -> c.Name.[0].ToString().ToUpper())
                             
                             [
                                 View.ListViewGrouped(

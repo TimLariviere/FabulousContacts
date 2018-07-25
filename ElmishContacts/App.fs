@@ -90,6 +90,16 @@ module App =
             let m, cmd = MapPage.init dbPath
             { model with MapPageModel = Some m }, (Cmd.map MapPageMsg cmd)
 
+        | UpdateMainWithContactAdded contact ->
+            { model with ItemPageModel = None }, Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactAdded contact))
+
+        | UpdateMainWithContactUpdated contact ->
+            { model with ItemPageModel = None }, Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactUpdated contact))
+
+        | UpdateMainWithContactDeleted contact ->
+            { model with ItemPageModel = None }, Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactDeleted contact))
+
+
     let view dbPath (model: Model) dispatch =
         let mainPage = MainPage.view model.MainPageModel (MainPageMsg >> dispatch)
 

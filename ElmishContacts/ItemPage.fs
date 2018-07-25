@@ -10,7 +10,7 @@ module ItemPage =
     type Msg = | UpdateName of string
                | UpdateAddress of string
                | UpdateIsFavorite of bool
-               | SaveContact of Contact * name: string * address: string * isFavorite: bool
+               | SaveContact of Contact option * name: string * address: string * isFavorite: bool
                | DeleteContact of Contact
                | ContactAdded of Contact
                | ContactUpdated of Contact
@@ -73,7 +73,10 @@ module ItemPage =
         | UpdateIsFavorite isFavorite ->
             { model with IsFavorite = isFavorite }, Cmd.none, ExternalMsg.NoOp
         | SaveContact (contact, name, address, isFavorite) ->
-            let newContact = { contact with Name = name; Address = address; IsFavorite = isFavorite }
+            let newContact =
+                match contact with
+                | None -> { Id = 0; Name = name; Address = address; IsFavorite = isFavorite }
+                | Some c -> { c with Name = name; Address = address; IsFavorite = isFavorite }
             model, Cmd.ofAsyncMsg (saveAsync dbPath newContact), ExternalMsg.NoOp
         | DeleteContact contact ->
             model, Cmd.ofAsyncMsg (deleteAsync dbPath contact), ExternalMsg.NoOp
@@ -95,7 +98,7 @@ module ItemPage =
             View.ContentPage(
                 title=(if mName = "" then "New Contact" else mName),
                 toolbarItems=[
-                    mkToolbarButton "Save" (fun() -> (mContact.Value, mName, mAddress, mIsFavorite) |> SaveContact |> dispatch)
+                    mkToolbarButton "Save" (fun() -> (mContact, mName, mAddress, mIsFavorite) |> SaveContact |> dispatch)
                 ],
                 content=View.StackLayout(
                     children=[
