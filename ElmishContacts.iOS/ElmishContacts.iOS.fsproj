@@ -239,6 +239,14 @@
       <Project>{AD454E78-7578-4EB2-99EA-1F3F6F21A950}</Project>
       <Name>ElmishContacts</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Elmish.XamarinForms\Elmish.XamarinForms\Elmish.XamarinForms.fsproj">
+      <Project>{86CBC761-168B-4B03-B622-A50BE6EA73ED}</Project>
+      <Name>Elmish.XamarinForms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Elmish.XamarinForms\extensions\Maps\Elmish.XamarinForms.Maps.fsproj">
+      <Project>{4E4BE2CC-300C-461A-8D7B-7C5C18726374}</Project>
+      <Name>Elmish.XamarinForms.Maps</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="..\packages\Xamarin.Forms.3.1.0.637273\build\netstandard2.0\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.3.1.0.637273\build\netstandard2.0\Xamarin.Forms.targets')" />
 </Project>
