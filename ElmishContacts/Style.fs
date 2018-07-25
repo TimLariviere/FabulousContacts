@@ -4,6 +4,9 @@ open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
 
 module Style =
+    let navigationPageBarTextColor = Color.White
+    let navigationPageBarBackgroundColor = Color.FromHex("#3080b1")
+
     let mkCentralLabel text =
         View.Label(text=text, horizontalOptions=LayoutOptions.Center, verticalOptions=LayoutOptions.CenterAndExpand)
 
@@ -41,3 +44,6 @@ module Style =
                 View.Image(source="star.png", isVisible=isFavorite, verticalOptions=LayoutOptions.Center, margin=new Thickness(0., 0., 20., 0.), heightRequest=25., widthRequest=25.)
             ]
         )
+
+    let mkCachedCellView name address isFavorite =
+        dependsOn (name, address, isFavorite) (fun _ (cName, cAddress, cIsFavorite) -> mkCellView cName cAddress cIsFavorite)

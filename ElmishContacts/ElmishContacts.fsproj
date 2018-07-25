@@ -7,6 +7,9 @@
     <Compile Include="Style.fs" />
     <Compile Include="Models.fs" />
     <Compile Include="Repository.fs" />
+    <Compile Include="MainPage.fs" />
+    <Compile Include="ItemPage.fs" />
+    <Compile Include="MapPage.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
   <ItemGroup>
