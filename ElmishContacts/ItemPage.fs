@@ -93,7 +93,7 @@ module ItemPage =
                 match mContact with
                 | None -> false
                 | Some x when x.Id = 0 -> false
-                | Some x -> true
+                | Some _ -> true
 
             View.ContentPage(
                 title=(if mName = "" then "New Contact" else mName),

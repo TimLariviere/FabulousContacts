@@ -34,7 +34,7 @@ module App =
     let update dbPath msg model =
         match msg with
         | MainPageMsg msg ->
-            let m, cmd, externalMsg = MainPage.update dbPath msg model.MainPageModel
+            let m, cmd, externalMsg = MainPage.update msg model.MainPageModel
 
             let cmd2 =
                 match externalMsg with
@@ -100,29 +100,29 @@ module App =
             { model with ItemPageModel = None }, Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactDeleted contact))
 
 
-    let view dbPath (model: Model) dispatch =
+    let view (model: Model) dispatch =
         let mainPage = MainPage.view model.MainPageModel (MainPageMsg >> dispatch)
 
         let itemPage =
             match model.ItemPageModel with
-            | None -> View.Label()
-            | Some iModel -> ItemPage.view iModel (ItemPageMsg >> dispatch)
+            | None -> None
+            | Some iModel -> Some (ItemPage.view iModel (ItemPageMsg >> dispatch))
 
         let mapPage =
             match model.MapPageModel with
-            | None -> View.Label()
-            | Some mModel -> MapPage.view mModel (MapPageMsg >> dispatch)
-
+            | None -> None
+            | Some mModel -> Some (MapPage.view mModel (MapPageMsg >> dispatch))
+            
         View.NavigationPage(
-            barTextColor=Color.White,
-            barBackgroundColor=Color.FromHex("#3080b1"),
-            popped=(fun e -> NavigationPopped |> dispatch),
+            barTextColor=Style.navigationPageBarTextColor,
+            barBackgroundColor=Style.navigationPageBarBackgroundColor,
+            popped=(fun _ -> NavigationPopped |> dispatch),
             pages=
-                match (model.ItemPageModel, model.MapPageModel) with
+                match (itemPage, mapPage) with
                 | (None, None) -> [ mainPage ]
-                | (None, Some _) -> [ mainPage; mapPage ]
-                | (Some _, None) -> [ mainPage; itemPage ]
-                | (Some _, Some _) -> [ mainPage; mapPage; itemPage ]
+                | (None, Some map) -> [ mainPage; map ]
+                | (Some item, None) -> [ mainPage; item ]
+                | (Some item, Some map) -> [ mainPage; map; item ]
         )
 
 type App (dbPath) as app = 
@@ -130,7 +130,7 @@ type App (dbPath) as app =
 
     let init = App.init dbPath
     let update = App.update dbPath
-    let view = App.view dbPath
+    let view = App.view
 
     let runner = 
         Program.mkProgram init update view

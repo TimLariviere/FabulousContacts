@@ -10,7 +10,6 @@ module Models =
             Address: string
             IsFavorite: bool
         }
-    with static member NewContact = { Id = 0; Name = ""; Address = ""; IsFavorite = false }
 
     type ContactPin =
         {

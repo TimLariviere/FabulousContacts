@@ -33,14 +33,14 @@ module MainPage =
 
     let findContactIn (groupedContacts: (string * Contact list) list) (gIndex: int, iIndex: int) =
         groupedContacts.[gIndex]
-        |> (fun (gName, items) -> items.[iIndex])
+        |> (fun (_, items) -> items.[iIndex])
 
     let init dbPath () =
         {
             Contacts = None
         }, Cmd.ofAsyncMsg (loadAsyncCmd dbPath)
 
-    let update dbPath msg model =
+    let update msg model =
         match msg with
         | ContactsLoaded contacts -> { model with Contacts = Some contacts }, Cmd.none, ExternalMsg.NoOp
         | ContactSelected contact -> model, Cmd.none, (ExternalMsg.Select contact)

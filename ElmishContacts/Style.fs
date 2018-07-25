@@ -4,6 +4,9 @@ open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
 
 module Style =
+    let navigationPageBarTextColor = Color.White
+    let navigationPageBarBackgroundColor = Color.FromHex("#3080b1")
+
     let mkCentralLabel text =
         View.Label(text=text, horizontalOptions=LayoutOptions.Center, verticalOptions=LayoutOptions.CenterAndExpand)
 

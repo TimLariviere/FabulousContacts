@@ -51,7 +51,7 @@ module MapPage =
         | PinsLoaded pins ->
             { model with Pins = Some pins }, Cmd.none, ExternalMsg.NoOp
 
-    let view model dispatch =
+    let view model _ =
         dependsOn model.Pins (fun model (mPins) ->
             let paris = Position(48.8566, 2.3522)
 
