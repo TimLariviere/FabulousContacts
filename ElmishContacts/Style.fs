@@ -26,10 +26,17 @@ module Style =
         View.ToolbarItem(order=ToolbarItemOrder.Primary, text=text, command=command)
 
     let mkGroupView name =
-        View.Label(text=name, verticalTextAlignment=TextAlignment.Center, margin=Thickness(20., 5.))
+        View.StackLayout(
+            heightRequest=25.,
+            backgroundColor=navigationPageBarBackgroundColor,
+            children=[
+                View.Label(text=name, verticalOptions=LayoutOptions.FillAndExpand, verticalTextAlignment=TextAlignment.Center, margin=Thickness(20., 5.))
+            ]
+        )
 
     let mkCellView name address isFavorite =
         View.StackLayout(
+            heightRequest=55.,
             orientation=StackOrientation.Horizontal,
             children=[
                 View.StackLayout(

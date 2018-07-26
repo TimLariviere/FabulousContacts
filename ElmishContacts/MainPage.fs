@@ -77,7 +77,6 @@ module MainPage =
                             
                             [
                                 View.ListViewGrouped(
-                                    rowHeight=55,
                                     verticalOptions=LayoutOptions.FillAndExpand,
                                     itemTapped=(findContactIn groupedContacts >> ContactSelected >> dispatch),
                                     items=
