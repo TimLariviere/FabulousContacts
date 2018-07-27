@@ -16,6 +16,9 @@ module Style =
     let mkFormEntry text textChanged =
         View.Entry(text=text, textChanged=textChanged, margin=new Thickness(20., 0., 20., 0.))
 
+    let mkFormEditor text textChanged =
+        View.Editor(text=text, textChanged=textChanged, heightRequest=100., margin=new Thickness(20., 0., 20., 0.))
+
     let mkFormSwitch isToggled toggled =
         View.Switch(isToggled=isToggled, toggled=toggled, margin=new Thickness(20., 0., 20., 0.))
 

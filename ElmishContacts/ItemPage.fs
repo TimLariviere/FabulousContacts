@@ -111,7 +111,7 @@ module ItemPage =
                         mkFormLabel "Name"
                         mkFormEntry mName (fun e -> e.NewTextValue |> UpdateName |> dispatch)
                         mkFormLabel "Address"
-                        mkFormEntry mAddress (fun e -> e.NewTextValue |> UpdateAddress |> dispatch)
+                        mkFormEditor mAddress (fun e -> e.NewTextValue |> UpdateAddress |> dispatch)
                         mkFormLabel "Is Favorite"
                         mkFormSwitch mIsFavorite (fun e -> e.Value |> UpdateIsFavorite |> dispatch)
                         mkDestroyButton "Delete" (fun () -> mContact.Value |> DeleteContact |> dispatch) isDeleteButtonVisible
