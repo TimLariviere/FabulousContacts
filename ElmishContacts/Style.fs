@@ -42,8 +42,8 @@ module Style =
                     horizontalOptions=LayoutOptions.FillAndExpand,
                     margin=Thickness(20., 5.),
                     children=[
-                        View.Label(text=name, fontSize=18.)
-                        View.Label(text=address, fontSize=12.)
+                        View.Label(text=name, fontSize=18., verticalOptions=LayoutOptions.FillAndExpand, verticalTextAlignment=TextAlignment.Center)
+                        View.Label(text=address, fontSize=12., textColor=Color.Gray)
                     ]
                 )
                 View.Image(source="star.png", isVisible=isFavorite, verticalOptions=LayoutOptions.Center, margin=new Thickness(0., 0., 20., 0.), heightRequest=25., widthRequest=25.)

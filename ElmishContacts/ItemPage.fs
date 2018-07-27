@@ -39,9 +39,15 @@ module ItemPage =
             return ContactUpdated updatedContact
     }
 
-    let deleteAsync dbPath contact = async {
-        do! deleteContact dbPath contact
-        return ContactDeleted contact
+    let deleteAsync dbPath (contact: Contact) = async {
+        let! shouldDelete = 
+            View.displayAlertWithConfirm ("Delete " + contact.Name) "This action is definitive. Are you sure?" "Yes" "No"
+
+        if shouldDelete then
+            do! deleteContact dbPath contact
+            return Some (ContactDeleted contact)
+        else
+            return None
     }
 
     let init contact =
@@ -79,7 +85,7 @@ module ItemPage =
                 | Some c -> { c with Name = name; Address = address; IsFavorite = isFavorite }
             model, Cmd.ofAsyncMsg (saveAsync dbPath newContact), ExternalMsg.NoOp
         | DeleteContact contact ->
-            model, Cmd.ofAsyncMsg (deleteAsync dbPath contact), ExternalMsg.NoOp
+            model, Cmd.ofAsyncMsgOption (deleteAsync dbPath contact), ExternalMsg.NoOp
         | ContactAdded contact -> 
             model, Cmd.none, (ExternalMsg.GoBackAfterContactAdded contact)
         | ContactUpdated contact -> 

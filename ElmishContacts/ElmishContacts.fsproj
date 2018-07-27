@@ -4,6 +4,7 @@
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ElmishExtensions.fs" />
     <Compile Include="Style.fs" />
     <Compile Include="Models.fs" />
     <Compile Include="Repository.fs" />
