@@ -4,8 +4,8 @@ open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
 
 module Style =
-    let navigationPageBarTextColor = Color.White
-    let navigationPageBarBackgroundColor = Color.FromHex("#3080b1")
+    let accentTextColor = Color.White
+    let accentColor = Color.FromHex("#3080b1")
 
     let mkCentralLabel text =
         View.Label(text=text, horizontalOptions=LayoutOptions.Center, verticalOptions=LayoutOptions.CenterAndExpand)
@@ -27,16 +27,14 @@ module Style =
 
     let mkGroupView name =
         View.StackLayout(
-            heightRequest=25.,
-            backgroundColor=navigationPageBarBackgroundColor,
+            backgroundColor=accentColor,
             children=[
-                View.Label(text=name, verticalOptions=LayoutOptions.FillAndExpand, verticalTextAlignment=TextAlignment.Center, margin=Thickness(20., 5.))
+                View.Label(text=name, textColor=accentTextColor, verticalOptions=LayoutOptions.FillAndExpand, verticalTextAlignment=TextAlignment.Center, margin=Thickness(20., 5.))
             ]
         )
 
     let mkCellView name address isFavorite =
         View.StackLayout(
-            heightRequest=55.,
             orientation=StackOrientation.Horizontal,
             children=[
                 View.StackLayout(

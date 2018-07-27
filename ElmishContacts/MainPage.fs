@@ -73,7 +73,10 @@ module MainPage =
                         | Some contacts ->
                             let groupedContacts =
                                 contacts
-                                |> List.groupBy (fun c -> c.Name.[0].ToString().ToUpper())
+                                |> List.map (fun c -> (c, c.Name.[0].ToString().ToUpper()))
+                                |> List.sortBy snd
+                                |> List.groupBy snd
+                                |> List.map (fun (k, l) -> (k, List.map fst l))
                             
                             [
                                 View.ListViewGrouped(

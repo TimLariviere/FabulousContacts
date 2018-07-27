@@ -114,8 +114,8 @@ module App =
             | Some mModel -> Some (MapPage.view mModel (MapPageMsg >> dispatch))
             
         View.NavigationPage(
-            barTextColor=Style.navigationPageBarTextColor,
-            barBackgroundColor=Style.navigationPageBarBackgroundColor,
+            barTextColor=Style.accentTextColor,
+            barBackgroundColor=Style.accentColor,
             popped=(fun _ -> NavigationPopped |> dispatch),
             pages=
                 match (itemPage, mapPage) with
