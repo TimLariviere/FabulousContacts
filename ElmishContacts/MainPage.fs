@@ -82,11 +82,12 @@ module MainPage =
                                 View.ListViewGrouped(
                                     verticalOptions=LayoutOptions.FillAndExpand,
                                     rowHeight=50,
+                                    showJumpList=true,
                                     itemTapped=(findContactIn groupedContacts >> ContactSelected >> dispatch),
                                     items=
                                         [
                                             for (groupName, items) in groupedContacts do
-                                                yield mkGroupView groupName,
+                                                yield groupName, mkGroupView groupName,
                                                         [
                                                             for contact in items do
                                                                 yield mkCachedCellView contact.Name contact.Address contact.IsFavorite
