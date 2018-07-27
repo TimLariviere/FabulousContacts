@@ -50,7 +50,7 @@ module MainPage =
             let newContacts = model.Contacts.Value @ [ contact ]
             { model with Contacts = Some newContacts }, Cmd.none, ExternalMsg.NoOp
         | ContactUpdated contact ->
-            let newContacts = model.Contacts.Value |> List.map (fun c -> if c = contact then contact else c)
+            let newContacts = model.Contacts.Value |> List.map (fun c -> if c.Id = contact.Id then contact else c)
             { model with Contacts = Some newContacts }, Cmd.none, ExternalMsg.NoOp
         | ContactDeleted contact ->
             let newContacts = model.Contacts.Value |> List.filter (fun c -> c <> contact)
