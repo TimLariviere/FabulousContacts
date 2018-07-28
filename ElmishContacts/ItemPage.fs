@@ -1,5 +1,6 @@
 ﻿namespace ElmishContacts
 
+open Extensions
 open Models
 open Repository
 open Style
@@ -41,7 +42,7 @@ module ItemPage =
 
     let deleteAsync dbPath (contact: Contact) = async {
         let! shouldDelete = 
-            View.displayAlertWithConfirm ("Delete " + contact.Name) "This action is definitive. Are you sure?" "Yes" "No"
+            displayAlertWithConfirm("Delete " + contact.Name, "This action is definitive. Are you sure?", "Yes", "No")
 
         if shouldDelete then
             do! deleteContact dbPath contact
