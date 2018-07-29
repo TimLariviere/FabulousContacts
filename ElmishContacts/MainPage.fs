@@ -10,6 +10,7 @@ open Xamarin.Forms
 module MainPage =
     type Msg = | ContactsLoaded of Contact list
                | ContactSelected of Contact
+               | AboutTapped
                | AddNewContactTapped
                | ShowMapTapped
                | ContactAdded of Contact
@@ -18,6 +19,7 @@ module MainPage =
 
     type ExternalMsg = | NoOp
                        | Select of Contact
+                       | About
                        | AddNewContact
                        | ShowMap
 
@@ -44,6 +46,7 @@ module MainPage =
         match msg with
         | ContactsLoaded contacts -> { model with Contacts = Some contacts }, Cmd.none, ExternalMsg.NoOp
         | ContactSelected contact -> model, Cmd.none, (ExternalMsg.Select contact)
+        | AboutTapped -> model, Cmd.none, ExternalMsg.About
         | AddNewContactTapped -> model, Cmd.none, ExternalMsg.AddNewContact
         | ShowMapTapped -> model, Cmd.none, ExternalMsg.ShowMap
         | ContactAdded contact ->
@@ -61,6 +64,7 @@ module MainPage =
             View.ContentPage(
                 title="ElmContact",
                 toolbarItems=[
+                    mkToolbarButton "About" (fun() -> dispatch AboutTapped)
                     mkToolbarButton "Add" (fun() -> dispatch AddNewContactTapped)
                 ],
                 content=View.StackLayout(
