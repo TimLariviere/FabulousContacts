@@ -73,7 +73,7 @@ module MainPage =
                         | Some contacts ->
                             let groupedContacts =
                                 contacts
-                                |> List.map (fun c -> (c, c.Name.[0].ToString().ToUpper()))
+                                |> List.map (fun c -> (c, c.LastName.[0].ToString().ToUpper()))
                                 |> List.sortBy snd
                                 |> List.groupBy snd
                                 |> List.map (fun (k, l) -> (k, List.map fst l))
@@ -91,7 +91,7 @@ module MainPage =
                                                         [
                                                             for contact in items do
                                                                 let address = contact.Address.Replace("\n", " ")
-                                                                yield mkCachedCellView contact.Name address contact.IsFavorite
+                                                                yield mkCachedCellView (contact.FirstName + " " + contact.LastName) address contact.IsFavorite
                                                         ]
                                         ]
                                 )

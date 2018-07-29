@@ -40,10 +40,11 @@ module Style =
         View.StackLayout(
             orientation=StackOrientation.Horizontal,
             children=[
+                View.Image(source="star.png", verticalOptions=LayoutOptions.Center, margin=new Thickness(20., 0., 0., 0.), heightRequest=25., widthRequest=25.)
                 View.StackLayout(
                     spacing=5.,
                     horizontalOptions=LayoutOptions.FillAndExpand,
-                    margin=Thickness(20., 5.),
+                    margin=Thickness(10., 5., 20., 5.),
                     children=[
                         View.Label(text=name, fontSize=18., verticalOptions=LayoutOptions.FillAndExpand, verticalTextAlignment=TextAlignment.Center)
                         View.Label(text=address, fontSize=12., textColor=Color.Gray, lineBreakMode=LineBreakMode.TailTruncation)

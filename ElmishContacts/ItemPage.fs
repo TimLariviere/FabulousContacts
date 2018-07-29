@@ -6,12 +6,14 @@ open Repository
 open Style
 open Elmish.XamarinForms
 open Elmish.XamarinForms.DynamicViews
+open Xamarin.Forms
 
 module ItemPage =
-    type Msg = | UpdateName of string
+    type Msg = | UpdateFirstName of string
+               | UpdateLastName of string
                | UpdateAddress of string
                | UpdateIsFavorite of bool
-               | SaveContact of Contact option * name: string * address: string * isFavorite: bool
+               | SaveContact of Contact option * firstName: string * lastName: string * address: string * isFavorite: bool
                | DeleteContact of Contact
                | ContactAdded of Contact
                | ContactUpdated of Contact
@@ -25,7 +27,8 @@ module ItemPage =
     type Model =
         {
             Contact: Contact option
-            Name: string
+            FirstName: string
+            LastName: string
             Address: string
             IsFavorite: bool
         }
@@ -42,7 +45,7 @@ module ItemPage =
 
     let deleteAsync dbPath (contact: Contact) = async {
         let! shouldDelete = 
-            displayAlertWithConfirm("Delete " + contact.Name, "This action is definitive. Are you sure?", "Yes", "No")
+            displayAlertWithConfirm("Delete " + contact.FirstName + " " + contact.LastName, "This action is definitive. Are you sure?", "Yes", "No")
 
         if shouldDelete then
             do! deleteContact dbPath contact
@@ -57,14 +60,16 @@ module ItemPage =
             | Some c ->
                 {
                     Contact = Some c
-                    Name = c.Name
+                    FirstName = c.FirstName
+                    LastName = c.LastName
                     Address = c.Address
                     IsFavorite = c.IsFavorite
                 }
             | None ->
                 {
                     Contact = None
-                    Name = ""
+                    FirstName = ""
+                    LastName = ""
                     Address = ""
                     IsFavorite = false
                 }
@@ -73,17 +78,19 @@ module ItemPage =
 
     let update dbPath msg (model: Model) =
         match msg with
-        | UpdateName name ->
-            { model with Name = name }, Cmd.none, ExternalMsg.NoOp
+        | UpdateFirstName name ->
+            { model with FirstName = name }, Cmd.none, ExternalMsg.NoOp
+        | UpdateLastName name ->
+            { model with LastName = name }, Cmd.none, ExternalMsg.NoOp
         | UpdateAddress address ->
             { model with Address = address }, Cmd.none, ExternalMsg.NoOp
         | UpdateIsFavorite isFavorite ->
             { model with IsFavorite = isFavorite }, Cmd.none, ExternalMsg.NoOp
-        | SaveContact (contact, name, address, isFavorite) ->
+        | SaveContact (contact, firstName, lastName, address, isFavorite) ->
             let newContact =
                 match contact with
-                | None -> { Id = 0; Name = name; Address = address; IsFavorite = isFavorite }
-                | Some c -> { c with Name = name; Address = address; IsFavorite = isFavorite }
+                | None -> { Id = 0; FirstName = firstName; LastName = lastName; Address = address; IsFavorite = isFavorite }
+                | Some c -> { c with FirstName = firstName; LastName = lastName; Address = address; IsFavorite = isFavorite }
             model, Cmd.ofAsyncMsg (saveAsync dbPath newContact), ExternalMsg.NoOp
         | DeleteContact contact ->
             model, Cmd.ofAsyncMsgOption (deleteAsync dbPath contact), ExternalMsg.NoOp
@@ -95,7 +102,7 @@ module ItemPage =
             model, Cmd.none, (ExternalMsg.GoBackAfterContactDeleted contact)
 
     let view model dispatch =
-        dependsOn (model.Contact, model.Name, model.Address, model.IsFavorite) (fun model (mContact, mName, mAddress, mIsFavorite) ->
+        dependsOn (model.Contact, model.FirstName, model.LastName, model.Address, model.IsFavorite) (fun model (mContact, mFirstName, mLastName, mAddress, mIsFavorite) ->
             let isDeleteButtonVisible =
                 match mContact with
                 | None -> false
@@ -103,14 +110,24 @@ module ItemPage =
                 | Some _ -> true
 
             View.ContentPage(
-                title=(if mName = "" then "New Contact" else mName),
+                title=(if (mFirstName = "" && mLastName = "") then "New Contact" else mFirstName + " " + mLastName),
                 toolbarItems=[
-                    mkToolbarButton "Save" (fun() -> (mContact, mName, mAddress, mIsFavorite) |> SaveContact |> dispatch)
+                    mkToolbarButton "Save" (fun() -> (mContact, mFirstName, mLastName, mAddress, mIsFavorite) |> SaveContact |> dispatch)
                 ],
                 content=View.StackLayout(
                     children=[
-                        mkFormLabel "Name"
-                        mkFormEntry mName (fun e -> e.NewTextValue |> UpdateName |> dispatch)
+
+                        View.Grid(
+                            margin=Thickness(20., 20., 20., 0.),
+                            coldefs=[ 65.; GridLength.Star ],
+                            rowdefs=[ GridLength.Star; GridLength.Star ],
+                            children=[
+                                View.Button(text="Photo", heightRequest=65., margin=Thickness(0., 0., 20., 0.), verticalOptions=LayoutOptions.Center, horizontalOptions=LayoutOptions.Center).GridRowSpan(2)
+                                View.Entry(placeholder="First name", text=mFirstName, textChanged=(fun e -> e.NewTextValue |> UpdateFirstName |> dispatch)).GridColumn(1)
+                                View.Entry(placeholder="Last name", text=mLastName, textChanged=(fun e -> e.NewTextValue |> UpdateLastName |> dispatch)).GridColumn(1).GridRow(1)
+                            ]
+                        )
+
                         mkFormLabel "Address"
                         mkFormEditor mAddress (fun e -> e.NewTextValue |> UpdateAddress |> dispatch)
                         mkFormLabel "Is Favorite"
