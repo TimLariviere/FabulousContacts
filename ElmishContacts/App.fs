@@ -4,6 +4,7 @@ open Elmish.XamarinForms
 open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
 open ElmishContacts.Models
+open System
 
 module App =
     type Model = 
@@ -135,3 +136,35 @@ type App (dbPath) as app =
     let runner = 
         Program.mkProgram init update view
         |> Program.runWithDynamicView app
+
+
+
+#if APPSAVE
+    let modelId = "model"
+    override __.OnSleep() = 
+
+        let json = Newtonsoft.Json.JsonConvert.SerializeObject(runner.CurrentModel)
+        Console.WriteLine("OnSleep: saving model into app.Properties, json = {0}", json)
+
+        app.Properties.[modelId] <- json
+
+    override __.OnResume() = 
+        Console.WriteLine "OnResume: checking for model in app.Properties"
+        try 
+            match app.Properties.TryGetValue modelId with
+            | true, (:? string as json) -> 
+
+                Console.WriteLine("OnResume: restoring model from app.Properties, json = {0}", json)
+                let model = Newtonsoft.Json.JsonConvert.DeserializeObject<App.Model>(json)
+
+                Console.WriteLine("OnResume: restoring model from app.Properties, model = {0}", (sprintf "%0A" model))
+                runner.SetCurrentModel (model, Cmd.none)
+
+            | _ -> ()
+        with ex -> 
+            Console.WriteLine ("Error while restoring model found in app.Properties. " + ex.ToString())
+
+    override this.OnStart() = 
+        Console.WriteLine "OnStart: using same logic as OnResume()"
+        this.OnResume()
+#endif

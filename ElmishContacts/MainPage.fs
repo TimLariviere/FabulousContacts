@@ -82,7 +82,7 @@ module MainPage =
                                 View.ListViewGrouped(
                                     verticalOptions=LayoutOptions.FillAndExpand,
                                     rowHeight=50,
-                                    showJumpList=true,
+                                    showJumpList=(contacts.Length > 10),
                                     itemTapped=(findContactIn groupedContacts >> ContactSelected >> dispatch),
                                     items=
                                         [
@@ -90,7 +90,8 @@ module MainPage =
                                                 yield groupName, mkGroupView groupName,
                                                         [
                                                             for contact in items do
-                                                                yield mkCachedCellView contact.Name contact.Address contact.IsFavorite
+                                                                let address = contact.Address.Replace("\n", " ")
+                                                                yield mkCachedCellView contact.Name address contact.IsFavorite
                                                         ]
                                         ]
                                 )
