@@ -7,6 +7,8 @@ open Style
 open Elmish.XamarinForms
 open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
+open Plugin.Media
+open Plugin.Media.Abstractions
 
 module ItemPage =
     type Msg = | UpdateFirstName of string
@@ -56,8 +58,31 @@ module ItemPage =
     }
 
     let addPhotoAsync () = async {
+        let canPickPicture = CrossMedia.Current.IsPickPhotoSupported
+        let canTakePicture = CrossMedia.Current.IsCameraAvailable && CrossMedia.Current.IsTakePhotoSupported
+
+        let pickPicture = "Choose from gallery"
+        let takePicture = "Take picture"
+        let cancel = "Cancel"
+
+        let choices = [|
+            if canPickPicture then yield pickPicture
+            if canTakePicture then yield takePicture
+        |]
+
         let! source =
-            displayActionSheet("Add photo", Some "Cancel", None, [| "From Disk"; "From Camera" |])
+            displayActionSheet(None, Some cancel, None, Some choices)
+
+        let! photo =
+            match source with
+            | choice when choice = pickPicture -> CrossMedia.Current.PickPhotoAsync() |> Async.AwaitTask
+            | choice when choice = takePicture -> CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions()) |> Async.AwaitTask
+            | _ -> System.Threading.Tasks.Task.FromResult<Abstractions.MediaFile>(null) |> Async.AwaitTask
+
+        do!
+            match photo with
+            | null -> displayAlert("No photo", "No photo selected", "OK")
+            | file -> displayAlert("Photo", "Photo selected: " + file.AlbumPath, "OK")
 
         return None
     }

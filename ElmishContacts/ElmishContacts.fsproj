@@ -25,6 +25,7 @@
     <PackageReference Include="FSharp.Core" Version="4.5.2" />
     <PackageReference Update="FSharp.Core" Version="4.5.2" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="Xam.Plugin.Media" Version="4.0.1.1" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Elmish.XamarinForms">
