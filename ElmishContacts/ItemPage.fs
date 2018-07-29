@@ -13,6 +13,7 @@ module ItemPage =
                | UpdateLastName of string
                | UpdateAddress of string
                | UpdateIsFavorite of bool
+               | AddPhoto
                | SaveContact of Contact option * firstName: string * lastName: string * address: string * isFavorite: bool
                | DeleteContact of Contact
                | ContactAdded of Contact
@@ -54,6 +55,13 @@ module ItemPage =
             return None
     }
 
+    let addPhotoAsync () = async {
+        let! source =
+            displayActionSheet("Add photo", Some "Cancel", None, [| "From Disk"; "From Camera" |])
+
+        return None
+    }
+
     let init contact =
         let model =
             match contact with
@@ -86,6 +94,8 @@ module ItemPage =
             { model with Address = address }, Cmd.none, ExternalMsg.NoOp
         | UpdateIsFavorite isFavorite ->
             { model with IsFavorite = isFavorite }, Cmd.none, ExternalMsg.NoOp
+        | AddPhoto ->
+            model, Cmd.ofAsyncMsgOption (addPhotoAsync ()), ExternalMsg.NoOp
         | SaveContact (contact, firstName, lastName, address, isFavorite) ->
             let newContact =
                 match contact with
@@ -122,7 +132,7 @@ module ItemPage =
                             coldefs=[ 65.; GridLength.Star ],
                             rowdefs=[ GridLength.Star; GridLength.Star ],
                             children=[
-                                View.Button(text="Photo", heightRequest=65., margin=Thickness(0., 0., 20., 0.), verticalOptions=LayoutOptions.Center, horizontalOptions=LayoutOptions.Center).GridRowSpan(2)
+                                View.Button(text="Photo", command=(fun () -> dispatch AddPhoto), heightRequest=65., margin=Thickness(0., 0., 20., 0.), verticalOptions=LayoutOptions.Center, horizontalOptions=LayoutOptions.Center).GridRowSpan(2)
                                 View.Entry(placeholder="First name", text=mFirstName, textChanged=(fun e -> e.NewTextValue |> UpdateFirstName |> dispatch)).GridColumn(1)
                                 View.Entry(placeholder="Last name", text=mLastName, textChanged=(fun e -> e.NewTextValue |> UpdateLastName |> dispatch)).GridColumn(1).GridRow(1)
                             ]
