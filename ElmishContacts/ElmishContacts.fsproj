@@ -3,26 +3,37 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DefineConstants>TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_0;</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="ElmishExtensions.fs" />
+    <Compile Include="Helpers.fs" />
     <Compile Include="Style.fs" />
     <Compile Include="Models.fs" />
     <Compile Include="Repository.fs" />
     <Compile Include="MainPage.fs" />
     <Compile Include="ItemPage.fs" />
     <Compile Include="MapPage.fs" />
+    <Compile Include="AboutPage.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Elmish.XamarinForms.Maps" Version="0.15.2" />
     <PackageReference Include="sqlite-net-pcl" Version="1.4.118" />
-    <PackageReference Include="Xamarin.Forms" Version="3.0.0.482510" />
-    <PackageReference Include="Xamarin.Essentials" Version="0.6.0-preview" />
-    <PackageReference Include="Elmish.XamarinForms" Version="0.15.2" />
-    <PackageReference Include="FSharp.Core" Version="4.5.0" />
-    <PackageReference Update="FSharp.Core" Version="4.5.1" />
-    <!-- workaround for VSMac bug https://github.com/mono/monodevelop/pull/5137 -->
-    <PackageReference Include="FsPickler" Version="5.2" />
-    <PackageReference Include="FsPickler.Json" Version="5.2" />
+    <PackageReference Include="Xamarin.Forms.Maps" Version="3.1.0.637273" />
+    <PackageReference Include="Xamarin.Forms" Version="3.1.0.637273" />
+    <PackageReference Include="Xamarin.Essentials" Version="0.8.0-preview" />
+    <PackageReference Include="FSharp.Core" Version="4.5.2" />
+    <PackageReference Update="FSharp.Core" Version="4.5.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="Xam.Plugin.Media" Version="4.0.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Elmish.XamarinForms">
+      <HintPath>..\Libs\Elmish.XamarinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Elmish.XamarinForms.Maps">
+      <HintPath>..\Libs\Elmish.XamarinForms.Maps.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

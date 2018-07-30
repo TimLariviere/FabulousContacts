@@ -2,6 +2,7 @@
 
 open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
+open Helpers
 
 module Style =
     let accentTextColor = Color.White
@@ -36,22 +37,30 @@ module Style =
             ]
         )
 
-    let mkCellView name address isFavorite =
+    let mkCellView picture name address isFavorite =
+        let source =
+            match picture with
+            | "" -> "addphoto.png" :> obj
+            | base64 -> getImageSourceFromBase64 base64 :> obj
+
         View.StackLayout(
             orientation=StackOrientation.Horizontal,
+            padding=5.,
+            spacing=10.,
             children=[
+                View.Image(source=source, aspect=Aspect.AspectFill, margin=new Thickness(15., 0., 0., 0.), heightRequest=50., widthRequest=50.)
                 View.StackLayout(
                     spacing=5.,
                     horizontalOptions=LayoutOptions.FillAndExpand,
-                    margin=Thickness(20., 5.),
+                    margin=Thickness(0., 5., 0., 5.),
                     children=[
                         View.Label(text=name, fontSize=18., verticalOptions=LayoutOptions.FillAndExpand, verticalTextAlignment=TextAlignment.Center)
-                        View.Label(text=address, fontSize=12., textColor=Color.Gray)
+                        View.Label(text=address, fontSize=12., textColor=Color.Gray, lineBreakMode=LineBreakMode.TailTruncation)
                     ]
                 )
-                View.Image(source="star.png", isVisible=isFavorite, verticalOptions=LayoutOptions.Center, margin=new Thickness(0., 0., 20., 0.), heightRequest=25., widthRequest=25.)
+                View.Image(source="star.png", isVisible=isFavorite, verticalOptions=LayoutOptions.Center, margin=new Thickness(0., 0., 15., 0.), heightRequest=25., widthRequest=25.)
             ]
         )
 
-    let mkCachedCellView name address isFavorite =
-        dependsOn (name, address, isFavorite) (fun _ (cName, cAddress, cIsFavorite) -> mkCellView cName cAddress cIsFavorite)
+    let mkCachedCellView picture name address isFavorite =
+        dependsOn (picture, name, address, isFavorite) (fun _ (cPicture, cName, cAddress, cIsFavorite) -> mkCellView cPicture cName cAddress cIsFavorite)

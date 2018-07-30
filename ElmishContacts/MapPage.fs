@@ -35,7 +35,7 @@ module MapPage =
 
         let pins = contactsAndPositions
                    |> Array.filter (fun (_, p) -> Option.isSome p)
-                   |> Array.map (fun (c, p) -> { Position = p.Value; Label = c.Name; PinType = PinType.Place; Address = c.Address})
+                   |> Array.map (fun (c, p) -> { Position = p.Value; Label = (c.FirstName + " " + c.LastName); PinType = PinType.Place; Address = c.Address})
                    |> Array.toList
 
         return PinsLoaded pins

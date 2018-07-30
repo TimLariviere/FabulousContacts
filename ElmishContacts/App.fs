@@ -4,6 +4,7 @@ open Elmish.XamarinForms
 open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
 open ElmishContacts.Models
+open System
 
 module App =
     type Model = 
@@ -11,6 +12,7 @@ module App =
             MainPageModel: MainPage.Model
             ItemPageModel: ItemPage.Model option
             MapPageModel: MapPage.Model option
+            AboutPageModel: bool option
         }
 
     type Msg = | MainPageMsg of MainPage.Msg
@@ -18,6 +20,7 @@ module App =
                | MapPageMsg of MapPage.Msg
                | GoToItem of Contact option
                | GoToMap
+               | GoToAbout
                | UpdateMainWithContactAdded of Contact
                | UpdateMainWithContactUpdated of Contact
                | UpdateMainWithContactDeleted of Contact
@@ -29,6 +32,7 @@ module App =
             MainPageModel = mainModel
             ItemPageModel = None
             MapPageModel = None
+            AboutPageModel = None
         }, Cmd.batch [ (Cmd.map MainPageMsg mainMsg) ]
 
     let update dbPath msg model =
@@ -42,6 +46,8 @@ module App =
                     Cmd.none
                 | MainPage.ExternalMsg.Select contact ->
                     Cmd.ofMsg (GoToItem (Some contact))
+                | MainPage.ExternalMsg.About ->
+                    Cmd.ofMsg GoToAbout
                 | MainPage.ExternalMsg.AddNewContact ->
                     Cmd.ofMsg (GoToItem None)
                 | MainPage.ExternalMsg.ShowMap ->
@@ -76,11 +82,15 @@ module App =
             { model with MapPageModel = Some m }, Cmd.batch [ (Cmd.map MainPageMsg cmd); cmd2 ]
 
         | NavigationPopped ->
-            match (model.ItemPageModel, model.MapPageModel) with
-            | None, None -> model, Cmd.none
-            | Some _, None -> { model with ItemPageModel = None }, Cmd.none
-            | None, Some _ -> { model with MapPageModel = None }, Cmd.none
-            | Some _, Some _ -> { model with ItemPageModel = None }, Cmd.none
+            match (model.ItemPageModel, model.MapPageModel, model.AboutPageModel) with
+            | None, None, None -> model, Cmd.none
+            | None, None, Some _ -> { model with AboutPageModel = None }, Cmd.none
+            | Some _, None, _ -> { model with ItemPageModel = None }, Cmd.none
+            | None, Some _, _ -> { model with MapPageModel = None }, Cmd.none
+            | Some _, Some _, _ -> { model with ItemPageModel = None }, Cmd.none
+
+        | GoToAbout ->
+            { model with AboutPageModel = Some true }, Cmd.none
 
         | GoToItem contact ->
             let m, cmd = ItemPage.init contact
@@ -112,17 +122,23 @@ module App =
             match model.MapPageModel with
             | None -> None
             | Some mModel -> Some (MapPage.view mModel (MapPageMsg >> dispatch))
-            
+
+        let aboutPage = 
+            match model.AboutPageModel with
+            | None -> None
+            | Some _ -> Some (AboutPage.view ())
+
         View.NavigationPage(
             barTextColor=Style.accentTextColor,
             barBackgroundColor=Style.accentColor,
             popped=(fun _ -> NavigationPopped |> dispatch),
             pages=
-                match (itemPage, mapPage) with
-                | (None, None) -> [ mainPage ]
-                | (None, Some map) -> [ mainPage; map ]
-                | (Some item, None) -> [ mainPage; item ]
-                | (Some item, Some map) -> [ mainPage; map; item ]
+                match (itemPage, mapPage, aboutPage) with
+                | (None, None, None) -> [ mainPage ]
+                | (None, None, Some about) -> [ mainPage; about ]
+                | (None, Some map, _) -> [ mainPage; map ]
+                | (Some item, None, _) -> [ mainPage; item ]
+                | (Some item, Some map, _) -> [ mainPage; map; item ]
         )
 
 type App (dbPath) as app = 
@@ -135,3 +151,35 @@ type App (dbPath) as app =
     let runner = 
         Program.mkProgram init update view
         |> Program.runWithDynamicView app
+
+
+
+#if APPSAVE
+    let modelId = "model"
+    override __.OnSleep() = 
+
+        let json = Newtonsoft.Json.JsonConvert.SerializeObject(runner.CurrentModel)
+        Console.WriteLine("OnSleep: saving model into app.Properties, json = {0}", json)
+
+        app.Properties.[modelId] <- json
+
+    override __.OnResume() = 
+        Console.WriteLine "OnResume: checking for model in app.Properties"
+        try 
+            match app.Properties.TryGetValue modelId with
+            | true, (:? string as json) -> 
+
+                Console.WriteLine("OnResume: restoring model from app.Properties, json = {0}", json)
+                let model = Newtonsoft.Json.JsonConvert.DeserializeObject<App.Model>(json)
+
+                Console.WriteLine("OnResume: restoring model from app.Properties, model = {0}", (sprintf "%0A" model))
+                runner.SetCurrentModel (model, Cmd.none)
+
+            | _ -> ()
+        with ex -> 
+            Console.WriteLine ("Error while restoring model found in app.Properties. " + ex.ToString())
+
+    override this.OnStart() = 
+        Console.WriteLine "OnStart: using same logic as OnResume()"
+        this.OnResume()
+#endif

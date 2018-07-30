@@ -10,6 +10,7 @@ open Xamarin.Forms
 module MainPage =
     type Msg = | ContactsLoaded of Contact list
                | ContactSelected of Contact
+               | AboutTapped
                | AddNewContactTapped
                | ShowMapTapped
                | ContactAdded of Contact
@@ -18,6 +19,7 @@ module MainPage =
 
     type ExternalMsg = | NoOp
                        | Select of Contact
+                       | About
                        | AddNewContact
                        | ShowMap
 
@@ -44,6 +46,7 @@ module MainPage =
         match msg with
         | ContactsLoaded contacts -> { model with Contacts = Some contacts }, Cmd.none, ExternalMsg.NoOp
         | ContactSelected contact -> model, Cmd.none, (ExternalMsg.Select contact)
+        | AboutTapped -> model, Cmd.none, ExternalMsg.About
         | AddNewContactTapped -> model, Cmd.none, ExternalMsg.AddNewContact
         | ShowMapTapped -> model, Cmd.none, ExternalMsg.ShowMap
         | ContactAdded contact ->
@@ -59,8 +62,9 @@ module MainPage =
     let view model dispatch =
         dependsOn model.Contacts (fun model mContacts ->
             View.ContentPage(
-                title="ElmContact",
+                title="ElmishContacts",
                 toolbarItems=[
+                    mkToolbarButton "About" (fun() -> dispatch AboutTapped)
                     mkToolbarButton "Add" (fun() -> dispatch AddNewContactTapped)
                 ],
                 content=View.StackLayout(
@@ -73,7 +77,7 @@ module MainPage =
                         | Some contacts ->
                             let groupedContacts =
                                 contacts
-                                |> List.map (fun c -> (c, c.Name.[0].ToString().ToUpper()))
+                                |> List.map (fun c -> (c, c.LastName.[0].ToString().ToUpper()))
                                 |> List.sortBy snd
                                 |> List.groupBy snd
                                 |> List.map (fun (k, l) -> (k, List.map fst l))
@@ -81,15 +85,17 @@ module MainPage =
                             [
                                 View.ListViewGrouped(
                                     verticalOptions=LayoutOptions.FillAndExpand,
-                                    rowHeight=50,
+                                    rowHeight=60,
+                                    showJumpList=(contacts.Length > 10),
                                     itemTapped=(findContactIn groupedContacts >> ContactSelected >> dispatch),
                                     items=
                                         [
                                             for (groupName, items) in groupedContacts do
-                                                yield mkGroupView groupName,
+                                                yield groupName, mkGroupView groupName,
                                                         [
                                                             for contact in items do
-                                                                yield mkCachedCellView contact.Name contact.Address contact.IsFavorite
+                                                                let address = contact.Address.Replace("\n", " ")
+                                                                yield mkCachedCellView contact.Picture (contact.FirstName + " " + contact.LastName) address contact.IsFavorite
                                                         ]
                                         ]
                                 )

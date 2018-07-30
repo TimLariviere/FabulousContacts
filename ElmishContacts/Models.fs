@@ -6,7 +6,9 @@ module Models =
     type Contact =
         {
             Id: int
-            Name: string
+            Picture: string
+            FirstName: string
+            LastName: string
             Address: string
             IsFavorite: bool
         }
