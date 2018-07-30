@@ -122,6 +122,13 @@ module ItemPage =
             model, Cmd.none, (ExternalMsg.GoBackAfterContactDeleted contact)
 
     let view model dispatch =
+        let imageSource =
+            dependsOn model.Picture (fun _ picture ->
+                match picture with
+                | None -> null
+                | Some base64 -> getImageSourceFromBase64 base64
+            )
+
         dependsOn (model.Contact, model.Picture, model.FirstName, model.LastName, model.Address, model.IsFavorite) (fun model (mContact, mPicture, mFirstName, mLastName, mAddress, mIsFavorite) ->
             let isDeleteButtonVisible =
                 match mContact with
@@ -147,7 +154,7 @@ module ItemPage =
                                     yield View.Button(image="addphoto.png", backgroundColor=Color.White, command=(fun () -> dispatch UpdatePicture)).GridRowSpan(2)
                                 else
                                     yield View.Image(
-                                            source=getImageSourceFromBase64 mPicture.Value,
+                                            source=imageSource,
                                             aspect=Aspect.AspectFill,
                                             gestureRecognizers=[ View.TapGestureRecognizer(command=(fun () -> dispatch UpdatePicture)) ]
                                           ).GridRowSpan(2)
