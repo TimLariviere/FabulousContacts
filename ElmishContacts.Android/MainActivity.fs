@@ -36,6 +36,7 @@ type MainActivity() =
         Xamarin.Essentials.Platform.Init(this, bundle)
 
         Xamarin.Forms.Forms.Init (this, bundle)
+        Xamarin.FormsMaps.Init (this, bundle)
 
         let dbPath = getDbPath()
         let appcore  = new ElmishContacts.App(dbPath)
