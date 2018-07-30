@@ -21,6 +21,7 @@ module ItemPage =
                | ContactAdded of Contact
                | ContactUpdated of Contact
                | ContactDeleted of Contact
+               | Photo of ImageSource
 
     type ExternalMsg = | NoOp
                        | GoBackAfterContactAdded of Contact
@@ -34,6 +35,7 @@ module ItemPage =
             LastName: string
             Address: string
             IsFavorite: bool
+            Photo: ImageSource option
         }
 
     let saveAsync dbPath contact = async {
@@ -79,12 +81,14 @@ module ItemPage =
             | choice when choice = takePicture -> CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions()) |> Async.AwaitTask
             | _ -> System.Threading.Tasks.Task.FromResult<Abstractions.MediaFile>(null) |> Async.AwaitTask
 
-        do!
-            match photo with
-            | null -> displayAlert("No photo", "No photo selected", "OK")
-            | file -> displayAlert("Photo", "Photo selected: " + file.AlbumPath, "OK")
-
-        return None
+        match photo with
+        | null ->
+            do! displayAlert("No photo", "No photo selected", "OK")
+            return None
+        | file ->
+            let stream = file.GetStream()
+            let imageSource = ImageSource.FromStream(fun () -> stream)
+            return Some (Photo imageSource)
     }
 
     let init contact =
@@ -97,6 +101,7 @@ module ItemPage =
                     LastName = c.LastName
                     Address = c.Address
                     IsFavorite = c.IsFavorite
+                    Photo = None
                 }
             | None ->
                 {
@@ -105,6 +110,7 @@ module ItemPage =
                     LastName = ""
                     Address = ""
                     IsFavorite = false
+                    Photo = None
                 }
 
         model, Cmd.none
@@ -135,9 +141,11 @@ module ItemPage =
             model, Cmd.none, (ExternalMsg.GoBackAfterContactUpdated contact)
         | ContactDeleted contact ->
             model, Cmd.none, (ExternalMsg.GoBackAfterContactDeleted contact)
+        | Photo imgSrc ->
+            { model with Photo = Some imgSrc}, Cmd.none, ExternalMsg.NoOp
 
     let view model dispatch =
-        dependsOn (model.Contact, model.FirstName, model.LastName, model.Address, model.IsFavorite) (fun model (mContact, mFirstName, mLastName, mAddress, mIsFavorite) ->
+        dependsOn (model.Contact, model.FirstName, model.LastName, model.Address, model.IsFavorite, model.Photo) (fun model (mContact, mFirstName, mLastName, mAddress, mIsFavorite, mPhoto) ->
             let isDeleteButtonVisible =
                 match mContact with
                 | None -> false
@@ -154,12 +162,24 @@ module ItemPage =
 
                         View.Grid(
                             margin=Thickness(20., 20., 20., 0.),
-                            coldefs=[ 65.; GridLength.Star ],
-                            rowdefs=[ GridLength.Star; GridLength.Star ],
+                            coldefs=[ 90.; GridLength.Star ],
+                            rowdefs=[ 35.; 35. ],
+                            columnSpacing=0.,
+                            rowSpacing=0.,
                             children=[
-                                View.Button(text="Photo", command=(fun () -> dispatch AddPhoto), heightRequest=65., margin=Thickness(0., 0., 20., 0.), verticalOptions=LayoutOptions.Center, horizontalOptions=LayoutOptions.Center).GridRowSpan(2)
-                                View.Entry(placeholder="First name", text=mFirstName, textChanged=(fun e -> e.NewTextValue |> UpdateFirstName |> dispatch)).GridColumn(1)
-                                View.Entry(placeholder="Last name", text=mLastName, textChanged=(fun e -> e.NewTextValue |> UpdateLastName |> dispatch)).GridColumn(1).GridRow(1)
+                                if mPhoto.IsNone then
+                                    yield View.Button(text="Photo", command=(fun () -> dispatch AddPhoto), heightRequest=40., widthRequest=40., verticalOptions=LayoutOptions.Center, horizontalOptions=LayoutOptions.Start).GridRowSpan(2)
+                                else
+                                    yield View.ContentView(
+                                        heightRequest=70.,
+                                        widthRequest=70.,
+                                        verticalOptions=LayoutOptions.Center,
+                                        gestureRecognizers=[ View.TapGestureRecognizer(command=(fun () -> dispatch AddPhoto)) ],
+                                        content=View.Image(source=mPhoto.Value, aspect=Aspect.AspectFill, verticalOptions=LayoutOptions.Fill, horizontalOptions=LayoutOptions.Fill)
+                                    ).GridRowSpan(2)
+
+                                yield View.Entry(placeholder="First name", text=mFirstName, textChanged=(fun e -> e.NewTextValue |> UpdateFirstName |> dispatch)).GridColumn(1)
+                                yield View.Entry(placeholder="Last name", text=mLastName, textChanged=(fun e -> e.NewTextValue |> UpdateLastName |> dispatch)).GridColumn(1).GridRow(1)
                             ]
                         )
 
