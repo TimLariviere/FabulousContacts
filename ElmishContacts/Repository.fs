@@ -8,6 +8,7 @@ module Repository =
     type ContactObject() =
         [<PrimaryKey>][<AutoIncrement>]
         member val Id = 0 with get, set
+        member val Picture = "" with get, set
         member val FirstName = "" with get, set
         member val LastName = "" with get, set
         member val Address = "" with get, set
@@ -16,6 +17,7 @@ module Repository =
     let convertToObject (item: Contact) =
         let obj = ContactObject()
         obj.Id <- item.Id
+        obj.Picture <- item.Picture
         obj.FirstName <- item.FirstName
         obj.LastName <- item.LastName
         obj.Address <- item.Address
@@ -25,6 +27,7 @@ module Repository =
     let convertToModel (obj: ContactObject) : Contact =
         {
             Id = obj.Id
+            Picture = obj.Picture
             FirstName = obj.FirstName
             LastName = obj.LastName
             Address = obj.Address
