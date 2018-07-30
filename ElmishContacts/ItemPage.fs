@@ -138,8 +138,8 @@ module ItemPage =
                     children=[
                         View.Grid(
                             margin=Thickness(20., 20., 20., 0.),
-                            coldefs=[ 70.; GridLength.Star ],
-                            rowdefs=[ 35.; 35. ],
+                            coldefs=[ 100.; GridLength.Star ],
+                            rowdefs=[ 50.; 50. ],
                             columnSpacing=10.,
                             rowSpacing=0.,
                             children=[
