@@ -4184,6 +4184,9 @@ namespace ElmishContacts.Droid
 		public partial class String
 		{
 			
+			// aapt resource value: 0x7f0a004d
+			public const int GoogleMaps_APIKey = 2131361869;
+			
 			// aapt resource value: 0x7f0a0026
 			public const int abc_action_bar_home_description = 2131361830;
 			
