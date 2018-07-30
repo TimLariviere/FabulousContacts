@@ -163,14 +163,18 @@ module ItemPage =
                         View.Grid(
                             margin=Thickness(20., 20., 20., 0.),
                             coldefs=[ 70.; GridLength.Star ],
-                            rowdefs=[ 30.; 30. ],
+                            rowdefs=[ GridLength.Auto; GridLength.Auto ],
                             columnSpacing=10.,
                             rowSpacing=10.,
                             children=[
                                 if mPhoto.IsNone then
-                                    yield View.Button(image="addphoto.png", command=(fun () -> dispatch AddPhoto), heightRequest=70., widthRequest=70.).GridRowSpan(2)
+                                    yield View.Button(image="addphoto.png", backgroundColor=Color.White, command=(fun () -> dispatch AddPhoto)).GridRowSpan(2)
                                 else
-                                    yield View.Image(source=mPhoto.Value, aspect=Aspect.AspectFill, heightRequest=70., widthRequest=70., gestureRecognizers=[ View.TapGestureRecognizer(command=(fun () -> dispatch AddPhoto)) ]).GridRowSpan(2)
+                                    yield View.Image(
+                                            source=mPhoto.Value,
+                                            aspect=Aspect.AspectFill,
+                                            gestureRecognizers=[ View.TapGestureRecognizer(command=(fun () -> dispatch AddPhoto)) ]
+                                          ).GridRowSpan(2)
 
                                 yield View.Entry(placeholder="First name", text=mFirstName, textChanged=(fun e -> e.NewTextValue |> UpdateFirstName |> dispatch)).GridColumn(1)
                                 yield View.Entry(placeholder="Last name", text=mLastName, textChanged=(fun e -> e.NewTextValue |> UpdateLastName |> dispatch)).GridColumn(1).GridRow(1)
