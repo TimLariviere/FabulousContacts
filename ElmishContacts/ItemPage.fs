@@ -162,21 +162,15 @@ module ItemPage =
 
                         View.Grid(
                             margin=Thickness(20., 20., 20., 0.),
-                            coldefs=[ 90.; GridLength.Star ],
-                            rowdefs=[ 35.; 35. ],
-                            columnSpacing=0.,
-                            rowSpacing=0.,
+                            coldefs=[ 70.; GridLength.Star ],
+                            rowdefs=[ 30.; 30. ],
+                            columnSpacing=10.,
+                            rowSpacing=10.,
                             children=[
                                 if mPhoto.IsNone then
-                                    yield View.Button(text="Photo", command=(fun () -> dispatch AddPhoto), heightRequest=40., widthRequest=40., verticalOptions=LayoutOptions.Center, horizontalOptions=LayoutOptions.Start).GridRowSpan(2)
+                                    yield View.Button(image="addphoto.png", command=(fun () -> dispatch AddPhoto), heightRequest=70., widthRequest=70.).GridRowSpan(2)
                                 else
-                                    yield View.ContentView(
-                                        heightRequest=70.,
-                                        widthRequest=70.,
-                                        verticalOptions=LayoutOptions.Center,
-                                        gestureRecognizers=[ View.TapGestureRecognizer(command=(fun () -> dispatch AddPhoto)) ],
-                                        content=View.Image(source=mPhoto.Value, aspect=Aspect.AspectFill, verticalOptions=LayoutOptions.Fill, horizontalOptions=LayoutOptions.Fill)
-                                    ).GridRowSpan(2)
+                                    yield View.Image(source=mPhoto.Value, aspect=Aspect.AspectFill, heightRequest=70., widthRequest=70., gestureRecognizers=[ View.TapGestureRecognizer(command=(fun () -> dispatch AddPhoto)) ]).GridRowSpan(2)
 
                                 yield View.Entry(placeholder="First name", text=mFirstName, textChanged=(fun e -> e.NewTextValue |> UpdateFirstName |> dispatch)).GridColumn(1)
                                 yield View.Entry(placeholder="Last name", text=mLastName, textChanged=(fun e -> e.NewTextValue |> UpdateLastName |> dispatch)).GridColumn(1).GridRow(1)

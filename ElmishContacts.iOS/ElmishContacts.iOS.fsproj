@@ -191,6 +191,7 @@
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
     <BundleResource Include="Resources\star.png" />
     <BundleResource Include="Resources\icon.png" />
+    <BundleResource Include="Resources\addphoto.png" />
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json">
       <Visible>false</Visible>
     </ImageAsset>
