@@ -12,6 +12,7 @@
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
@@ -23,7 +24,7 @@
 	<key>MinimumOSVersion</key>
 	<string>8.0</string>
 	<key>CFBundleDisplayName</key>
-	<string>ElmContact</string>
+	<string>ElmishContacts</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.woodenmoose.elmishcontacts</string>
 	<key>CFBundleVersion</key>

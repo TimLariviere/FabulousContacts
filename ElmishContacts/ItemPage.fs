@@ -1,16 +1,12 @@
 ﻿namespace ElmishContacts
 
-open Extensions
+open Helpers
 open Models
 open Repository
 open Style
 open Elmish.XamarinForms
 open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
-open Plugin.Media
-open Plugin.Media.Abstractions
-open System.IO
-open System.Text
 
 module ItemPage =
     type Msg = | UpdatePicture
@@ -62,37 +58,13 @@ module ItemPage =
     }
 
     let addPhotoAsync () = async {
-        let canPickPicture = CrossMedia.Current.IsPickPhotoSupported
-        let canTakePicture = CrossMedia.Current.IsCameraAvailable && CrossMedia.Current.IsTakePhotoSupported
-
-        let pickPicture = "Choose from gallery"
-        let takePicture = "Take picture"
-        let cancel = "Cancel"
-
-        let choices = [|
-            if canPickPicture then yield pickPicture
-            if canTakePicture then yield takePicture
-        |]
-
-        let! source =
-            displayActionSheet(None, Some cancel, None, Some choices)
-
-        let! photo =
-            match source with
-            | choice when choice = pickPicture -> CrossMedia.Current.PickPhotoAsync() |> Async.AwaitTask
-            | choice when choice = takePicture -> CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions()) |> Async.AwaitTask
-            | _ -> System.Threading.Tasks.Task.FromResult<Abstractions.MediaFile>(null) |> Async.AwaitTask
+        let! photo = pickOrTakePictureAsync()
 
         match photo with
         | null ->
-            do! displayAlert("No photo", "No photo selected", "OK")
             return None
         | file ->
-            use stream = file.GetStream()
-            use memoryStream = new MemoryStream()
-            do! stream.CopyToAsync(memoryStream) |> Async.AwaitTask
-            let bytes = memoryStream.ToArray()
-            let base64 = System.Convert.ToBase64String(bytes)
+            let! base64 = readFileAsBase64 file
             return Some (SetPicture base64)
     }
 
@@ -138,12 +110,7 @@ module ItemPage =
             let newContact =
                 match contact with
                 | None -> { Id = 0; Picture = ""; FirstName = firstName; LastName = lastName; Address = address; IsFavorite = isFavorite }
-                | Some c ->
-                    let picture =
-                        match picture with
-                        | None -> ""
-                        | Some base64 -> base64
-                    { c with Picture = picture; FirstName = firstName; LastName = lastName; Address = address; IsFavorite = isFavorite }
+                | Some c -> { c with Picture = getBase64 picture; FirstName = firstName; LastName = lastName; Address = address; IsFavorite = isFavorite }
             model, Cmd.ofAsyncMsg (saveAsync dbPath newContact), ExternalMsg.NoOp
         | DeleteContact contact ->
             model, Cmd.ofAsyncMsgOption (deleteAsync dbPath contact), ExternalMsg.NoOp
@@ -169,27 +136,24 @@ module ItemPage =
                 ],
                 content=View.StackLayout(
                     children=[
-
                         View.Grid(
                             margin=Thickness(20., 20., 20., 0.),
                             coldefs=[ 70.; GridLength.Star ],
-                            rowdefs=[ GridLength.Auto; GridLength.Auto ],
+                            rowdefs=[ 35.; 35. ],
                             columnSpacing=10.,
-                            rowSpacing=10.,
+                            rowSpacing=0.,
                             children=[
                                 if mPicture.IsNone then
                                     yield View.Button(image="addphoto.png", backgroundColor=Color.White, command=(fun () -> dispatch UpdatePicture)).GridRowSpan(2)
                                 else
-                                    let bytes = System.Convert.FromBase64String(mPicture.Value)
-                                    let stream: Stream = new MemoryStream(bytes) :> Stream
                                     yield View.Image(
-                                            source=ImageSource.FromStream(fun () -> stream),
+                                            source=getImageSourceFromBase64 mPicture.Value,
                                             aspect=Aspect.AspectFill,
                                             gestureRecognizers=[ View.TapGestureRecognizer(command=(fun () -> dispatch UpdatePicture)) ]
                                           ).GridRowSpan(2)
 
-                                yield View.Entry(placeholder="First name", text=mFirstName, textChanged=(fun e -> e.NewTextValue |> UpdateFirstName |> dispatch)).GridColumn(1)
-                                yield View.Entry(placeholder="Last name", text=mLastName, textChanged=(fun e -> e.NewTextValue |> UpdateLastName |> dispatch)).GridColumn(1).GridRow(1)
+                                yield View.Entry(placeholder="First name", text=mFirstName, textChanged=(fun e -> e.NewTextValue |> UpdateFirstName |> dispatch), verticalOptions=LayoutOptions.Center).GridColumn(1)
+                                yield View.Entry(placeholder="Last name", text=mLastName, textChanged=(fun e -> e.NewTextValue |> UpdateLastName |> dispatch), verticalOptions=LayoutOptions.Center).GridColumn(1).GridRow(1)
                             ]
                         )
 

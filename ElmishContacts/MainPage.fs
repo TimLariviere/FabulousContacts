@@ -62,7 +62,7 @@ module MainPage =
     let view model dispatch =
         dependsOn model.Contacts (fun model mContacts ->
             View.ContentPage(
-                title="ElmContact",
+                title="ElmishContacts",
                 toolbarItems=[
                     mkToolbarButton "About" (fun() -> dispatch AboutTapped)
                     mkToolbarButton "Add" (fun() -> dispatch AddNewContactTapped)
@@ -85,7 +85,7 @@ module MainPage =
                             [
                                 View.ListViewGrouped(
                                     verticalOptions=LayoutOptions.FillAndExpand,
-                                    rowHeight=50,
+                                    rowHeight=60,
                                     showJumpList=(contacts.Length > 10),
                                     itemTapped=(findContactIn groupedContacts >> ContactSelected >> dispatch),
                                     items=
@@ -95,7 +95,7 @@ module MainPage =
                                                         [
                                                             for contact in items do
                                                                 let address = contact.Address.Replace("\n", " ")
-                                                                yield mkCachedCellView (contact.FirstName + " " + contact.LastName) address contact.IsFavorite
+                                                                yield mkCachedCellView contact.Picture (contact.FirstName + " " + contact.LastName) address contact.IsFavorite
                                                         ]
                                         ]
                                 )

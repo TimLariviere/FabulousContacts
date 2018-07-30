@@ -7,7 +7,7 @@ module AboutPage =
         View.ContentPage(
             content=View.StackLayout(
                 children=[
-                    View.Label(text="Icon made by https://www.flaticon.com/authors/freepik from www.flaticon.com")
+                    View.Label(text="Icons made by https://www.flaticon.com/authors/freepik from www.flaticon.com")
                 ]
             )
         )

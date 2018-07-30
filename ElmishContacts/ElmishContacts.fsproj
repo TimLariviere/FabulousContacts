@@ -4,10 +4,11 @@
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DefineConstants>TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_0;APPSAVE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_0;</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ElmishExtensions.fs" />
+    <Compile Include="Helpers.fs" />
     <Compile Include="Style.fs" />
     <Compile Include="Models.fs" />
     <Compile Include="Repository.fs" />
