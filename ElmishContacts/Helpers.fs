@@ -5,8 +5,6 @@ open Plugin.Media.Abstractions
 open Xamarin.Forms
 open System
 open System.IO
-open System.Text
-open Elmish.XamarinForms.DynamicViews
 
 module Helpers =
     let displayAlert(title, message, cancel) =

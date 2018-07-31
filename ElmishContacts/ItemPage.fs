@@ -9,6 +9,8 @@ open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
 
 module ItemPage =
+    let mutable _imageSource : ImageSource = null
+
     type Msg = | UpdatePicture
                | UpdateFirstName of string
                | UpdateLastName of string
@@ -68,10 +70,12 @@ module ItemPage =
             return Some (SetPicture base64)
     }
 
-    let init contact =
+    let init (contact: Contact option) =
         let model =
             match contact with
             | Some c ->
+                if c.Picture <> "" then _imageSource <- getImageSourceFromBase64 c.Picture
+
                 {
                     Contact = Some c
                     Picture = if c.Picture <> "" then Some c.Picture else None
@@ -81,6 +85,8 @@ module ItemPage =
                     IsFavorite = c.IsFavorite
                 }
             | None ->
+                _imageSource <- null
+
                 {
                     Contact = None
                     Picture = None
@@ -105,6 +111,7 @@ module ItemPage =
         | UpdateIsFavorite isFavorite ->
             { model with IsFavorite = isFavorite }, Cmd.none, ExternalMsg.NoOp
         | SetPicture base64 ->
+            _imageSource <- getImageSourceFromBase64 base64
             { model with Picture = Some base64}, Cmd.none, ExternalMsg.NoOp
         | SaveContact (contact, picture, firstName, lastName, address, isFavorite) ->
             let newContact =
@@ -122,13 +129,6 @@ module ItemPage =
             model, Cmd.none, (ExternalMsg.GoBackAfterContactDeleted contact)
 
     let view model dispatch =
-        let imageSource =
-            dependsOn model.Picture (fun _ picture ->
-                match picture with
-                | None -> null
-                | Some base64 -> getImageSourceFromBase64 base64
-            )
-
         dependsOn (model.Contact, model.Picture, model.FirstName, model.LastName, model.Address, model.IsFavorite) (fun model (mContact, mPicture, mFirstName, mLastName, mAddress, mIsFavorite) ->
             let isDeleteButtonVisible =
                 match mContact with
@@ -154,7 +154,7 @@ module ItemPage =
                                     yield View.Button(image="addphoto.png", backgroundColor=Color.White, command=(fun () -> dispatch UpdatePicture)).GridRowSpan(2)
                                 else
                                     yield View.Image(
-                                            source=imageSource,
+                                            source=_imageSource,
                                             aspect=Aspect.AspectFill,
                                             gestureRecognizers=[ View.TapGestureRecognizer(command=(fun () -> dispatch UpdatePicture)) ]
                                           ).GridRowSpan(2)
