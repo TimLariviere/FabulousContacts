@@ -83,9 +83,10 @@ module MainPage =
                                 |> List.map (fun (k, l) -> (k, List.map fst l))
                             
                             [
-                                View.ListViewGrouped(
+                                View.ListViewGrouped_XF31(
                                     verticalOptions=LayoutOptions.FillAndExpand,
                                     rowHeight=60,
+                                    selectionMode=ListViewSelectionMode.None,
                                     showJumpList=(contacts.Length > 10),
                                     itemTapped=(findContactIn groupedContacts >> ContactSelected >> dispatch),
                                     items=
