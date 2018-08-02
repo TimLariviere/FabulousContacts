@@ -28,4 +28,4 @@ module CustomViews =
                 View.UpdateListViewGrouped(prevOpt, source, target)
                 source.UpdatePrimitive(prevOpt, target, ListViewGroupedSelectionModeAttributeKey, (fun target v -> target.SelectionMode <- v))
 
-            ViewElement.Create<CustomGroupListView>(CustomGroupListView, update, attribs)
+            ViewElement.Create(CustomGroupListView, update, attribs)
