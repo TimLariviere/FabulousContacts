@@ -14,7 +14,6 @@
     <Compile Include="Repository.fs" />
     <Compile Include="MainPage.fs" />
     <Compile Include="ItemPage.fs" />
-    <Compile Include="MapPage.fs" />
     <Compile Include="AboutPage.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>

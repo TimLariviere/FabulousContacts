@@ -6,31 +6,54 @@ open Style
 open Elmish.XamarinForms
 open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
+open Xamarin.Forms.Maps
 
 module MainPage =
     type Msg = | ContactsLoaded of Contact list
                | ContactSelected of Contact
                | AboutTapped
                | AddNewContactTapped
-               | ShowMapTapped
                | ContactAdded of Contact
                | ContactUpdated of Contact
                | ContactDeleted of Contact
+               | PinsLoaded of ContactPin list
 
     type ExternalMsg = | NoOp
                        | Select of Contact
                        | About
                        | AddNewContact
-                       | ShowMap
 
     type Model =
         {
             Contacts: Contact list option
+            Pins: ContactPin list option
         }
 
     let loadAsyncCmd dbPath = async {
         let! contacts = loadAllContacts dbPath
         return ContactsLoaded contacts
+    }
+
+    let loadPinsAsync (contacts: Contact list) = async {
+        let geocoder = Geocoder()
+
+        let gettingPositions =
+            contacts
+            |> List.map (fun c -> async {
+                let! positions = geocoder.GetPositionsForAddressAsync(c.Address) |> Async.AwaitTask
+                let position = positions |> Seq.tryHead
+                return (c, position)
+            })
+            |> Async.Parallel
+
+        let! contactsAndPositions = gettingPositions
+
+        let pins = contactsAndPositions
+                   |> Array.filter (fun (_, p) -> Option.isSome p)
+                   |> Array.map (fun (c, p) -> { Position = p.Value; Label = (c.FirstName + " " + c.LastName); PinType = PinType.Place; Address = c.Address})
+                   |> Array.toList
+
+        return PinsLoaded pins
     }
 
     let groupContacts contacts =
@@ -47,24 +70,30 @@ module MainPage =
     let init dbPath () =
         {
             Contacts = None
+            Pins = None
         }, Cmd.ofAsyncMsg (loadAsyncCmd dbPath)
 
     let update msg model =
         match msg with
-        | ContactsLoaded contacts -> { model with Contacts = Some contacts }, Cmd.none, ExternalMsg.NoOp
-        | ContactSelected contact -> model, Cmd.none, (ExternalMsg.Select contact)
-        | AboutTapped -> model, Cmd.none, ExternalMsg.About
-        | AddNewContactTapped -> model, Cmd.none, ExternalMsg.AddNewContact
-        | ShowMapTapped -> model, Cmd.none, ExternalMsg.ShowMap
+        | ContactsLoaded contacts ->
+            { model with Contacts = Some contacts }, Cmd.ofAsyncMsg (loadPinsAsync contacts), ExternalMsg.NoOp
+        | PinsLoaded pins ->
+            { model with Pins = Some pins }, Cmd.none, ExternalMsg.NoOp
+        | ContactSelected contact ->
+            model, Cmd.none, (ExternalMsg.Select contact)
+        | AboutTapped ->
+            model, Cmd.none, ExternalMsg.About
+        | AddNewContactTapped ->
+            model, Cmd.none, ExternalMsg.AddNewContact
         | ContactAdded contact ->
             let newContacts = model.Contacts.Value @ [ contact ]
-            { model with Contacts = Some newContacts }, Cmd.none, ExternalMsg.NoOp
+            { model with Contacts = Some newContacts }, Cmd.ofAsyncMsg (loadPinsAsync newContacts), ExternalMsg.NoOp
         | ContactUpdated contact ->
             let newContacts = model.Contacts.Value |> List.map (fun c -> if c.Id = contact.Id then contact else c)
-            { model with Contacts = Some newContacts }, Cmd.none, ExternalMsg.NoOp
+            { model with Contacts = Some newContacts }, Cmd.ofAsyncMsg (loadPinsAsync newContacts), ExternalMsg.NoOp
         | ContactDeleted contact ->
             let newContacts = model.Contacts.Value |> List.filter (fun c -> c <> contact)
-            { model with Contacts = Some newContacts }, Cmd.none, ExternalMsg.NoOp
+            { model with Contacts = Some newContacts }, Cmd.ofAsyncMsg (loadPinsAsync newContacts), ExternalMsg.NoOp
 
     let mkListView contactsLength (groupedContacts: (string * Contact list) list) itemTapped =
         View.ListViewGrouped_XF31(
@@ -91,7 +120,6 @@ module MainPage =
             dependsOn () (fun model () ->
                 [
                     mkToolbarButton "About" (fun() -> dispatch AboutTapped)
-                    mkToolbarButton "Map" (fun() -> dispatch ShowMapTapped)
                     mkToolbarButton "Add" (fun() -> dispatch AddNewContactTapped)
                 ]
             )
@@ -151,10 +179,32 @@ module MainPage =
                     )
                 )
 
+            let mapTab =
+                dependsOn model.Pins (fun model pins ->
+                    let paris = Position(48.8566, 2.3522)
 
-            dependsOn contacts (fun contacts mContacts ->
+                    View.ContentPage(
+                        title="Map",
+                        content=
+                            match pins with
+                            | None ->
+                                mkCentralLabel "Loading..."
+                            | Some pins ->
+                                View.Map(
+                                    hasZoomEnabled=true,
+                                    hasScrollEnabled=true,
+                                    requestedRegion=MapSpan.FromCenterAndRadius(paris, Distance.FromKilometers(25.)),
+                                    pins=[
+                                        for pin in pins do
+                                            yield View.Pin(position=pin.Position, label=pin.Label, pinType=pin.PinType, address=pin.Address)
+                                    ]
+                                )
+                    )
+                )
+
+            dependsOn model (fun model _ ->
                 View.TabbedPage(
                     title=title,
-                    children=[ contactsTab; favoriteTab ]
+                    children=[ contactsTab; favoriteTab; mapTab ]
                 )
             )

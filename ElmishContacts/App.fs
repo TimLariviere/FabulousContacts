@@ -11,15 +11,12 @@ module App =
         {
             MainPageModel: MainPage.Model
             ItemPageModel: ItemPage.Model option
-            MapPageModel: MapPage.Model option
             AboutPageModel: bool option
         }
 
     type Msg = | MainPageMsg of MainPage.Msg
                | ItemPageMsg of ItemPage.Msg
-               | MapPageMsg of MapPage.Msg
                | GoToItem of Contact option
-               | GoToMap
                | GoToAbout
                | UpdateMainWithContactAdded of Contact
                | UpdateMainWithContactUpdated of Contact
@@ -31,7 +28,6 @@ module App =
         {
             MainPageModel = mainModel
             ItemPageModel = None
-            MapPageModel = None
             AboutPageModel = None
         }, Cmd.batch [ (Cmd.map MainPageMsg mainMsg) ]
 
@@ -50,8 +46,6 @@ module App =
                     Cmd.ofMsg GoToAbout
                 | MainPage.ExternalMsg.AddNewContact ->
                     Cmd.ofMsg (GoToItem None)
-                | MainPage.ExternalMsg.ShowMap ->
-                    Cmd.ofMsg GoToMap
 
             { model with MainPageModel = m }, Cmd.batch [ (Cmd.map MainPageMsg cmd); cmd2 ]
 
@@ -71,23 +65,11 @@ module App =
 
             { model with ItemPageModel = Some m }, Cmd.batch [ (Cmd.map ItemPageMsg cmd); cmd2 ]
 
-        | MapPageMsg msg ->
-            let m, cmd, externalMsg = MapPage.update msg model.MapPageModel.Value
-
-            let cmd2 =
-                match externalMsg with
-                | MapPage.ExternalMsg.NoOp ->
-                    Cmd.none
-
-            { model with MapPageModel = Some m }, Cmd.batch [ (Cmd.map MainPageMsg cmd); cmd2 ]
-
         | NavigationPopped ->
-            match (model.ItemPageModel, model.MapPageModel, model.AboutPageModel) with
-            | None, None, None -> model, Cmd.none
-            | None, None, Some _ -> { model with AboutPageModel = None }, Cmd.none
-            | Some _, None, _ -> { model with ItemPageModel = None }, Cmd.none
-            | None, Some _, _ -> { model with MapPageModel = None }, Cmd.none
-            | Some _, Some _, _ -> { model with ItemPageModel = None }, Cmd.none
+            match (model.ItemPageModel, model.AboutPageModel) with
+            | None, None -> model, Cmd.none
+            | None, Some _ -> { model with AboutPageModel = None }, Cmd.none
+            | Some _, _ -> { model with ItemPageModel = None }, Cmd.none
 
         | GoToAbout ->
             { model with AboutPageModel = Some true }, Cmd.none
@@ -95,10 +77,6 @@ module App =
         | GoToItem contact ->
             let m, cmd = ItemPage.init contact
             { model with ItemPageModel = Some m }, (Cmd.map ItemPageMsg cmd)
-
-        | GoToMap ->
-            let m, cmd = MapPage.init dbPath
-            { model with MapPageModel = Some m }, (Cmd.map MapPageMsg cmd)
 
         | UpdateMainWithContactAdded contact ->
             { model with ItemPageModel = None }, Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactAdded contact))
@@ -118,11 +96,6 @@ module App =
             | None -> None
             | Some iModel -> Some (ItemPage.view iModel (ItemPageMsg >> dispatch))
 
-        let mapPage =
-            match model.MapPageModel with
-            | None -> None
-            | Some mModel -> Some (MapPage.view mModel (MapPageMsg >> dispatch))
-
         let aboutPage = 
             match model.AboutPageModel with
             | None -> None
@@ -133,12 +106,10 @@ module App =
             barBackgroundColor=Style.accentColor,
             popped=(fun _ -> NavigationPopped |> dispatch),
             pages=
-                match (itemPage, mapPage, aboutPage) with
-                | (None, None, None) -> [ mainPage ]
-                | (None, None, Some about) -> [ mainPage; about ]
-                | (None, Some map, _) -> [ mainPage; map ]
-                | (Some item, None, _) -> [ mainPage; item ]
-                | (Some item, Some map, _) -> [ mainPage; map; item ]
+                match (itemPage, aboutPage) with
+                | (None, None) -> [ mainPage ]
+                | (None, Some about) -> [ mainPage; about ]
+                | (Some item, _) -> [ mainPage; item ]
         )
 
 type App (dbPath) as app = 
