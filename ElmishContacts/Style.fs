@@ -42,14 +42,14 @@ module Style =
         let source =
             match picture with
             | null -> "addphoto.png" :> obj
-            | bytes -> createImageSource name bytes :> obj
+            | bytes -> createImageSource bytes :> obj
 
         View.StackLayout(
             orientation=StackOrientation.Horizontal,
             padding=5.,
             spacing=10.,
             children=[
-                View.Image(source=source, aspect=Aspect.AspectFill, margin=new Thickness(15., 0., 0., 0.), heightRequest=50., widthRequest=50.)
+                View.Image(source=source, aspect=Aspect.AspectFill, margin=Thickness(15., 0., 0., 0.), heightRequest=50., widthRequest=50.)
                 View.StackLayout(
                     spacing=5.,
                     horizontalOptions=LayoutOptions.FillAndExpand,
@@ -59,7 +59,7 @@ module Style =
                         View.Label(text=address, fontSize=12., textColor=Color.Gray, lineBreakMode=LineBreakMode.TailTruncation)
                     ]
                 )
-                View.Image(source="star.png", isVisible=isFavorite, verticalOptions=LayoutOptions.Center, margin=new Thickness(0., 0., 15., 0.), heightRequest=25., widthRequest=25.)
+                View.Image(source="star.png", isVisible=isFavorite, verticalOptions=LayoutOptions.Center, margin=Thickness(0., 0., 15., 0.), heightRequest=25., widthRequest=25.)
             ]
         )
 

@@ -80,6 +80,11 @@ module ItemPage =
             return None
     }
 
+    let releaseImage picture =
+        match picture with
+        | None -> ()
+        | Some bytes -> releaseImageSource bytes
+
     let init (contact: Contact option) =
         let model =
             match contact with
@@ -117,6 +122,7 @@ module ItemPage =
         | UpdateIsFavorite isFavorite ->
             { model with IsFavorite = isFavorite }, Cmd.none, ExternalMsg.NoOp
         | SetPicture picture ->
+            releaseImage model.Picture
             { model with Picture = Some picture}, Cmd.none, ExternalMsg.NoOp
         | SaveContact (contact, picture, firstName, lastName, address, isFavorite) ->
             let newContact =
@@ -135,7 +141,7 @@ module ItemPage =
         | ContactDeleted contact ->
             model, Cmd.none, (ExternalMsg.GoBackAfterContactDeleted contact)
         | UnloadPage ->
-            releaseImageSource "Item"
+            releaseImage model.Picture
             model, Cmd.none, ExternalMsg.NoOp        
 
     let view model dispatch =
@@ -164,7 +170,7 @@ module ItemPage =
                                     yield View.Button(image="addphoto.png", backgroundColor=Color.White, command=(fun () -> dispatch UpdatePicture)).GridRowSpan(2)
                                 else
                                     yield View.Image(
-                                            source=createImageSource "Item" mPicture.Value,
+                                            source=createImageSource mPicture.Value,
                                             aspect=Aspect.AspectFill,
                                             gestureRecognizers=[ View.TapGestureRecognizer(command=(fun () -> dispatch UpdatePicture)) ]
                                           ).GridRowSpan(2)

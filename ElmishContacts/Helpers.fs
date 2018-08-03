@@ -71,8 +71,19 @@ module Helpers =
 
         return!
             match source with
-            | choice when choice = pickPicture -> CrossMedia.Current.PickPhotoAsync() |> Async.AwaitTask
-            | choice when choice = takePicture -> CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions()) |> Async.AwaitTask
+            | choice when choice = pickPicture ->
+                let options = new PickMediaOptions()
+                options.PhotoSize <- PhotoSize.MaxWidthHeight
+                options.MaxWidthHeight <- Nullable<int>(75)
+                CrossMedia.Current.PickPhotoAsync(options) |> Async.AwaitTask
+
+            | choice when choice = takePicture -> 
+                let options = new StoreCameraMediaOptions()
+                options.AllowCropping <- Nullable<bool>(true)
+                options.PhotoSize <- PhotoSize.MaxWidthHeight
+                options.MaxWidthHeight <- Nullable<int>(75)
+                CrossMedia.Current.TakePhotoAsync(options) |> Async.AwaitTask
+
             | _ -> System.Threading.Tasks.Task.FromResult<Abstractions.MediaFile>(null) |> Async.AwaitTask
     }
 
@@ -83,37 +94,27 @@ module Helpers =
         return memoryStream.ToArray()
     }
 
-    let getBase64 picture = 
-        match picture with
-        | None -> ""
-        | Some base64 -> base64
-
-    let getImageSourceFromBase64 base64 =
-        let bytes = Convert.FromBase64String(base64)
-        let stream = new MemoryStream(bytes) :> Stream
-        ImageSource.FromStream(fun () -> stream)
-
 module Images =
     open System.Collections.Generic
 
     type internal Memoizations() = 
-         static let t = Dictionary<string,ImageSource>(HashIdentity.Structural)
+         static let t = Dictionary<byte array, ImageSource>(HashIdentity.Structural)
          static member T = t
-         static member Add(key: string, res: ImageSource) = 
+         static member Add(key: byte array, res: ImageSource) = 
              if Memoizations.T.Count > 50000 then 
-                 System.Diagnostics.Trace.WriteLine("Clearing 'dependsOn' and 'fix' memoizations...")
+                 System.Diagnostics.Trace.WriteLine("Clearing 'imageSource' memoizations...")
                  Memoizations.T.Clear()
              
              Memoizations.T.[key] <- res
 
-         static member Remove(key: string) =
-            Memoizations.T.Remove(key)         
+         static member Remove(key: byte array) =
+            Memoizations.T.Remove(key)
 
-    let createImageSource key (bytes: byte array) =
+    let createImageSource key =
         match Memoizations.T.TryGetValue(key) with
         | true, imageSource -> imageSource
         | _ ->
-            let imageSource = ImageSource.FromStream(fun () -> new MemoryStream(bytes) :> Stream)
+            let imageSource = ImageSource.FromStream(fun () -> new MemoryStream(key) :> Stream)
             Memoizations.T.Add(key, imageSource)
             imageSource
 

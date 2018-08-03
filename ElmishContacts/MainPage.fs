@@ -3,6 +3,7 @@
 open Models
 open Repository
 open Style
+open Images
 open Elmish.XamarinForms
 open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
@@ -89,9 +90,15 @@ module MainPage =
             let newContacts = model.Contacts.Value @ [ contact ]
             { model with Contacts = Some newContacts }, Cmd.ofAsyncMsg (loadPinsAsync newContacts), ExternalMsg.NoOp
         | ContactUpdated contact ->
+            let previousContact = model.Contacts.Value |> List.find (fun c -> c.Id = contact.Id)
+            match previousContact.Picture, contact.Picture with
+            | prevVal, currVal when prevVal = currVal && prevVal <> null -> releaseImageSource previousContact.Picture
+            | _ -> ()
+
             let newContacts = model.Contacts.Value |> List.map (fun c -> if c.Id = contact.Id then contact else c)
             { model with Contacts = Some newContacts }, Cmd.ofAsyncMsg (loadPinsAsync newContacts), ExternalMsg.NoOp
         | ContactDeleted contact ->
+            releaseImageSource contact.Picture
             let newContacts = model.Contacts.Value |> List.filter (fun c -> c <> contact)
             { model with Contacts = Some newContacts }, Cmd.ofAsyncMsg (loadPinsAsync newContacts), ExternalMsg.NoOp
 
