@@ -13,11 +13,7 @@ open System.IO
 open Plugin.CurrentActivity
 open Plugin.Media
 
-[<assembly: UsesFeature("android.hardware.camera", Required = false)>]
-[<assembly: UsesFeature("android.hardware.camera.autofocus", Required = false)>]
-do ()
-
-[<Activity (Label = "ElmishContacts.Android", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = (ConfigChanges.ScreenSize ||| ConfigChanges.Orientation))>]
+[<Activity (Label = "ElmishContacts", Icon = "@drawable/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = (ConfigChanges.ScreenSize ||| ConfigChanges.Orientation))>]
 type MainActivity() =
     inherit FormsAppCompatActivity()
 
