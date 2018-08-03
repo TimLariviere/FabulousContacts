@@ -69,7 +69,7 @@ module App =
             match (model.ItemPageModel, model.AboutPageModel) with
             | None, None -> model, Cmd.none
             | None, Some _ -> { model with AboutPageModel = None }, Cmd.none
-            | Some _, _ -> { model with ItemPageModel = None }, Cmd.none
+            | Some _, _ -> { model with ItemPageModel = None }, Cmd.ofMsg (ItemPageMsg ItemPage.UnloadPage)
 
         | GoToAbout ->
             { model with AboutPageModel = Some true }, Cmd.none

@@ -8,7 +8,7 @@ module Repository =
     type ContactObject() =
         [<PrimaryKey>][<AutoIncrement>]
         member val Id = 0 with get, set
-        member val Picture = "" with get, set
+        member val Picture: byte array = null with get, set
         member val FirstName = "" with get, set
         member val LastName = "" with get, set
         member val Address = "" with get, set

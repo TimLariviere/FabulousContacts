@@ -3,6 +3,7 @@
 open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
 open Helpers
+open Images
 
 module Style =
     let accentTextColor = Color.White
@@ -40,8 +41,8 @@ module Style =
     let mkCellView picture name address isFavorite =
         let source =
             match picture with
-            | "" -> "addphoto.png" :> obj
-            | base64 -> getImageSourceFromBase64 base64 :> obj
+            | null -> "addphoto.png" :> obj
+            | bytes -> createImageSource name bytes :> obj
 
         View.StackLayout(
             orientation=StackOrientation.Horizontal,

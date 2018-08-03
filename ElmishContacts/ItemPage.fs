@@ -4,24 +4,24 @@ open Helpers
 open Models
 open Repository
 open Style
+open Images
 open Elmish.XamarinForms
 open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
 
 module ItemPage =
-    let mutable _imageSource : ImageSource = null
-
     type Msg = | UpdatePicture
                | UpdateFirstName of string
                | UpdateLastName of string
                | UpdateAddress of string
                | UpdateIsFavorite of bool
-               | SetPicture of string
-               | SaveContact of Contact option * picture: string option * firstName: string * lastName: string * address: string * isFavorite: bool
+               | SetPicture of byte array
+               | SaveContact of Contact option * picture: byte array option * firstName: string * lastName: string * address: string * isFavorite: bool
                | DeleteContact of Contact
                | ContactAdded of Contact
                | ContactUpdated of Contact
                | ContactDeleted of Contact
+               | UnloadPage
 
     type ExternalMsg = | NoOp
                        | GoBackAfterContactAdded of Contact
@@ -31,7 +31,7 @@ module ItemPage =
     type Model =
         {
             Contact: Contact option
-            Picture: string option
+            Picture: byte array option
             FirstName: string
             LastName: string
             Address: string
@@ -74,8 +74,8 @@ module ItemPage =
                 | null ->
                     return None
                 | file ->
-                    let! base64 = readFileAsBase64 file
-                    return Some (SetPicture base64)
+                    let! bytes = readBytesAsync file
+                    return Some (SetPicture bytes)
         with exn ->
             return None
     }
@@ -84,19 +84,15 @@ module ItemPage =
         let model =
             match contact with
             | Some c ->
-                if c.Picture <> "" then _imageSource <- getImageSourceFromBase64 c.Picture
-
                 {
                     Contact = Some c
-                    Picture = if c.Picture <> "" then Some c.Picture else None
+                    Picture = if c.Picture <> null then Some c.Picture else None
                     FirstName = c.FirstName
                     LastName = c.LastName
                     Address = c.Address
                     IsFavorite = c.IsFavorite
                 }
             | None ->
-                _imageSource <- null
-
                 {
                     Contact = None
                     Picture = None
@@ -120,14 +116,15 @@ module ItemPage =
             { model with Address = address }, Cmd.none, ExternalMsg.NoOp
         | UpdateIsFavorite isFavorite ->
             { model with IsFavorite = isFavorite }, Cmd.none, ExternalMsg.NoOp
-        | SetPicture base64 ->
-            _imageSource <- getImageSourceFromBase64 base64
-            { model with Picture = Some base64}, Cmd.none, ExternalMsg.NoOp
+        | SetPicture picture ->
+            { model with Picture = Some picture}, Cmd.none, ExternalMsg.NoOp
         | SaveContact (contact, picture, firstName, lastName, address, isFavorite) ->
             let newContact =
                 match contact with
-                | None -> { Id = 0; Picture = ""; FirstName = firstName; LastName = lastName; Address = address; IsFavorite = isFavorite }
-                | Some c -> { c with Picture = getBase64 picture; FirstName = firstName; LastName = lastName; Address = address; IsFavorite = isFavorite }
+                | None -> { Id = 0; Picture = null; FirstName = firstName; LastName = lastName; Address = address; IsFavorite = isFavorite }
+                | Some c ->
+                    let bytes = (match picture with None -> null | Some arr -> arr)
+                    { c with Picture = bytes; FirstName = firstName; LastName = lastName; Address = address; IsFavorite = isFavorite }
             model, Cmd.ofAsyncMsg (saveAsync dbPath newContact), ExternalMsg.NoOp
         | DeleteContact contact ->
             model, Cmd.ofAsyncMsgOption (deleteAsync dbPath contact), ExternalMsg.NoOp
@@ -137,6 +134,9 @@ module ItemPage =
             model, Cmd.none, (ExternalMsg.GoBackAfterContactUpdated contact)
         | ContactDeleted contact ->
             model, Cmd.none, (ExternalMsg.GoBackAfterContactDeleted contact)
+        | UnloadPage ->
+            releaseImageSource "Item"
+            model, Cmd.none, ExternalMsg.NoOp        
 
     let view model dispatch =
         dependsOn (model.Contact, model.Picture, model.FirstName, model.LastName, model.Address, model.IsFavorite) (fun model (mContact, mPicture, mFirstName, mLastName, mAddress, mIsFavorite) ->
@@ -164,7 +164,7 @@ module ItemPage =
                                     yield View.Button(image="addphoto.png", backgroundColor=Color.White, command=(fun () -> dispatch UpdatePicture)).GridRowSpan(2)
                                 else
                                     yield View.Image(
-                                            source=_imageSource,
+                                            source=createImageSource "Item" mPicture.Value,
                                             aspect=Aspect.AspectFill,
                                             gestureRecognizers=[ View.TapGestureRecognizer(command=(fun () -> dispatch UpdatePicture)) ]
                                           ).GridRowSpan(2)

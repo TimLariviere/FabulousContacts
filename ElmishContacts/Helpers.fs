@@ -76,12 +76,11 @@ module Helpers =
             | _ -> System.Threading.Tasks.Task.FromResult<Abstractions.MediaFile>(null) |> Async.AwaitTask
     }
 
-    let readFileAsBase64 (file: Plugin.Media.Abstractions.MediaFile) = async {
+    let readBytesAsync (file: Plugin.Media.Abstractions.MediaFile) = async {
         use stream = file.GetStream()
         use memoryStream = new MemoryStream()
         do! stream.CopyToAsync(memoryStream) |> Async.AwaitTask
-        let bytes = memoryStream.ToArray()
-        return Convert.ToBase64String(bytes)
+        return memoryStream.ToArray()
     }
 
     let getBase64 picture = 
@@ -93,3 +92,32 @@ module Helpers =
         let bytes = Convert.FromBase64String(base64)
         let stream = new MemoryStream(bytes) :> Stream
         ImageSource.FromStream(fun () -> stream)
+
+module Images =
+    open System.Collections.Generic
+
+    type internal Memoizations() = 
+         static let t = Dictionary<string,ImageSource>(HashIdentity.Structural)
+         static member T = t
+         static member Add(key: string, res: ImageSource) = 
+             if Memoizations.T.Count > 50000 then 
+                 System.Diagnostics.Trace.WriteLine("Clearing 'dependsOn' and 'fix' memoizations...")
+                 Memoizations.T.Clear()
+             
+             Memoizations.T.[key] <- res
+
+         static member Remove(key: string) =
+            Memoizations.T.Remove(key)         
+
+    let createImageSource key (bytes: byte array) =
+        match Memoizations.T.TryGetValue(key) with
+        | true, imageSource -> imageSource
+        | _ ->
+            let imageSource = ImageSource.FromStream(fun () -> new MemoryStream(bytes) :> Stream)
+            Memoizations.T.Add(key, imageSource)
+            imageSource
+
+    let releaseImageSource key =
+        match Memoizations.T.TryGetValue(key) with
+        | true, _ -> Memoizations.Remove(key) |> ignore
+        | _ -> ()

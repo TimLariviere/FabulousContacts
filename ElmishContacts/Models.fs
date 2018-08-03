@@ -6,7 +6,7 @@ module Models =
     type Contact =
         {
             Id: int
-            Picture: string
+            Picture: byte array
             FirstName: string
             LastName: string
             Address: string
