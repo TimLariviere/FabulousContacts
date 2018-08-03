@@ -60,14 +60,24 @@ module ItemPage =
     }
 
     let addPhotoAsync () = async {
-        let! photo = pickOrTakePictureAsync()
+        try
+            let! askPermissions = askCameraPermissionsAsync()
 
-        match photo with
-        | null ->
+            match askPermissions with
+            | false ->
+                do! displayAlert("Can't access pictures or camera", "ElmishContacts needs to access your camera in order to set a picture", "OK")
+                return None
+            | true -> 
+                let! photo = pickOrTakePictureAsync()
+
+                match photo with
+                | null ->
+                    return None
+                | file ->
+                    let! base64 = readFileAsBase64 file
+                    return Some (SetPicture base64)
+        with exn ->
             return None
-        | file ->
-            let! base64 = readFileAsBase64 file
-            return Some (SetPicture base64)
     }
 
     let init (contact: Contact option) =

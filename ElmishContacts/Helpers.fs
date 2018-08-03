@@ -2,6 +2,8 @@
 
 open Plugin.Media
 open Plugin.Media.Abstractions
+open Plugin.Permissions
+open Plugin.Permissions.Abstractions
 open Xamarin.Forms
 open System
 open System.IO
@@ -35,6 +37,21 @@ module Helpers =
             | Some buttons -> buttons
 
         Application.Current.MainPage.DisplayActionSheet(title, cancel, destruction, buttons) |> Async.AwaitTask
+
+    let askCameraPermissionsAsync () = async {
+        try
+            let! cameraStatus = CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Camera) |> Async.AwaitTask
+            let! photosStatus = CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Photos) |> Async.AwaitTask
+
+            if cameraStatus = PermissionStatus.Granted && photosStatus = PermissionStatus.Granted then
+                return true
+            else
+                let! status = CrossPermissions.Current.RequestPermissionsAsync([| Permission.Camera; Permission.Photos |]) |> Async.AwaitTask
+                return status.[Permission.Camera] = PermissionStatus.Granted
+                       && status.[Permission.Photos] = PermissionStatus.Granted
+        with exn ->
+            return false
+    }
 
     let pickOrTakePictureAsync () = async {
         let canPickPicture = CrossMedia.Current.IsPickPhotoSupported
