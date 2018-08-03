@@ -38,60 +38,42 @@ module Helpers =
 
         Application.Current.MainPage.DisplayActionSheet(title, cancel, destruction, buttons) |> Async.AwaitTask
 
-    let askCameraPermissionsAsync () = async {
+    let askPermissionAsync permission = async {
         try
-            let! cameraStatus = CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Camera) |> Async.AwaitTask
-            let! photosStatus = CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Photos) |> Async.AwaitTask
-
-            if cameraStatus = PermissionStatus.Granted && photosStatus = PermissionStatus.Granted then
+            let! status = CrossPermissions.Current.CheckPermissionStatusAsync(permission) |> Async.AwaitTask
+            if status = PermissionStatus.Granted then
                 return true
             else
-                let! status = CrossPermissions.Current.RequestPermissionsAsync([| Permission.Camera; Permission.Photos |]) |> Async.AwaitTask
-                return status.[Permission.Camera] = PermissionStatus.Granted
-                       && status.[Permission.Photos] = PermissionStatus.Granted
+                let! status = CrossPermissions.Current.RequestPermissionsAsync([| permission |]) |> Async.AwaitTask
+                return status.[permission] = PermissionStatus.Granted
+                       || status.[permission] = PermissionStatus.Unknown
         with exn ->
             return false
     }
 
-    let pickOrTakePictureAsync () = async {
-        let canPickPicture = CrossMedia.Current.IsPickPhotoSupported
-        let canTakePicture = CrossMedia.Current.IsCameraAvailable && CrossMedia.Current.IsTakePhotoSupported
+    let takePictureAsync() = async {
+        let options = new StoreCameraMediaOptions()
+        options.AllowCropping <- Nullable<bool>(true)
+        options.PhotoSize <- PhotoSize.MaxWidthHeight
+        options.MaxWidthHeight <- Nullable<int>(75)
+        return! CrossMedia.Current.TakePhotoAsync(options) |> Async.AwaitTask
+    }
 
-        let pickPicture = "Choose from gallery"
-        let takePicture = "Take picture"
-        let cancel = "Cancel"
-
-        let choices = [|
-            if canPickPicture then yield pickPicture
-            if canTakePicture then yield takePicture
-        |]
-
-        let! source =
-            displayActionSheet(None, Some cancel, None, Some choices)
-
-        return!
-            match source with
-            | choice when choice = pickPicture ->
-                let options = new PickMediaOptions()
-                options.PhotoSize <- PhotoSize.MaxWidthHeight
-                options.MaxWidthHeight <- Nullable<int>(75)
-                CrossMedia.Current.PickPhotoAsync(options) |> Async.AwaitTask
-
-            | choice when choice = takePicture -> 
-                let options = new StoreCameraMediaOptions()
-                options.AllowCropping <- Nullable<bool>(true)
-                options.PhotoSize <- PhotoSize.MaxWidthHeight
-                options.MaxWidthHeight <- Nullable<int>(75)
-                CrossMedia.Current.TakePhotoAsync(options) |> Async.AwaitTask
-
-            | _ -> System.Threading.Tasks.Task.FromResult<Abstractions.MediaFile>(null) |> Async.AwaitTask
+    let pickPictureAsync() = async {
+        let options = new PickMediaOptions()
+        options.PhotoSize <- PhotoSize.MaxWidthHeight
+        options.MaxWidthHeight <- Nullable<int>(75)
+        return! CrossMedia.Current.PickPhotoAsync(options) |> Async.AwaitTask
     }
 
     let readBytesAsync (file: Plugin.Media.Abstractions.MediaFile) = async {
-        use stream = file.GetStream()
-        use memoryStream = new MemoryStream()
-        do! stream.CopyToAsync(memoryStream) |> Async.AwaitTask
-        return memoryStream.ToArray()
+        match file with
+        | null -> return None
+        | _ ->
+            use stream = file.GetStream()
+            use memoryStream = new MemoryStream()
+            do! stream.CopyToAsync(memoryStream) |> Async.AwaitTask
+            return Some (memoryStream.ToArray())
     }
 
 module Images =

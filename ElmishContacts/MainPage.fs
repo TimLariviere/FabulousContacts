@@ -155,18 +155,6 @@ module MainPage =
             )
 
         | Some contacts ->
-            let contactsTab =
-                dependsOn contacts (fun contacts mContacts ->
-                    let groupedContacts = groupContacts mContacts
-                    View.ContentPage(
-                        title="All",
-                        toolbarItems=toolbarItems,
-                        content=View.StackLayout(
-                            children=[ mkListView mContacts.Length groupedContacts (findContactIn groupedContacts >> ContactSelected >> dispatch) ]
-                        )
-                    )
-                )
-
             let favoriteTab =
                 let favoriteContacts = contacts |> List.filter (fun c -> c.IsFavorite)
 
@@ -182,6 +170,18 @@ module MainPage =
                                     | [] -> mkCentralLabel "No favorite"
                                     | _ -> mkListView favoriteContacts.Length groupedContacts (findContactIn groupedContacts >> ContactSelected >> dispatch)
                             ]
+                        )
+                    )
+                )
+
+            let contactsTab =
+                dependsOn contacts (fun contacts mContacts ->
+                    let groupedContacts = groupContacts mContacts
+                    View.ContentPage(
+                        title="All",
+                        toolbarItems=toolbarItems,
+                        content=View.StackLayout(
+                            children=[ mkListView mContacts.Length groupedContacts (findContactIn groupedContacts >> ContactSelected >> dispatch) ]
                         )
                     )
                 )
@@ -212,6 +212,6 @@ module MainPage =
             dependsOn model (fun model _ ->
                 View.TabbedPage(
                     title=title,
-                    children=[ contactsTab; favoriteTab; mapTab ]
+                    children=[ favoriteTab; contactsTab; mapTab ]
                 )
             )

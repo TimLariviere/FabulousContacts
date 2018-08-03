@@ -8,6 +8,8 @@ open Images
 open Elmish.XamarinForms
 open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
+open Plugin.Permissions.Abstractions
+open Plugin.Media
 
 module ItemPage =
     type Msg = | UpdatePicture
@@ -15,7 +17,7 @@ module ItemPage =
                | UpdateLastName of string
                | UpdateAddress of string
                | UpdateIsFavorite of bool
-               | SetPicture of byte array
+               | SetPicture of byte array option
                | SaveContact of Contact option * picture: byte array option * firstName: string * lastName: string * address: string * isFavorite: bool
                | DeleteContact of Contact
                | ContactAdded of Contact
@@ -59,25 +61,49 @@ module ItemPage =
             return None
     }
 
-    let addPhotoAsync () = async {
-        try
-            let! askPermissions = askCameraPermissionsAsync()
-
-            match askPermissions with
-            | false ->
-                do! displayAlert("Can't access pictures or camera", "ElmishContacts needs to access your camera in order to set a picture", "OK")
-                return None
-            | true -> 
-                let! photo = pickOrTakePictureAsync()
-
-                match photo with
-                | null ->
-                    return None
-                | file ->
-                    let! bytes = readBytesAsync file
-                    return Some (SetPicture bytes)
-        with exn ->
+    let doAsync action permission = async {
+        let! permissionGranted = askPermissionAsync permission
+        if permissionGranted then
+            let! picture = action()
+            return! readBytesAsync picture
+        else
             return None
+    }
+
+    let updatePictureAsync previousValue = async {
+        let cancel = "Cancel"
+        let remove = "Remove"
+        let takePicture = "Take a picture"
+        let chooseFromGallery = "Choose from the gallery"
+
+        let canTakePicture = CrossMedia.Current.IsCameraAvailable && CrossMedia.Current.IsTakePhotoSupported
+        let canPickPicture = CrossMedia.Current.IsPickPhotoSupported
+
+        let! action =
+            displayActionSheet(None,
+                               Some cancel,
+                               (match previousValue with None -> None | Some _ -> Some remove), 
+                               Some [| 
+                                   if canTakePicture then yield takePicture
+                                   if canPickPicture then yield chooseFromGallery
+                               |])
+
+        match action with
+        | s when s = remove -> return Some (SetPicture None)
+
+        | s when s = takePicture ->
+            let! bytes = doAsync takePictureAsync Permission.Camera
+            match bytes with
+            | None -> return None
+            | Some bytes -> return Some (SetPicture (Some bytes))
+
+        | s when s = chooseFromGallery ->
+            let! bytes = doAsync pickPictureAsync Permission.Photos
+            match bytes with
+            | None -> return None
+            | Some bytes -> return Some (SetPicture (Some bytes))
+
+        | _ -> return None
     }
 
     let releaseImage picture =
@@ -112,7 +138,7 @@ module ItemPage =
     let update dbPath msg (model: Model) =
         match msg with
         | UpdatePicture ->
-            model, Cmd.ofAsyncMsgOption (addPhotoAsync ()), ExternalMsg.NoOp
+            model, Cmd.ofAsyncMsgOption (updatePictureAsync model.Picture), ExternalMsg.NoOp
         | UpdateFirstName name ->
             { model with FirstName = name }, Cmd.none, ExternalMsg.NoOp
         | UpdateLastName name ->
@@ -123,7 +149,7 @@ module ItemPage =
             { model with IsFavorite = isFavorite }, Cmd.none, ExternalMsg.NoOp
         | SetPicture picture ->
             releaseImage model.Picture
-            { model with Picture = Some picture}, Cmd.none, ExternalMsg.NoOp
+            { model with Picture = picture}, Cmd.none, ExternalMsg.NoOp
         | SaveContact (contact, picture, firstName, lastName, address, isFavorite) ->
             let newContact =
                 match contact with
