@@ -13,20 +13,20 @@ module Style =
         View.Label(text=text, horizontalOptions=LayoutOptions.Center, verticalOptions=LayoutOptions.CenterAndExpand)
 
     let mkFormLabel text =
-        View.Label(text=text, margin=new Thickness(20., 20., 20., 10.))
+        View.Label(text=text, margin=new Thickness(0., 20., 0., 5.))
 
-    let mkFormEntry placeholder text isValid textChanged =
-        View.BorderedEntry(placeholder=placeholder, text=text, textChanged=(fun e -> e.NewTextValue |> textChanged),
+    let mkFormEntry placeholder text keyboard isValid textChanged =
+        View.BorderedEntry(placeholder=placeholder, text=text, keyboard=keyboard, textChanged=(fun e -> e.NewTextValue |> textChanged),
                            borderColor=(match isValid with true -> Color.Default | false -> Color.Red))
 
     let mkFormEditor text textChanged =
-        View.Editor(text=text, textChanged=(fun e -> e.NewTextValue |> textChanged), heightRequest=100., margin=new Thickness(20., 0., 20., 0.))
+        View.Editor(text=text, textChanged=(fun e -> e.NewTextValue |> textChanged), heightRequest=100.)
 
     let mkFormSwitch isToggled toggled =
-        View.Switch(isToggled=isToggled, toggled=toggled, margin=new Thickness(20., 0., 20., 0.))
+        View.Switch(isToggled=isToggled, toggled=toggled)
 
     let mkDestroyButton text command isVisible =
-        View.Button(text=text, command=command, isVisible=isVisible, backgroundColor=Color.Red, textColor=Color.White, margin=new Thickness(20., 0., 20., 20.), verticalOptions=LayoutOptions.EndAndExpand)
+        View.Button(text=text, command=command, isVisible=isVisible, backgroundColor=Color.Red, textColor=Color.White, margin=new Thickness(0., 20., 0., 0.), verticalOptions=LayoutOptions.EndAndExpand)
 
     let mkToolbarButton text command =
         View.ToolbarItem(order=ToolbarItemOrder.Primary, text=text, command=command)

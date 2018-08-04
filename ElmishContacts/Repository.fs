@@ -8,30 +8,36 @@ module Repository =
     type ContactObject() =
         [<PrimaryKey>][<AutoIncrement>]
         member val Id = 0 with get, set
-        member val Picture: byte array = null with get, set
         member val FirstName = "" with get, set
         member val LastName = "" with get, set
+        member val Email = "" with get, set
+        member val Phone = "" with get, set
         member val Address = "" with get, set
         member val IsFavorite = false with get, set
+        member val Picture: byte array = null with get, set
 
     let convertToObject (item: Contact) =
         let obj = ContactObject()
         obj.Id <- item.Id
-        obj.Picture <- item.Picture
         obj.FirstName <- item.FirstName
         obj.LastName <- item.LastName
+        obj.Email <- item.Email
+        obj.Phone <- item.Phone
         obj.Address <- item.Address
         obj.IsFavorite <- item.IsFavorite
+        obj.Picture <- item.Picture
         obj
 
     let convertToModel (obj: ContactObject) : Contact =
         {
             Id = obj.Id
-            Picture = obj.Picture
             FirstName = obj.FirstName
             LastName = obj.LastName
+            Email = obj.Email
+            Phone = obj.Phone
             Address = obj.Address
             IsFavorite = obj.IsFavorite
+            Picture = obj.Picture
         }
 
     let connect dbPath = async {

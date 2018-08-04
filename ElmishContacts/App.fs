@@ -10,12 +10,12 @@ module App =
     type Model = 
         {
             MainPageModel: MainPage.Model
-            ItemPageModel: ItemPage.Model option
+            EditPageModel: EditPage.Model option
             AboutPageModel: bool option
         }
 
     type Msg = | MainPageMsg of MainPage.Msg
-               | ItemPageMsg of ItemPage.Msg
+               | EditPageMsg of EditPage.Msg
                | GoToItem of Contact option
                | GoToAbout
                | UpdateMainWithContactAdded of Contact
@@ -27,7 +27,7 @@ module App =
         let mainModel, mainMsg = MainPage.init dbPath ()
         {
             MainPageModel = mainModel
-            ItemPageModel = None
+            EditPageModel = None
             AboutPageModel = None
         }, Cmd.batch [ (Cmd.map MainPageMsg mainMsg) ]
 
@@ -49,52 +49,52 @@ module App =
 
             { model with MainPageModel = m }, Cmd.batch [ (Cmd.map MainPageMsg cmd); cmd2 ]
 
-        | ItemPageMsg msg ->
-            let m, cmd, externalMsg = ItemPage.update dbPath msg model.ItemPageModel.Value
+        | EditPageMsg msg ->
+            let m, cmd, externalMsg = EditPage.update dbPath msg model.EditPageModel.Value
 
             let cmd2 =
                 match externalMsg with
-                | ItemPage.ExternalMsg.NoOp ->
+                | EditPage.ExternalMsg.NoOp ->
                     Cmd.none
-                | ItemPage.ExternalMsg.GoBackAfterContactAdded contact ->
+                | EditPage.ExternalMsg.GoBackAfterContactAdded contact ->
                     Cmd.ofMsg (UpdateMainWithContactAdded contact)
-                | ItemPage.ExternalMsg.GoBackAfterContactUpdated contact ->
+                | EditPage.ExternalMsg.GoBackAfterContactUpdated contact ->
                     Cmd.ofMsg (UpdateMainWithContactUpdated contact)
-                | ItemPage.ExternalMsg.GoBackAfterContactDeleted contact ->
+                | EditPage.ExternalMsg.GoBackAfterContactDeleted contact ->
                     Cmd.ofMsg (UpdateMainWithContactDeleted contact)
 
-            { model with ItemPageModel = Some m }, Cmd.batch [ (Cmd.map ItemPageMsg cmd); cmd2 ]
+            { model with EditPageModel = Some m }, Cmd.batch [ (Cmd.map EditPageMsg cmd); cmd2 ]
 
         | NavigationPopped ->
-            match (model.ItemPageModel, model.AboutPageModel) with
+            match (model.EditPageModel, model.AboutPageModel) with
             | None, None -> model, Cmd.none
             | None, Some _ -> { model with AboutPageModel = None }, Cmd.none
-            | Some _, _ -> { model with ItemPageModel = None }, Cmd.none
+            | Some _, _ -> { model with EditPageModel = None }, Cmd.none
 
         | GoToAbout ->
             { model with AboutPageModel = Some true }, Cmd.none
 
         | GoToItem contact ->
-            let m, cmd = ItemPage.init contact
-            { model with ItemPageModel = Some m }, (Cmd.map ItemPageMsg cmd)
+            let m, cmd = EditPage.init contact
+            { model with EditPageModel = Some m }, (Cmd.map EditPageMsg cmd)
 
         | UpdateMainWithContactAdded contact ->
-            { model with ItemPageModel = None }, Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactAdded contact))
+            { model with EditPageModel = None }, Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactAdded contact))
 
         | UpdateMainWithContactUpdated contact ->
-            { model with ItemPageModel = None }, Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactUpdated contact))
+            { model with EditPageModel = None }, Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactUpdated contact))
 
         | UpdateMainWithContactDeleted contact ->
-            { model with ItemPageModel = None }, Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactDeleted contact))
+            { model with EditPageModel = None }, Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactDeleted contact))
 
 
     let view (model: Model) dispatch =
         let mainPage = MainPage.view model.MainPageModel (MainPageMsg >> dispatch)
 
         let itemPage =
-            match model.ItemPageModel with
+            match model.EditPageModel with
             | None -> None
-            | Some iModel -> Some (ItemPage.view iModel (ItemPageMsg >> dispatch))
+            | Some iModel -> Some (EditPage.view iModel (EditPageMsg >> dispatch))
 
         let aboutPage = 
             match model.AboutPageModel with

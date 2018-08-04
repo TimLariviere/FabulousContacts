@@ -18,10 +18,10 @@ module DynamicViews =
 
     type Elmish.XamarinForms.DynamicViews.View with
         static member BorderedEntry(?borderColor: Color,
-                                    ?placeholder, ?text, ?textChanged) =
+                                    ?placeholder, ?text, ?textChanged, ?keyboard) =
             let attribCount = match borderColor with None -> 0 | Some _ -> 1
             let attribs =
-                View.BuildEntry(attribCount, ?placeholder=placeholder, ?text=text, ?textChanged=textChanged)
+                View.BuildEntry(attribCount, ?placeholder=placeholder, ?text=text, ?textChanged=textChanged, ?keyboard=keyboard)
 
             match borderColor with None -> () | Some v -> attribs.Add(BorderedEntryBorderColorAttributeKey, v)
 

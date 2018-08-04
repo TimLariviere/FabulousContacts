@@ -119,7 +119,7 @@ module MainPage =
             dependsOn () (fun model () ->
                 [
                     mkToolbarButton "About" (fun() -> dispatch AboutTapped)
-                    mkToolbarButton "Add" (fun() -> dispatch AddNewContactTapped)
+                    mkToolbarButton "+" (fun() -> dispatch AddNewContactTapped)
                 ]
             )
 
@@ -204,6 +204,6 @@ module MainPage =
             dependsOn model (fun model _ ->
                 View.TabbedPage(
                     title=title,
-                    children=[ favoriteTab; contactsTab; mapTab ]
+                    children=[ contactsTab; favoriteTab; mapTab ]
                 )
             )

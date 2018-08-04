@@ -10,15 +10,17 @@ open Xamarin.Forms
 open Plugin.Permissions.Abstractions
 open Plugin.Media
 
-module ItemPage =
+module EditPage =
     /// Declarations
     type Msg = 
                // Fields update
-               | UpdatePicture
                | UpdateFirstName of string
                | UpdateLastName of string
+               | UpdateEmail of string
+               | UpdatePhone of string
                | UpdateAddress of string
                | UpdateIsFavorite of bool
+               | UpdatePicture
                | SetPicture of byte array option
 
                // Actions
@@ -38,11 +40,13 @@ module ItemPage =
     type Model =
         {
             Contact: Contact option
-            Picture: byte array option
             FirstName: string
             LastName: string
+            Email: string
+            Phone: string
             Address: string
             IsFavorite: bool
+            Picture: byte array option
             IsFirstNameValid: bool
             IsLastNameValid: bool
         }
@@ -133,22 +137,26 @@ module ItemPage =
             | Some c ->
                 {
                     Contact = Some c
-                    Picture = if c.Picture <> null then Some c.Picture else None
                     FirstName = c.FirstName
                     LastName = c.LastName
+                    Email = c.Email
+                    Phone = c.Phone
                     Address = c.Address
                     IsFavorite = c.IsFavorite
+                    Picture = if c.Picture <> null then Some c.Picture else None
                     IsFirstNameValid = true
                     IsLastNameValid = true
                 }
             | None ->
                 {
                     Contact = None
-                    Picture = None
                     FirstName = ""
                     LastName = ""
+                    Email = ""
+                    Phone = ""
                     Address = ""
                     IsFavorite = false
+                    Picture = None
                     IsFirstNameValid = false
                     IsLastNameValid = false
                 }
@@ -157,16 +165,20 @@ module ItemPage =
 
     let update dbPath msg (model: Model) =
         match msg with
-        | UpdatePicture ->
-            model, Cmd.ofAsyncMsgOption (updatePictureAsync model.Picture), ExternalMsg.NoOp
         | UpdateFirstName v ->
             { model with FirstName = v; IsFirstNameValid = (validateFirstName v) }, Cmd.none, ExternalMsg.NoOp
         | UpdateLastName v ->
             { model with LastName = v; IsLastNameValid = (validateLastName v) }, Cmd.none, ExternalMsg.NoOp
+        | UpdateEmail email ->
+            { model with Email = email }, Cmd.none, ExternalMsg.NoOp
+        | UpdatePhone phone ->
+            { model with Phone = phone }, Cmd.none, ExternalMsg.NoOp
         | UpdateAddress address ->
             { model with Address = address }, Cmd.none, ExternalMsg.NoOp
         | UpdateIsFavorite isFavorite ->
             { model with IsFavorite = isFavorite }, Cmd.none, ExternalMsg.NoOp
+        | UpdatePicture ->
+            model, Cmd.ofAsyncMsgOption (updatePictureAsync model.Picture), ExternalMsg.NoOp
         | SetPicture picture ->
             { model with Picture = picture}, Cmd.none, ExternalMsg.NoOp
 
@@ -178,7 +190,16 @@ module ItemPage =
                 let id = (match model.Contact with None -> 0 | Some c -> c.Id)
                 let bytes = (match model.Picture with None -> null | Some arr -> arr)
                 let newContact =
-                    { Id = id; Picture = bytes; FirstName = model.FirstName; LastName = model.LastName; Address = model.Address; IsFavorite = model.IsFavorite }
+                    { 
+                        Id = id
+                        FirstName = model.FirstName
+                        LastName = model.LastName
+                        Email = model.Email
+                        Phone = model.Phone
+                        Address = model.Address
+                        IsFavorite = model.IsFavorite
+                        Picture = bytes
+                    }
                 model, Cmd.ofAsyncMsg (saveAsync dbPath newContact), ExternalMsg.NoOp
 
         | DeleteContact contact ->
@@ -204,36 +225,46 @@ module ItemPage =
                 toolbarItems=[
                     mkToolbarButton "Save" (fun() -> dispatch SaveContact)
                 ],
-                content=View.StackLayout(
-                    children=[
-                        View.Grid(
-                            margin=Thickness(20., 20., 20., 0.),
-                            coldefs=[ 100.; GridLength.Star ],
-                            rowdefs=[ 50.; 50. ],
-                            columnSpacing=10.,
-                            rowSpacing=0.,
-                            children=[
-                                match mModel.Picture with
-                                | None -> 
-                                    yield View.Button(image="addphoto.png", backgroundColor=Color.White, command=(fun() -> dispatch UpdatePicture)).GridRowSpan(2)
-                                | Some picture ->
-                                    yield View.Image_Stream(
-                                            source=picture,
-                                            aspect=Aspect.AspectFill,
-                                            gestureRecognizers=[ View.TapGestureRecognizer(command=(fun() -> dispatch UpdatePicture)) ]
-                                          ).GridRowSpan(2)
+                content=View.ScrollView(
+                    content=View.StackLayout(
+                        padding=Thickness(20.),
+                        children=[
+                            View.Grid(
+                                coldefs=[ 100.; GridLength.Star ],
+                                rowdefs=[ 50.; 50. ],
+                                columnSpacing=10.,
+                                rowSpacing=0.,
+                                children=[
+                                    match mModel.Picture with
+                                    | None -> 
+                                        yield View.Button(image="addphoto.png", backgroundColor=Color.White, command=(fun() -> dispatch UpdatePicture)).GridRowSpan(2)
+                                    | Some picture ->
+                                        yield View.Image_Stream(
+                                                source=picture,
+                                                aspect=Aspect.AspectFill,
+                                                gestureRecognizers=[ View.TapGestureRecognizer(command=(fun() -> dispatch UpdatePicture)) ]
+                                              ).GridRowSpan(2)
 
-                                yield (mkFormEntry "First name*" mModel.FirstName mModel.IsFirstNameValid (UpdateFirstName >> dispatch)).VerticalOptions(LayoutOptions.Center).GridColumn(1)
-                                yield (mkFormEntry "Last name*" mModel.LastName mModel.IsLastNameValid (UpdateLastName >> dispatch)).VerticalOptions(LayoutOptions.Center).GridColumn(1).GridRow(1)
-                            ]
-                        )
+                                    yield (mkFormEntry "First name*" mModel.FirstName Keyboard.Text mModel.IsFirstNameValid (UpdateFirstName >> dispatch)).VerticalOptions(LayoutOptions.Center).GridColumn(1)
+                                    yield (mkFormEntry "Last name*" mModel.LastName Keyboard.Text mModel.IsLastNameValid (UpdateLastName >> dispatch)).VerticalOptions(LayoutOptions.Center).GridColumn(1).GridRow(1)
+                                ]
+                            )
 
-                        mkFormLabel "Address"
-                        mkFormEditor mModel.Address (UpdateAddress >> dispatch)
-                        mkFormLabel "Is Favorite"
-                        mkFormSwitch mModel.IsFavorite (fun e -> e.Value |> UpdateIsFavorite |> dispatch)
-                        mkDestroyButton "Delete" (fun () -> mModel.Contact.Value |> DeleteContact |> dispatch) isDeleteButtonVisible
-                    ]
+                            mkFormLabel "Email"
+                            mkFormEntry "Email" mModel.Email Keyboard.Email true (UpdateEmail >> dispatch)
+
+                            mkFormLabel "Phone"
+                            mkFormEntry "Phone" mModel.Phone Keyboard.Telephone true (UpdatePhone >> dispatch)
+
+                            mkFormLabel "Address"
+                            mkFormEditor mModel.Address (UpdateAddress >> dispatch)
+
+                            mkFormLabel "Is Favorite"
+                            mkFormSwitch mModel.IsFavorite (fun e -> e.Value |> UpdateIsFavorite |> dispatch)
+
+                            mkDestroyButton "Delete" (fun () -> mModel.Contact.Value |> DeleteContact |> dispatch) isDeleteButtonVisible
+                        ]
+                    )
                 )
             )
         )

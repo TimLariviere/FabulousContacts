@@ -6,11 +6,13 @@ module Models =
     type Contact =
         {
             Id: int
-            Picture: byte array
             FirstName: string
             LastName: string
+            Email: string
+            Phone: string
             Address: string
             IsFavorite: bool
+            Picture: byte array
         }
 
     type ContactPin =
