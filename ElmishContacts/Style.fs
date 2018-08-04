@@ -1,8 +1,9 @@
 ﻿namespace ElmishContacts
 
-open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
+open Elmish.XamarinForms.DynamicViews
 open Helpers
+open ElmishContacts.Controls
 
 module Style =
     let accentTextColor = Color.White
@@ -14,11 +15,12 @@ module Style =
     let mkFormLabel text =
         View.Label(text=text, margin=new Thickness(20., 20., 20., 10.))
 
-    let mkFormEntry text textChanged =
-        View.Entry(text=text, textChanged=textChanged, margin=new Thickness(20., 0., 20., 0.))
+    let mkFormEntry placeholder text isValid textChanged =
+        View.BorderedEntry(placeholder=placeholder, text=text, textChanged=(fun e -> e.NewTextValue |> textChanged),
+                           borderColor=(match isValid with true -> Color.Default | false -> Color.Red))
 
     let mkFormEditor text textChanged =
-        View.Editor(text=text, textChanged=textChanged, heightRequest=100., margin=new Thickness(20., 0., 20., 0.))
+        View.Editor(text=text, textChanged=(fun e -> e.NewTextValue |> textChanged), heightRequest=100., margin=new Thickness(20., 0., 20., 0.))
 
     let mkFormSwitch isToggled toggled =
         View.Switch(isToggled=isToggled, toggled=toggled, margin=new Thickness(20., 0., 20., 0.))

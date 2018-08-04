@@ -7,6 +7,7 @@
     <DefineConstants>TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_0;</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Controls\BorderedEntry.fs" />
     <Compile Include="ElmishExtensions.fs" />
     <Compile Include="Helpers.fs" />
     <Compile Include="Style.fs" />
@@ -35,5 +36,8 @@
     <Reference Include="Elmish.XamarinForms.Maps">
       <HintPath>..\Libs\Elmish.XamarinForms.Maps.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Controls\" />
   </ItemGroup>
 </Project>

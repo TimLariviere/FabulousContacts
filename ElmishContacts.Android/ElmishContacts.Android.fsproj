@@ -243,6 +243,7 @@
     <AndroidResource Include="Resources\values\styles.xml" />
     <AndroidResource Include="Resources\xml\file_paths.xml" />
     <None Include="Resources\AboutResources.txt" />
+    <Compile Include="BorderedEntryRenderer.fs" />
     <Compile Include="MainActivity.fs" />
     <None Include="packages.config" />
     <ProjectReference Include="..\ElmishContacts\ElmishContacts.fsproj">
