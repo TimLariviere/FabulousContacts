@@ -143,12 +143,11 @@ module ItemPage =
         | SetPicture picture ->
             { model with Picture = picture}, Cmd.none, ExternalMsg.NoOp
         | SaveContact (contact, picture, firstName, lastName, address, isFavorite) ->
+            let bytes = (match picture with None -> null | Some arr -> arr)
             let newContact =
                 match contact with
-                | None -> { Id = 0; Picture = null; FirstName = firstName; LastName = lastName; Address = address; IsFavorite = isFavorite }
-                | Some c ->
-                    let bytes = (match picture with None -> null | Some arr -> arr)
-                    { c with Picture = bytes; FirstName = firstName; LastName = lastName; Address = address; IsFavorite = isFavorite }
+                | None -> { Id = 0; Picture = bytes; FirstName = firstName; LastName = lastName; Address = address; IsFavorite = isFavorite }
+                | Some c -> { c with Picture = bytes; FirstName = firstName; LastName = lastName; Address = address; IsFavorite = isFavorite }
             model, Cmd.ofAsyncMsg (saveAsync dbPath newContact), ExternalMsg.NoOp
         | DeleteContact contact ->
             model, Cmd.ofAsyncMsgOption (deleteAsync dbPath contact), ExternalMsg.NoOp
