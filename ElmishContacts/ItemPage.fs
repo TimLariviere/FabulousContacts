@@ -4,7 +4,6 @@ open Helpers
 open Models
 open Repository
 open Style
-open Images
 open Elmish.XamarinForms
 open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
@@ -23,7 +22,6 @@ module ItemPage =
                | ContactAdded of Contact
                | ContactUpdated of Contact
                | ContactDeleted of Contact
-               | UnloadPage
 
     type ExternalMsg = | NoOp
                        | GoBackAfterContactAdded of Contact
@@ -106,11 +104,6 @@ module ItemPage =
         | _ -> return None
     }
 
-    let releaseImage picture =
-        match picture with
-        | None -> ()
-        | Some bytes -> releaseImageSource bytes
-
     let init (contact: Contact option) =
         let model =
             match contact with
@@ -148,7 +141,6 @@ module ItemPage =
         | UpdateIsFavorite isFavorite ->
             { model with IsFavorite = isFavorite }, Cmd.none, ExternalMsg.NoOp
         | SetPicture picture ->
-            releaseImage model.Picture
             { model with Picture = picture}, Cmd.none, ExternalMsg.NoOp
         | SaveContact (contact, picture, firstName, lastName, address, isFavorite) ->
             let newContact =
@@ -166,9 +158,6 @@ module ItemPage =
             model, Cmd.none, (ExternalMsg.GoBackAfterContactUpdated contact)
         | ContactDeleted contact ->
             model, Cmd.none, (ExternalMsg.GoBackAfterContactDeleted contact)
-        | UnloadPage ->
-            releaseImage model.Picture
-            model, Cmd.none, ExternalMsg.NoOp        
 
     let view model dispatch =
         dependsOn (model.Contact, model.Picture, model.FirstName, model.LastName, model.Address, model.IsFavorite) (fun model (mContact, mPicture, mFirstName, mLastName, mAddress, mIsFavorite) ->
@@ -195,8 +184,8 @@ module ItemPage =
                                 if mPicture.IsNone then
                                     yield View.Button(image="addphoto.png", backgroundColor=Color.White, command=(fun () -> dispatch UpdatePicture)).GridRowSpan(2)
                                 else
-                                    yield View.Image(
-                                            source=createImageSource mPicture.Value,
+                                    yield View.Image_Stream(
+                                            source=mPicture.Value,
                                             aspect=Aspect.AspectFill,
                                             gestureRecognizers=[ View.TapGestureRecognizer(command=(fun () -> dispatch UpdatePicture)) ]
                                           ).GridRowSpan(2)

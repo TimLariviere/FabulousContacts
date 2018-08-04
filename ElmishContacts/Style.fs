@@ -3,7 +3,6 @@
 open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
 open Helpers
-open Images
 
 module Style =
     let accentTextColor = Color.White
@@ -42,14 +41,14 @@ module Style =
         let source =
             match picture with
             | null -> "addphoto.png" :> obj
-            | bytes -> createImageSource bytes :> obj
+            | bytes -> bytes :> obj
 
         View.StackLayout(
             orientation=StackOrientation.Horizontal,
             padding=5.,
             spacing=10.,
             children=[
-                View.Image(source=source, aspect=Aspect.AspectFill, margin=Thickness(15., 0., 0., 0.), heightRequest=50., widthRequest=50.)
+                View.Image_Stream(source=source, aspect=Aspect.AspectFill, margin=Thickness(15., 0., 0., 0.), heightRequest=50., widthRequest=50.)
                 View.StackLayout(
                     spacing=5.,
                     horizontalOptions=LayoutOptions.FillAndExpand,

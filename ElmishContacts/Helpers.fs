@@ -75,32 +75,3 @@ module Helpers =
             do! stream.CopyToAsync(memoryStream) |> Async.AwaitTask
             return Some (memoryStream.ToArray())
     }
-
-module Images =
-    open System.Collections.Generic
-
-    type internal Memoizations() = 
-         static let t = Dictionary<byte array, ImageSource>(HashIdentity.Structural)
-         static member T = t
-         static member Add(key: byte array, res: ImageSource) = 
-             if Memoizations.T.Count > 50000 then 
-                 System.Diagnostics.Trace.WriteLine("Clearing 'imageSource' memoizations...")
-                 Memoizations.T.Clear()
-             
-             Memoizations.T.[key] <- res
-
-         static member Remove(key: byte array) =
-            Memoizations.T.Remove(key)
-
-    let createImageSource key =
-        match Memoizations.T.TryGetValue(key) with
-        | true, imageSource -> imageSource
-        | _ ->
-            let imageSource = ImageSource.FromStream(fun () -> new MemoryStream(key) :> Stream)
-            Memoizations.T.Add(key, imageSource)
-            imageSource
-
-    let releaseImageSource key =
-        match Memoizations.T.TryGetValue(key) with
-        | true, _ -> Memoizations.Remove(key) |> ignore
-        | _ -> ()

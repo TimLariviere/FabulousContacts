@@ -3,7 +3,6 @@
 open Models
 open Repository
 open Style
-open Images
 open Elmish.XamarinForms
 open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
@@ -36,25 +35,26 @@ module MainPage =
     }
 
     let loadPinsAsync (contacts: Contact list) = async {
-        let geocoder = Geocoder()
+        //let geocoder = Geocoder()
 
-        let gettingPositions =
-            contacts
-            |> List.map (fun c -> async {
-                let! positions = geocoder.GetPositionsForAddressAsync(c.Address) |> Async.AwaitTask
-                let position = positions |> Seq.tryHead
-                return (c, position)
-            })
-            |> Async.Parallel
+        //let gettingPositions =
+        //    contacts
+        //    |> List.map (fun c -> async {
+        //        let! positions = geocoder.GetPositionsForAddressAsync(c.Address) |> Async.AwaitTask
+        //        let position = positions |> Seq.tryHead
+        //        return (c, position)
+        //    })
+        //    |> Async.Parallel
 
-        let! contactsAndPositions = gettingPositions
+        //let! contactsAndPositions = gettingPositions
 
-        let pins = contactsAndPositions
-                   |> Array.filter (fun (_, p) -> Option.isSome p)
-                   |> Array.map (fun (c, p) -> { Position = p.Value; Label = (c.FirstName + " " + c.LastName); PinType = PinType.Place; Address = c.Address})
-                   |> Array.toList
+        //let pins = contactsAndPositions
+        //           |> Array.filter (fun (_, p) -> Option.isSome p)
+        //           |> Array.map (fun (c, p) -> { Position = p.Value; Label = (c.FirstName + " " + c.LastName); PinType = PinType.Place; Address = c.Address})
+        //           |> Array.toList
 
-        return PinsLoaded pins
+        //return PinsLoaded pins
+        return None
     }
 
     let groupContacts contacts =
@@ -77,7 +77,7 @@ module MainPage =
     let update msg model =
         match msg with
         | ContactsLoaded contacts ->
-            { model with Contacts = Some contacts }, Cmd.ofAsyncMsg (loadPinsAsync contacts), ExternalMsg.NoOp
+            { model with Contacts = Some contacts }, Cmd.ofAsyncMsgOption (loadPinsAsync contacts), ExternalMsg.NoOp
         | PinsLoaded pins ->
             { model with Pins = Some pins }, Cmd.none, ExternalMsg.NoOp
         | ContactSelected contact ->
@@ -88,19 +88,13 @@ module MainPage =
             model, Cmd.none, ExternalMsg.AddNewContact
         | ContactAdded contact ->
             let newContacts = model.Contacts.Value @ [ contact ]
-            { model with Contacts = Some newContacts }, Cmd.ofAsyncMsg (loadPinsAsync newContacts), ExternalMsg.NoOp
+            { model with Contacts = Some newContacts }, Cmd.ofAsyncMsgOption (loadPinsAsync newContacts), ExternalMsg.NoOp
         | ContactUpdated contact ->
-            let previousContact = model.Contacts.Value |> List.find (fun c -> c.Id = contact.Id)
-            match previousContact.Picture, contact.Picture with
-            | prevVal, currVal when prevVal = currVal && prevVal <> null -> releaseImageSource previousContact.Picture
-            | _ -> ()
-
             let newContacts = model.Contacts.Value |> List.map (fun c -> if c.Id = contact.Id then contact else c)
-            { model with Contacts = Some newContacts }, Cmd.ofAsyncMsg (loadPinsAsync newContacts), ExternalMsg.NoOp
+            { model with Contacts = Some newContacts }, Cmd.ofAsyncMsgOption (loadPinsAsync newContacts), ExternalMsg.NoOp
         | ContactDeleted contact ->
-            releaseImageSource contact.Picture
             let newContacts = model.Contacts.Value |> List.filter (fun c -> c <> contact)
-            { model with Contacts = Some newContacts }, Cmd.ofAsyncMsg (loadPinsAsync newContacts), ExternalMsg.NoOp
+            { model with Contacts = Some newContacts }, Cmd.ofAsyncMsgOption (loadPinsAsync newContacts), ExternalMsg.NoOp
 
     let mkListView contactsLength (groupedContacts: (string * Contact list) list) itemTapped =
         View.ListViewGrouped_XF31(
