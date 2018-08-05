@@ -10,13 +10,17 @@ module App =
     type Model = 
         {
             MainPageModel: MainPage.Model
+            DetailPageModel: DetailPage.Model option
             EditPageModel: EditPage.Model option
             AboutPageModel: bool option
+            ManualNavPop: bool
         }
 
     type Msg = | MainPageMsg of MainPage.Msg
+               | DetailPageMsg of DetailPage.Msg
                | EditPageMsg of EditPage.Msg
-               | GoToItem of Contact option
+               | GoToDetail of Contact
+               | GoToEdit of Contact option
                | GoToAbout
                | UpdateMainWithContactAdded of Contact
                | UpdateMainWithContactUpdated of Contact
@@ -27,8 +31,10 @@ module App =
         let mainModel, mainMsg = MainPage.init dbPath ()
         {
             MainPageModel = mainModel
+            DetailPageModel = None
             EditPageModel = None
             AboutPageModel = None
+            ManualNavPop = false
         }, Cmd.batch [ (Cmd.map MainPageMsg mainMsg) ]
 
     let update dbPath msg model =
@@ -41,13 +47,25 @@ module App =
                 | MainPage.ExternalMsg.NoOp ->
                     Cmd.none
                 | MainPage.ExternalMsg.Select contact ->
-                    Cmd.ofMsg (GoToItem (Some contact))
+                    Cmd.ofMsg (GoToDetail contact)
                 | MainPage.ExternalMsg.About ->
                     Cmd.ofMsg GoToAbout
                 | MainPage.ExternalMsg.AddNewContact ->
-                    Cmd.ofMsg (GoToItem None)
+                    Cmd.ofMsg (GoToEdit None)
 
             { model with MainPageModel = m }, Cmd.batch [ (Cmd.map MainPageMsg cmd); cmd2 ]
+
+        | DetailPageMsg msg ->
+            let m, cmd, externalMsg = DetailPage.update msg model.DetailPageModel.Value
+
+            let cmd2 =
+                match externalMsg with
+                | DetailPage.ExternalMsg.NoOp ->
+                    Cmd.none
+                | DetailPage.ExternalMsg.EditContact contact ->
+                    Cmd.ofMsg (GoToEdit (Some contact))
+
+            { model with DetailPageModel = Some m }, Cmd.batch [ (Cmd.map DetailPageMsg cmd); cmd2 ]
 
         | EditPageMsg msg ->
             let m, cmd, externalMsg = EditPage.update dbPath msg model.EditPageModel.Value
@@ -66,35 +84,46 @@ module App =
             { model with EditPageModel = Some m }, Cmd.batch [ (Cmd.map EditPageMsg cmd); cmd2 ]
 
         | NavigationPopped ->
-            match (model.EditPageModel, model.AboutPageModel) with
-            | None, None -> model, Cmd.none
-            | None, Some _ -> { model with AboutPageModel = None }, Cmd.none
-            | Some _, _ -> { model with EditPageModel = None }, Cmd.none
+            match model.ManualNavPop, (model.AboutPageModel, model.DetailPageModel, model.EditPageModel) with
+            | true, _ -> { model with ManualNavPop = false }, Cmd.none // Do not pop pages if already done manually
+            | false, (None, None, None) -> model, Cmd.none
+            | false, (Some _, None, None) -> { model with AboutPageModel = None }, Cmd.none
+            | false, (_, Some _, None) -> { model with DetailPageModel = None }, Cmd.none
+            | false, (_, _, Some _) -> { model with EditPageModel = None }, Cmd.none
 
         | GoToAbout ->
             { model with AboutPageModel = Some true }, Cmd.none
 
-        | GoToItem contact ->
+        | GoToDetail contact ->
+            let m, cmd = DetailPage.init contact
+            { model with DetailPageModel = Some m }, (Cmd.map DetailPageMsg cmd)
+
+        | GoToEdit contact ->
             let m, cmd = EditPage.init contact
             { model with EditPageModel = Some m }, (Cmd.map EditPageMsg cmd)
 
         | UpdateMainWithContactAdded contact ->
-            { model with EditPageModel = None }, Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactAdded contact))
+            { model with EditPageModel = None; ManualNavPop = true }, Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactAdded contact))
 
         | UpdateMainWithContactUpdated contact ->
-            { model with EditPageModel = None }, Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactUpdated contact))
+            { model with EditPageModel = None; ManualNavPop = true }, Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactUpdated contact))
 
         | UpdateMainWithContactDeleted contact ->
-            { model with EditPageModel = None }, Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactDeleted contact))
+            { model with EditPageModel = None; ManualNavPop = true }, Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactDeleted contact))
 
 
     let view (model: Model) dispatch =
         let mainPage = MainPage.view model.MainPageModel (MainPageMsg >> dispatch)
 
-        let itemPage =
+        let detailPage =
+            match model.DetailPageModel with
+            | None -> None
+            | Some dModel -> Some (DetailPage.view dModel (DetailPageMsg >> dispatch))
+
+        let editPage =
             match model.EditPageModel with
             | None -> None
-            | Some iModel -> Some (EditPage.view iModel (EditPageMsg >> dispatch))
+            | Some eModel -> Some (EditPage.view eModel (EditPageMsg >> dispatch))
 
         let aboutPage = 
             match model.AboutPageModel with
@@ -106,10 +135,12 @@ module App =
             barBackgroundColor=Style.accentColor,
             popped=(fun _ -> NavigationPopped |> dispatch),
             pages=
-                match (itemPage, aboutPage) with
-                | (None, None) -> [ mainPage ]
-                | (None, Some about) -> [ mainPage; about ]
-                | (Some item, _) -> [ mainPage; item ]
+                match aboutPage, detailPage, editPage with
+                | None, None, None -> [ mainPage ]
+                | Some about, None, None -> [ mainPage; about ]
+                | _, Some detail, None -> [ mainPage; detail ]
+                | _, Some detail, Some edit -> [ mainPage; detail; edit ]
+                | _, None, Some edit -> [ mainPage; edit ]
         )
 
 type App (dbPath) as app = 

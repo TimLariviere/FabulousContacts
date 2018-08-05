@@ -14,7 +14,7 @@ module CustomViews =
     /// ListViewGrouped XamarinForms 3.1
     let ListViewGroupedSelectionModeAttributeKey = AttributeKey<_> "ListViewGrouped_SelectionMode"
 
-    type View with
+    type Elmish.XamarinForms.DynamicViews.View with
         static member ListViewGrouped_XF31(?selectionMode: ListViewSelectionMode,
                                            ?items, ?showJumpList, ?rowHeight, ?itemTapped, ?verticalOptions) =
 
@@ -34,12 +34,12 @@ module CustomViews =
     /// Image with bytes
     let ImageStreamSourceAttributeKey = AttributeKey<_> "ImageStream_Source"
 
-    type View with
-        static member Image_Stream(?source: obj, ?aspect, ?margin, ?heightRequest, ?widthRequest, ?gestureRecognizers) =
+    type Elmish.XamarinForms.DynamicViews.View with
+        static member ImageEx(?source: obj, ?aspect, ?margin, ?heightRequest, ?widthRequest, ?gestureRecognizers, ?isVisible) =
             let attribCount = match source with None -> 0 | Some _ -> 1
             let attribs =
                 View.BuildImage(attribCount, ?aspect=aspect, ?margin=margin, ?heightRequest=heightRequest,
-                                ?widthRequest=widthRequest, ?gestureRecognizers=gestureRecognizers)
+                                ?widthRequest=widthRequest, ?gestureRecognizers=gestureRecognizers, ?isVisible=isVisible)
 
             match source with None -> () | Some v -> attribs.Add(ImageStreamSourceAttributeKey, v)       
 

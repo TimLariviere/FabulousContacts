@@ -42,15 +42,15 @@ module Style =
     let mkCellView picture name address isFavorite =
         let source =
             match picture with
-            | null -> "addphoto.png" :> obj
-            | bytes -> bytes :> obj
+            | null -> box "addphoto.png"
+            | bytes -> box bytes
 
         View.StackLayout(
             orientation=StackOrientation.Horizontal,
             padding=5.,
             spacing=10.,
             children=[
-                View.Image_Stream(source=source, aspect=Aspect.AspectFill, margin=Thickness(15., 0., 0., 0.), heightRequest=50., widthRequest=50.)
+                View.ImageEx(source=source, aspect=Aspect.AspectFill, margin=Thickness(15., 0., 0., 0.), heightRequest=50., widthRequest=50.)
                 View.StackLayout(
                     spacing=5.,
                     horizontalOptions=LayoutOptions.FillAndExpand,

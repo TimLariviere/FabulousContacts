@@ -14,6 +14,7 @@
     <Compile Include="Models.fs" />
     <Compile Include="Repository.fs" />
     <Compile Include="MainPage.fs" />
+    <Compile Include="DetailPage.fs" />
     <Compile Include="EditPage.fs" />
     <Compile Include="AboutPage.fs" />
     <Compile Include="App.fs" />

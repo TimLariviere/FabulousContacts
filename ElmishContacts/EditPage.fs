@@ -239,7 +239,7 @@ module EditPage =
                                     | None -> 
                                         yield View.Button(image="addphoto.png", backgroundColor=Color.White, command=(fun() -> dispatch UpdatePicture)).GridRowSpan(2)
                                     | Some picture ->
-                                        yield View.Image_Stream(
+                                        yield View.ImageEx(
                                                 source=picture,
                                                 aspect=Aspect.AspectFill,
                                                 gestureRecognizers=[ View.TapGestureRecognizer(command=(fun() -> dispatch UpdatePicture)) ]
