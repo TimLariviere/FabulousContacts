@@ -22,9 +22,6 @@ module Style =
     let mkFormEditor text textChanged =
         View.Editor(text=text, textChanged=(fun e -> e.NewTextValue |> textChanged), heightRequest=100.)
 
-    let mkFormSwitch isToggled toggled =
-        View.Switch(isToggled=isToggled, toggled=toggled)
-
     let mkDestroyButton text command isVisible =
         View.Button(text=text, command=command, isVisible=isVisible, backgroundColor=Color.Red, textColor=Color.White, margin=new Thickness(0., 20., 0., 0.), verticalOptions=LayoutOptions.EndAndExpand)
 
@@ -68,7 +65,7 @@ module Style =
         dependsOn (picture, name, address, isFavorite) (fun _ (cPicture, cName, cAddress, cIsFavorite) -> mkCellView cPicture cName cAddress cIsFavorite)
 
     let mkDetailActionButton image command=
-        View.Button(image=image, command=command, heightRequest=35., widthRequest=35.)
+        View.Button(image=image, command=command, heightRequest=35., horizontalOptions=LayoutOptions.CenterAndExpand)
 
     let mkDetailFieldTitle text =
         View.Label(text=text, fontAttributes=FontAttributes.Bold, margin=Thickness(0., 10., 0., 0.))

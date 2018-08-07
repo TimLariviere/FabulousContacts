@@ -250,6 +250,15 @@ module EditPage =
                                 ]
                             )
 
+                            View.StackLayout(
+                                orientation=StackOrientation.Horizontal,
+                                margin=new Thickness(0., 20., 0., 0.),
+                                children=[
+                                    View.Label(text="Mark as Favorite", verticalOptions=LayoutOptions.Center)
+                                    View.Switch(isToggled=mModel.IsFavorite, toggled=(fun e -> e.Value |> UpdateIsFavorite |> dispatch), horizontalOptions=LayoutOptions.EndAndExpand, verticalOptions=LayoutOptions.Center)
+                                ]
+                            )
+
                             mkFormLabel "Email"
                             mkFormEntry "Email" mModel.Email Keyboard.Email true (UpdateEmail >> dispatch)
 
@@ -258,9 +267,6 @@ module EditPage =
 
                             mkFormLabel "Address"
                             mkFormEditor mModel.Address (UpdateAddress >> dispatch)
-
-                            mkFormLabel "Is Favorite"
-                            mkFormSwitch mModel.IsFavorite (fun e -> e.Value |> UpdateIsFavorite |> dispatch)
 
                             mkDestroyButton "Delete" (fun () -> mModel.Contact.Value |> DeleteContact |> dispatch) isDeleteButtonVisible
                         ]
