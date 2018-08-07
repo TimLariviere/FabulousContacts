@@ -55,14 +55,14 @@ module Helpers =
         let options = new StoreCameraMediaOptions()
         options.AllowCropping <- Nullable<bool>(true)
         options.PhotoSize <- PhotoSize.MaxWidthHeight
-        options.MaxWidthHeight <- Nullable<int>(75)
+        options.MaxWidthHeight <- Nullable<int>(150)
         return! CrossMedia.Current.TakePhotoAsync(options) |> Async.AwaitTask
     }
 
     let pickPictureAsync() = async {
         let options = new PickMediaOptions()
         options.PhotoSize <- PhotoSize.MaxWidthHeight
-        options.MaxWidthHeight <- Nullable<int>(75)
+        options.MaxWidthHeight <- Nullable<int>(150)
         return! CrossMedia.Current.PickPhotoAsync(options) |> Async.AwaitTask
     }
 

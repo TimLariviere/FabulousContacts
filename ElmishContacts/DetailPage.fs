@@ -4,6 +4,9 @@ open Models
 open Elmish.XamarinForms
 open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
+open Style
+open Xamarin.Essentials
+open Helpers
 
 module DetailPage =
     type Msg = | EditTapped
@@ -22,6 +25,38 @@ module DetailPage =
     let hasSetField field =
         (System.String.IsNullOrWhiteSpace(field) = false)
 
+    let dialNumber phoneNumber = async {
+        try
+            PhoneDialer.Open(phoneNumber)
+        with
+        | :? FeatureNotSupportedException as fnse -> do! displayAlert("Can't dial number", "Phone Dialer is not supported on this device", "OK")
+        | exn -> do! displayAlert("Can't dial number", "An error has occurred", "OK")
+
+        return None
+    }
+
+    let composeSms phoneNumber = async {
+        try
+            let message = SmsMessage("", phoneNumber)
+            do! Sms.ComposeAsync(message) |> Async.AwaitTask
+        with
+        | :? FeatureNotSupportedException as fnse -> do! displayAlert("Can't send SMS", "Sms is not supported on this device", "OK")
+        | exn -> do! displayAlert("Can't send SMS", "An error has occurred", "OK")
+
+        return None
+    }
+
+    let composeEmail emailAddress = async {
+        try
+            let message = EmailMessage("", "", [| emailAddress |])
+            do! Email.ComposeAsync(message) |> Async.AwaitTask
+        with
+        | :? FeatureNotSupportedException as fnse -> do! displayAlert("Can't send email", "Email is not supported on this device", "OK")
+        | exn -> do! displayAlert("Can't send email", "An error has occurred", "OK")
+
+        return None
+    }
+
     let init (contact: Contact) =
         {
             Contact = contact
@@ -30,9 +65,9 @@ module DetailPage =
     let update msg model =
         match msg with
         | EditTapped -> model, Cmd.none, (ExternalMsg.EditContact model.Contact)
-        | CallTapped -> model, Cmd.none, ExternalMsg.NoOp
-        | SmsTapped -> model, Cmd.none, ExternalMsg.NoOp
-        | EmailTapped -> model, Cmd.none, ExternalMsg.NoOp
+        | CallTapped -> model, Cmd.ofAsyncMsgOption (dialNumber model.Contact.Phone), ExternalMsg.NoOp
+        | SmsTapped -> model, Cmd.ofAsyncMsgOption (composeSms model.Contact.Phone), ExternalMsg.NoOp
+        | EmailTapped -> model, Cmd.ofAsyncMsgOption (composeEmail model.Contact.Email), ExternalMsg.NoOp
 
     let view model dispatch =
         View.ContentPage(
@@ -41,27 +76,50 @@ module DetailPage =
             ],
             content=View.ScrollView(
                 content=View.StackLayout(
+                    spacing=0.,
                     children=[
-                        View.ImageEx(source=match model.Contact.Picture with null -> box "addphoto.png" | picture -> box picture)
                         View.StackLayout(
-                            orientation=StackOrientation.Horizontal,
+                            backgroundColor=Color.FromHex("#448cb8"),
+                            padding=Thickness(20., 10., 20., 10.),
+                            spacing=10.,
                             children=[
-                                View.ImageEx(source="star.png", isVisible=model.Contact.IsFavorite, heightRequest=25., widthRequest=25.)
-                                View.Label(text= model.Contact.FirstName + " " + model.Contact.LastName)
+                                View.Label(text=model.Contact.FirstName + " " + model.Contact.LastName, fontSize=20, fontAttributes=FontAttributes.Bold, textColor=accentTextColor, horizontalOptions=LayoutOptions.Center)
+                                View.Grid(
+                                    widthRequest=125.,
+                                    heightRequest=125.,
+                                    horizontalOptions=LayoutOptions.Center,
+                                    children=[
+                                        View.ImageEx(source=(match model.Contact.Picture with null -> box "addphoto.png" | picture -> box picture), aspect=Aspect.AspectFill)
+                                        View.ImageEx(source="star.png", isVisible=model.Contact.IsFavorite, heightRequest=35., widthRequest=35., horizontalOptions=LayoutOptions.Start, verticalOptions=LayoutOptions.Start)
+                                    ]
+                                )
+                                View.StackLayout(
+                                    horizontalOptions=LayoutOptions.Center,
+                                    orientation=StackOrientation.Horizontal,
+                                    margin=Thickness(0., 10., 0., 10.),
+                                    spacing=30.,
+                                    children=[
+                                        if hasSetField model.Contact.Phone then
+                                            yield mkDetailActionButton "call.png" (fun () -> dispatch CallTapped)
+                                            yield mkDetailActionButton "sms.png" (fun () -> dispatch SmsTapped)
+                                        if hasSetField model.Contact.Email then
+                                            yield mkDetailActionButton "email.png" (fun () -> dispatch EmailTapped)
+                                    ]
+                                )
                             ]
                         )
                         View.StackLayout(
-                            orientation=StackOrientation.Horizontal,
+                            padding=Thickness(20., 10., 20., 10.),
+                            spacing=10.,
                             children=[
-                                if hasSetField model.Contact.Phone then
-                                    yield View.Button(text="call", command=(fun () -> dispatch CallTapped))
-                                    yield View.Button(text="sms", command=(fun () -> dispatch SmsTapped))
-                                if hasSetField model.Contact.Email then
-                                    yield View.Button(text="email", command=(fun () -> dispatch EmailTapped))
+                                mkDetailFieldTitle "Email"
+                                View.Label(text=model.Contact.Email)
+                                mkDetailFieldTitle "Phone"
+                                View.Label(text=model.Contact.Phone)
+                                mkDetailFieldTitle "Address"
+                                View.Label(text=model.Contact.Address)
                             ]
                         )
-                        View.Label(text="Address")
-                        View.Label(text=model.Contact.Address)
                     ]
                 )
             )

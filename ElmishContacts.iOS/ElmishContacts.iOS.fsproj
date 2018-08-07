@@ -193,6 +193,9 @@
     <BundleResource Include="Resources\star.png" />
     <BundleResource Include="Resources\icon.png" />
     <BundleResource Include="Resources\addphoto.png" />
+    <BundleResource Include="Resources\call.png" />
+    <BundleResource Include="Resources\email.png" />
+    <BundleResource Include="Resources\sms.png" />
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json">
       <Visible>false</Visible>
     </ImageAsset>

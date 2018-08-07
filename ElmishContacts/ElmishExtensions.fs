@@ -35,11 +35,12 @@ module CustomViews =
     let ImageStreamSourceAttributeKey = AttributeKey<_> "ImageStream_Source"
 
     type Elmish.XamarinForms.DynamicViews.View with
-        static member ImageEx(?source: obj, ?aspect, ?margin, ?heightRequest, ?widthRequest, ?gestureRecognizers, ?isVisible) =
+        static member ImageEx(?source: obj, ?aspect, ?margin, ?heightRequest, ?widthRequest, ?gestureRecognizers, ?isVisible, ?horizontalOptions, ?verticalOptions) =
             let attribCount = match source with None -> 0 | Some _ -> 1
             let attribs =
                 View.BuildImage(attribCount, ?aspect=aspect, ?margin=margin, ?heightRequest=heightRequest,
-                                ?widthRequest=widthRequest, ?gestureRecognizers=gestureRecognizers, ?isVisible=isVisible)
+                                ?widthRequest=widthRequest, ?gestureRecognizers=gestureRecognizers, ?isVisible=isVisible,
+                                ?horizontalOptions=horizontalOptions, ?verticalOptions=verticalOptions)
 
             match source with None -> () | Some v -> attribs.Add(ImageStreamSourceAttributeKey, v)       
 
