@@ -18,7 +18,7 @@
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
     <AndroidUseLatestPlatformSdk>true</AndroidUseLatestPlatformSdk>
-    <TargetFrameworkVersion>v8.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -233,12 +233,18 @@
     <Compile Include="Properties\AssemblyInfo.fs" />
     <None Include="Assets\AboutAssets.txt" />
     <AndroidResource Include="Resources\drawable\addphoto.png" />
-    <AndroidResource Include="Resources\drawable\Icon.png" />
+    <AndroidResource Include="Resources\drawable\icon.png" />
     <AndroidResource Include="Resources\drawable\launcher_foreground.png" />
     <AndroidResource Include="Resources\drawable\star.png" />
     <AndroidResource Include="Resources\drawable\call.png" />
     <AndroidResource Include="Resources\drawable\email.png" />
     <AndroidResource Include="Resources\drawable\sms.png" />
+    <AndroidResource Include="Resources\drawable\fsharp.png" />
+    <AndroidResource Include="Resources\drawable\xamarin.png" />
+    <AndroidResource Include="Resources\drawable\github.png" />
+    <AndroidResource Include="Resources\drawable\slack.png" />
+    <AndroidResource Include="Resources\drawable\twitter.png" />
+    <AndroidResource Include="Resources\drawable\blog.png" />
     <AndroidResource Include="Resources\layout\Tabbar.axml" />
     <AndroidResource Include="Resources\layout\Toolbar.axml" />
     <AndroidResource Include="Resources\mipmap-anydpi-v26\icon.xml" />

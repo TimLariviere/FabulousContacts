@@ -13,7 +13,7 @@ type BorderedEntry() =
         and set (value) = this.SetValue(BorderColorProperty, value)
 
 [<AutoOpen>]
-module DynamicViews =
+module DynamicViewsBorderedEntry =
     let BorderedEntryBorderColorAttributeKey = AttributeKey<_> "BorderedEntry_BorderColor"    
 
     type Elmish.XamarinForms.DynamicViews.View with
