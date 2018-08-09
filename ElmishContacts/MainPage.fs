@@ -5,130 +5,114 @@ open Repository
 open Style
 open Elmish.XamarinForms
 open Elmish.XamarinForms.DynamicViews
-open Xamarin.Forms
-open Xamarin.Forms.Maps
 
 module MainPage =
-    type Msg = | ContactsLoaded of Contact list
-               | ContactSelected of Contact
-               | AboutTapped
-               | AddNewContactTapped
+    // Declarations
+    type Msg = | TabAllContactsMsg of ContactsListPage.Msg
+               | TabFavContactsMsg of ContactsListPage.Msg
+               | TabMapMsg of MapPage.Msg
+               | ContactsLoaded of Contact list
                | ContactAdded of Contact
                | ContactUpdated of Contact
                | ContactDeleted of Contact
-               | PinsLoaded of ContactPin list
+               | NoContactAboutTapped
+               | NoContactAddNewContactTapped
 
     type ExternalMsg = | NoOp
-                       | Select of Contact
-                       | About
-                       | AddNewContact
+                       | NavigateToAbout
+                       | NavigateToNewContact
+                       | NavigateToDetail of Contact
 
     type Model =
         {
             Contacts: Contact list option
-            Pins: ContactPin list option
+            TabAllContactsModel: ContactsListPage.Model
+            TabFavContactsModel: ContactsListPage.Model
+            TabMapModel: MapPage.Model
         }
 
-    let loadAsyncCmd dbPath = async {
+    // Functions
+    let loadAsync dbPath = async {
         let! contacts = loadAllContacts dbPath
         return ContactsLoaded contacts
     }
 
-    let loadPinsAsync (contacts: Contact list) = async {
-        //let geocoder = Geocoder()
-
-        //let gettingPositions =
-        //    contacts
-        //    |> List.map (fun c -> async {
-        //        let! positions = geocoder.GetPositionsForAddressAsync(c.Address) |> Async.AwaitTask
-        //        let position = positions |> Seq.tryHead
-        //        return (c, position)
-        //    })
-        //    |> Async.Parallel
-
-        //let! contactsAndPositions = gettingPositions
-
-        //let pins = contactsAndPositions
-        //           |> Array.filter (fun (_, p) -> Option.isSome p)
-        //           |> Array.map (fun (c, p) -> { Position = p.Value; Label = (c.FirstName + " " + c.LastName); PinType = PinType.Place; Address = c.Address})
-        //           |> Array.toList
-
-        //return PinsLoaded pins
-        return None
-    }
-
-    let groupContacts contacts =
-        contacts
-        |> List.sortBy (fun c -> c.FirstName)
-        |> List.groupBy (fun c -> c.LastName.[0].ToString().ToUpper())
-
-    let findContactIn (groupedContacts: (string * Contact list) list) (gIndex: int, iIndex: int) =
-        groupedContacts.[gIndex]
-        |> (fun (_, items) -> items.[iIndex])
-
+    // Lifecycle
     let init dbPath () =
+        let (modelAllContacts, msgAllContacts) = ContactsListPage.init ()
+        let (modelFavContacts, msgFavContacts) = ContactsListPage.init ()
+        let (modelMap, msgMap) = MapPage.init ()
+
         {
             Contacts = None
-            Pins = None
-        }, Cmd.ofAsyncMsg (loadAsyncCmd dbPath)
+            TabAllContactsModel = modelAllContacts
+            TabFavContactsModel = modelFavContacts
+            TabMapModel = modelMap
+        }, Cmd.batch [
+            Cmd.ofAsyncMsg (loadAsync dbPath)
+            Cmd.map TabAllContactsMsg msgAllContacts
+            Cmd.map TabFavContactsMsg msgFavContacts
+            Cmd.map TabMapMsg msgMap
+        ]
+
+    let updateContactsList msg mapMsgFunc model =
+        let m, cmd, externalMsg = ContactsListPage.update msg model
+
+        let cmd2, externalMsg2 =
+            match externalMsg with
+            | ContactsListPage.ExternalMsg.NoOp -> Cmd.none, ExternalMsg.NoOp
+            | ContactsListPage.ExternalMsg.NavigateToAbout -> Cmd.none, ExternalMsg.NavigateToAbout
+            | ContactsListPage.ExternalMsg.NavigateToNewContact -> Cmd.none, ExternalMsg.NavigateToNewContact
+            | ContactsListPage.ExternalMsg.NavigateToDetail contact -> Cmd.none, (ExternalMsg.NavigateToDetail contact)
+
+        m, Cmd.batch [ Cmd.map mapMsgFunc cmd; cmd2 ], externalMsg2
+
+    let updateContacts model contacts =
+        let allMsg = (ContactsListPage.Msg.ContactsLoaded contacts)
+        let favMsg = (ContactsListPage.Msg.ContactsLoaded (contacts |> List.filter (fun c -> c.IsFavorite)))
+        let mapMsg = (MapPage.Msg.LoadPins contacts)
+
+        { model with Contacts = Some contacts }, Cmd.batch [
+            Cmd.ofMsg (TabAllContactsMsg allMsg)
+            Cmd.ofMsg (TabFavContactsMsg favMsg)
+            Cmd.ofMsg (TabMapMsg mapMsg)
+        ], ExternalMsg.NoOp
 
     let update msg model =
         match msg with
+        | TabAllContactsMsg msg ->
+            let m, cmd, externalMsg = updateContactsList msg TabAllContactsMsg model.TabAllContactsModel
+            { model with TabAllContactsModel = m }, cmd, externalMsg
+        | TabFavContactsMsg msg ->
+            let m, cmd, externalMsg = updateContactsList msg TabFavContactsMsg model.TabFavContactsModel
+            { model with TabFavContactsModel = m }, cmd, externalMsg
+        | TabMapMsg msg ->
+            let m, cmd = MapPage.update msg model.TabMapModel
+            { model with TabMapModel = m }, (Cmd.map TabMapMsg cmd), ExternalMsg.NoOp
         | ContactsLoaded contacts ->
-            { model with Contacts = Some contacts }, Cmd.ofAsyncMsgOption (loadPinsAsync contacts), ExternalMsg.NoOp
-        | PinsLoaded pins ->
-            { model with Pins = Some pins }, Cmd.none, ExternalMsg.NoOp
-        | ContactSelected contact ->
-            model, Cmd.none, (ExternalMsg.Select contact)
-        | AboutTapped ->
-            model, Cmd.none, ExternalMsg.About
-        | AddNewContactTapped ->
-            model, Cmd.none, ExternalMsg.AddNewContact
+            updateContacts model contacts
         | ContactAdded contact ->
-            let newContacts = model.Contacts.Value @ [ contact ]
-            { model with Contacts = Some newContacts }, Cmd.ofAsyncMsgOption (loadPinsAsync newContacts), ExternalMsg.NoOp
+            let newContacts = contact :: model.Contacts.Value
+            updateContacts model newContacts
         | ContactUpdated contact ->
             let newContacts = model.Contacts.Value |> List.map (fun c -> if c.Id = contact.Id then contact else c)
-            { model with Contacts = Some newContacts }, Cmd.ofAsyncMsgOption (loadPinsAsync newContacts), ExternalMsg.NoOp
+            updateContacts model newContacts
         | ContactDeleted contact ->
             let newContacts = model.Contacts.Value |> List.filter (fun c -> c <> contact)
-            { model with Contacts = Some newContacts }, Cmd.ofAsyncMsgOption (loadPinsAsync newContacts), ExternalMsg.NoOp
-
-    let mkListView contactsLength (groupedContacts: (string * Contact list) list) itemTapped =
-        View.ListViewGrouped_XF31(
-            verticalOptions=LayoutOptions.FillAndExpand,
-            rowHeight=60,
-            selectionMode=ListViewSelectionMode.None,
-            showJumpList=(contactsLength > 10),
-            itemTapped=itemTapped,
-            items=
-                [
-                    for (groupName, items) in groupedContacts do
-                        yield groupName, mkGroupView groupName,
-                                [
-                                    for contact in items do
-                                        let address = contact.Address.Replace("\n", " ")
-                                        yield mkCachedCellView contact.Picture (contact.FirstName + " " + contact.LastName) address contact.IsFavorite
-                                ]
-                ]
-        )
+            updateContacts model newContacts
+        | NoContactAboutTapped ->
+            model, Cmd.none, ExternalMsg.NavigateToAbout
+        | NoContactAddNewContactTapped ->
+            model, Cmd.none, ExternalMsg.NavigateToNewContact
 
     let view model dispatch =
         let title = "ElmishContacts"
-        let toolbarItems = 
-            dependsOn () (fun model () ->
-                [
-                    mkToolbarButton "About" (fun() -> dispatch AboutTapped)
-                    mkToolbarButton "+" (fun() -> dispatch AddNewContactTapped)
-                ]
-            )
 
         match model.Contacts with
         | None ->
             dependsOn () (fun model () ->
                 View.ContentPage(
                     title=title,
-                    toolbarItems=toolbarItems,
                     content=View.StackLayout(
                         children=[ mkCentralLabel "Loading..." ]
                     )
@@ -139,71 +123,24 @@ module MainPage =
             dependsOn () (fun model () ->
                 View.ContentPage(
                     title=title,
-                    toolbarItems=toolbarItems,
+                    toolbarItems=[
+                        View.ToolbarItem(text="About", command=(fun() -> dispatch NoContactAboutTapped))
+                        View.ToolbarItem(text="+", command=(fun() -> dispatch NoContactAddNewContactTapped))
+                    ],
                     content=View.StackLayout(
                         children=[ mkCentralLabel "No contact" ]
                     )
                 )
             )
 
-        | Some contacts ->
-            let favoriteTab =
-                let favoriteContacts = contacts |> List.filter (fun c -> c.IsFavorite)
-
-                dependsOn favoriteContacts (fun contacts mContacts ->
-                    let groupedContacts = groupContacts mContacts
-                    View.ContentPage(
-                        title="Favorites",
-                        toolbarItems=toolbarItems,
-                        content=View.StackLayout(
-                            children=[
-                                yield
-                                    match favoriteContacts with
-                                    | [] -> mkCentralLabel "No favorite"
-                                    | _ -> mkListView favoriteContacts.Length groupedContacts (findContactIn groupedContacts >> ContactSelected >> dispatch)
-                            ]
-                        )
-                    )
-                )
-
-            let contactsTab =
-                dependsOn contacts (fun contacts mContacts ->
-                    let groupedContacts = groupContacts mContacts
-                    View.ContentPage(
-                        title="All",
-                        toolbarItems=toolbarItems,
-                        content=View.StackLayout(
-                            children=[ mkListView mContacts.Length groupedContacts (findContactIn groupedContacts >> ContactSelected >> dispatch) ]
-                        )
-                    )
-                )
-
-            let mapTab =
-                dependsOn model.Pins (fun model pins ->
-                    let paris = Position(48.8566, 2.3522)
-
-                    View.ContentPage(
-                        title="Map",
-                        content=
-                            match pins with
-                            | None ->
-                                mkCentralLabel "Loading..."
-                            | Some pins ->
-                                View.Map(
-                                    hasZoomEnabled=true,
-                                    hasScrollEnabled=true,
-                                    requestedRegion=MapSpan.FromCenterAndRadius(paris, Distance.FromKilometers(25.)),
-                                    pins=[
-                                        for pin in pins do
-                                            yield View.Pin(position=pin.Position, label=pin.Label, pinType=pin.PinType, address=pin.Address)
-                                    ]
-                                )
-                    )
-                )
+        | Some _ ->
+            let tabAllContacts = (ContactsListPage.view "All" model.TabAllContactsModel (TabAllContactsMsg >> dispatch)).Icon("alltab.png")
+            let tabFavContacts = (ContactsListPage.view "Favorite" model.TabFavContactsModel (TabFavContactsMsg >> dispatch)).Icon("favoritetab.png")
+            let tabMap = MapPage.view model.TabMapModel (TabMapMsg >> dispatch)
 
             dependsOn model (fun model _ ->
-                View.TabbedPage(
+                View.BottomTabbedPage_XF31(
                     title=title,
-                    children=[ contactsTab; favoriteTab; mapTab ]
+                    children=[ tabAllContacts; tabFavContacts; tabMap ]
                 )
             )

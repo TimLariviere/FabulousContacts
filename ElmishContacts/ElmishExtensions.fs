@@ -4,10 +4,22 @@ open Elmish.XamarinForms
 open Elmish.XamarinForms.DynamicViews
 open Xamarin.Forms
 open System.IO
+open Xamarin.Forms.PlatformConfiguration.AndroidSpecific
 
 module Cmd =
     let ofAsyncMsgOption (p: Async<'msg option>) : Cmd<'msg> =
         [ fun dispatch -> async { let! msg = p in match msg with None -> () | Some msg -> dispatch msg } |> Async.StartImmediate ]
+
+module ViewHelpers =
+    let onPlatform setValueFunc iosValue androidValue (element: ViewElement) =
+        match Device.RuntimePlatform with
+        | p when p = Device.Android && (Option.isSome androidValue) -> setValueFunc element androidValue.Value
+        | p when p = Device.iOS && (Option.isSome iosValue) -> setValueFunc element iosValue.Value
+        | _ -> element
+
+    type Elmish.XamarinForms.DynamicViews.ViewElement with
+        member this.OnPlatform(setValueFunc, ?ios, ?android) =
+            onPlatform setValueFunc ios android this
 
 [<AutoOpen>]
 module CustomViews =
@@ -30,6 +42,17 @@ module CustomViews =
                 source.UpdatePrimitive(prevOpt, target, ListViewGroupedSelectionModeAttributeKey, (fun target v -> target.SelectionMode <- v))
 
             ViewElement.Create(CustomGroupListView, update, attribs)
+
+    /// TabbedPage with Bottom Placement of NavBar on Android
+    type Elmish.XamarinForms.DynamicViews.View with
+        static member BottomTabbedPage_XF31(?title, ?children) =
+            let attribs = View.BuildTabbedPage(0, ?title=title, ?children=children)
+
+            let update (prevOpt: ViewElement voption) (source: ViewElement) target =
+                View.UpdateTabbedPage(prevOpt, source, target)
+                target.On<Xamarin.Forms.PlatformConfiguration.Android>().SetToolbarPlacement(ToolbarPlacement.Bottom) |> ignore
+
+            ViewElement.Create(TabbedPage, update, attribs)
 
     /// Image with bytes
     let ImageStreamSourceAttributeKey = AttributeKey<_> "ImageStream_Source"

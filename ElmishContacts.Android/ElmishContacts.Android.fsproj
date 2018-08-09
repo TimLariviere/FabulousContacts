@@ -245,6 +245,9 @@
     <AndroidResource Include="Resources\drawable\slack.png" />
     <AndroidResource Include="Resources\drawable\twitter.png" />
     <AndroidResource Include="Resources\drawable\blog.png" />
+    <AndroidResource Include="Resources\drawable\alltab.png" />
+    <AndroidResource Include="Resources\drawable\favoritetab.png" />
+    <AndroidResource Include="Resources\drawable\maptab.png" />
     <AndroidResource Include="Resources\layout\Tabbar.axml" />
     <AndroidResource Include="Resources\layout\Toolbar.axml" />
     <AndroidResource Include="Resources\mipmap-anydpi-v26\icon.xml" />

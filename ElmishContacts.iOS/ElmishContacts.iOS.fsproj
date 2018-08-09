@@ -203,6 +203,9 @@
     <BundleResource Include="Resources\slack.png" />
     <BundleResource Include="Resources\twitter.png" />
     <BundleResource Include="Resources\blog.png" />
+    <BundleResource Include="Resources\alltab%402x.png" />
+    <BundleResource Include="Resources\favoritetab%402x.png" />
+    <BundleResource Include="Resources\maptab%402x.png" />
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json">
       <Visible>false</Visible>
     </ImageAsset>

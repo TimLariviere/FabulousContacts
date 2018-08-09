@@ -46,12 +46,12 @@ module App =
                 match externalMsg with
                 | MainPage.ExternalMsg.NoOp ->
                     Cmd.none
-                | MainPage.ExternalMsg.Select contact ->
-                    Cmd.ofMsg (GoToDetail contact)
-                | MainPage.ExternalMsg.About ->
+                | MainPage.ExternalMsg.NavigateToAbout ->
                     Cmd.ofMsg GoToAbout
-                | MainPage.ExternalMsg.AddNewContact ->
+                | MainPage.ExternalMsg.NavigateToNewContact ->
                     Cmd.ofMsg (GoToEdit None)
+                | MainPage.ExternalMsg.NavigateToDetail contact ->
+                    Cmd.ofMsg (GoToDetail contact)
 
             { model with MainPageModel = m }, Cmd.batch [ (Cmd.map MainPageMsg cmd); cmd2 ]
 

@@ -53,7 +53,6 @@ module Helpers =
 
     let takePictureAsync() = async {
         let options = new StoreCameraMediaOptions()
-        options.AllowCropping <- Nullable<bool>(true)
         options.PhotoSize <- PhotoSize.MaxWidthHeight
         options.MaxWidthHeight <- Nullable<int>(150)
         return! CrossMedia.Current.TakePhotoAsync(options) |> Async.AwaitTask

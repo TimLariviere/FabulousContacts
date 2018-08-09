@@ -2,7 +2,6 @@
 
 open Xamarin.Forms
 open Elmish.XamarinForms.DynamicViews
-open Helpers
 open ElmishContacts.Controls
 
 module Style =
