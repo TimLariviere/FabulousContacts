@@ -87,6 +87,7 @@ module DetailPage =
                                 View.Grid(
                                     widthRequest=125.,
                                     heightRequest=125.,
+                                    backgroundColor=Color.White,
                                     horizontalOptions=LayoutOptions.Center,
                                     children=[
                                         View.ImageEx(source=(match model.Contact.Picture with null -> box "addphoto.png" | picture -> box picture), aspect=Aspect.AspectFill)
