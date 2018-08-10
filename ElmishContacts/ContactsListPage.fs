@@ -34,8 +34,9 @@ module ContactsListPage =
 
     let groupContacts contacts =
         contacts
-        |> List.sortBy (fun c -> c.FirstName)
         |> List.groupBy (fun c -> c.LastName.[0].ToString().ToUpper())
+        |> List.map (fun (k, cs) -> (k, cs |> List.sortBy (fun c -> c.FirstName)))
+        |> List.sortBy (fun (k, cs) -> k)
 
     let findContactIn (groupedContacts: (string * Contact list) list) (gIndex: int, iIndex: int) =
         groupedContacts.[gIndex]
