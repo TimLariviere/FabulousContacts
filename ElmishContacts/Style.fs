@@ -64,7 +64,7 @@ module Style =
         dependsOn (picture, name, address, isFavorite) (fun _ (cPicture, cName, cAddress, cIsFavorite) -> mkCellView cPicture cName cAddress cIsFavorite)
 
     let mkDetailActionButton image command=
-        View.Button(image=image, command=command, heightRequest=35., horizontalOptions=LayoutOptions.CenterAndExpand)
+        View.Button(image=image, command=command, backgroundColor=accentColor, heightRequest=35., horizontalOptions=LayoutOptions.FillAndExpand)
 
     let mkDetailFieldTitle text =
         View.Label(text=text, fontAttributes=FontAttributes.Bold, margin=Thickness(0., 10., 0., 0.))

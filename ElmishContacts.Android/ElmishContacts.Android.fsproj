@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Xamarin.Forms.3.1.0.637273\build\netstandard2.0\Xamarin.Forms.props" Condition="Exists('..\packages\Xamarin.Forms.3.1.0.637273\build\netstandard2.0\Xamarin.Forms.props')" />
   <Import Project="..\packages\Xamarin.Build.Download.0.4.2\build\Xamarin.Build.Download.props" Condition="Exists('..\packages\Xamarin.Build.Download.0.4.2\build\Xamarin.Build.Download.props')" />
   <PropertyGroup>
@@ -19,8 +18,7 @@
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
     <AndroidUseLatestPlatformSdk>true</AndroidUseLatestPlatformSdk>
     <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <NuGetPackageImportStamp></NuGetPackageImportStamp>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <RestorePackages>true</RestorePackages>
     <SelectedDevice>new_device</SelectedDevice>
@@ -36,6 +34,7 @@
     <AndroidLinkMode>None</AndroidLinkMode>
     <AndroidUseSharedRuntime>true</AndroidUseSharedRuntime>
     <AndroidSupportedAbis>armeabi-v7a;armeabi;x86;arm64-v8a;x86_64</AndroidSupportedAbis>
+    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -68,7 +67,7 @@
   <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.v7.AppCompat.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v7.AppCompat.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.v7.AppCompat.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v7.AppCompat.targets')" />
   <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.Design.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Design.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.Design.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.Design.targets')" />
   <Import Project="$(SolutionDir)/packages/Xamarin.Android.Support.v7.MediaRouter.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v7.MediaRouter.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Android.Support.v7.MediaRouter.27.0.2.1/build/MonoAndroid81/Xamarin.Android.Support.v7.MediaRouter.targets')" />
-<!--  <Import Project="$(SolutionDir)/packages/Xamarin.Forms.3.0.0.482510/build/netstandard1.0/Xamarin.Forms.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Forms.3.0.0.482510/build/netstandard1.0/Xamarin.Forms.targets')" />-->
+  <!--  <Import Project="$(SolutionDir)/packages/Xamarin.Forms.3.0.0.482510/build/netstandard1.0/Xamarin.Forms.targets" Condition="Exists('$(SolutionDir)/packages/Xamarin.Forms.3.0.0.482510/build/netstandard1.0/Xamarin.Forms.targets')" />-->
   <Import Project="../.nuget/NuGet.targets" />
   <Import Project="..\packages\Xamarin.Build.Download.0.4.2\build\Xamarin.Build.Download.targets" Condition="Exists('..\packages\Xamarin.Build.Download.0.4.2\build\Xamarin.Build.Download.targets')" />
   <Import Project="..\packages\Xamarin.GooglePlayServices.Basement.42.1021.1\build\MonoAndroid70\Xamarin.GooglePlayServices.Basement.targets" Condition="Exists('..\packages\Xamarin.GooglePlayServices.Basement.42.1021.1\build\MonoAndroid70\Xamarin.GooglePlayServices.Basement.targets')" />
@@ -229,6 +228,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Resources\drawable-xxxhdpi\" />
+    <Folder Include="Resources\drawable-xxhdpi\" />
+    <Folder Include="Resources\drawable-xhdpi\" />
+    <Folder Include="Resources\drawable-hdpi\" />
+    <Folder Include="Resources\drawable-mdpi\" />
+    <Folder Include="Resources\drawable-ldpi\" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-ldpi\splashscreen.png" />
     <None Include="Properties\AndroidManifest.xml" />
     <Compile Include="Properties\AssemblyInfo.fs" />
     <None Include="Assets\AboutAssets.txt" />
@@ -248,6 +256,7 @@
     <AndroidResource Include="Resources\drawable\alltab.png" />
     <AndroidResource Include="Resources\drawable\favoritetab.png" />
     <AndroidResource Include="Resources\drawable\maptab.png" />
+    <AndroidResource Include="Resources\drawable\splashscreen.png" />
     <AndroidResource Include="Resources\layout\Tabbar.axml" />
     <AndroidResource Include="Resources\layout\Toolbar.axml" />
     <AndroidResource Include="Resources\mipmap-anydpi-v26\icon.xml" />
@@ -257,7 +266,13 @@
     <AndroidResource Include="Resources\values\styles.xml" />
     <AndroidResource Include="Resources\xml\file_paths.xml" />
     <None Include="Resources\AboutResources.txt" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\splashscreen.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\splashscreen.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\splashscreen.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\splashscreen.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\splashscreen.png" />
     <Compile Include="BorderedEntryRenderer.fs" />
+    <Compile Include="UnderlinedLabelRenderer.fs" />
     <Compile Include="MainActivity.fs" />
     <None Include="packages.config" />
     <ProjectReference Include="..\ElmishContacts\ElmishContacts.fsproj">

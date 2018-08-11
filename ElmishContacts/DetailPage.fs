@@ -100,7 +100,7 @@ module DetailPage =
                                     horizontalOptions=LayoutOptions.Center,
                                     orientation=StackOrientation.Horizontal,
                                     margin=Thickness(0., 10., 0., 10.),
-                                    spacing=30.,
+                                    spacing=20.,
                                     children=[
                                         if hasSetField model.Contact.Phone then
                                             yield mkDetailActionButton "call.png" (fun () -> dispatch CallTapped)

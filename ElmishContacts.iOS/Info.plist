@@ -26,7 +26,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>ElmishContacts</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.woodenmoose.elmishcontacts</string>
+	<string>com.timothelariviere.elmishcontacts</string>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
 	<key>UILaunchStoryboardName</key>

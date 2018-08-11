@@ -13,7 +13,7 @@ open System.IO
 open Plugin.CurrentActivity
 open Plugin.Media
 
-[<Activity (Label = "ElmishContacts", Icon = "@drawable/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = (ConfigChanges.ScreenSize ||| ConfigChanges.Orientation))>]
+[<Activity (Label = "ElmishContacts", Icon = "@drawable/icon", Theme = "@style/splashscreen", MainLauncher = true, ConfigurationChanges = (ConfigChanges.ScreenSize ||| ConfigChanges.Orientation))>]
 type MainActivity() =
     inherit FormsAppCompatActivity()
 
@@ -22,6 +22,7 @@ type MainActivity() =
         Path.Combine(path, "Contacts.db3");
 
     override this.OnCreate (bundle: Bundle) =
+        base.SetTheme(Resources.Style.MainTheme)
         FormsAppCompatActivity.TabLayoutResource <- Resources.Layout.Tabbar
         FormsAppCompatActivity.ToolbarResource <- Resources.Layout.Toolbar
         base.OnCreate (bundle)

@@ -2468,26 +2468,26 @@ namespace ElmishContacts.Droid
 			// aapt resource value: 0x7f020055
 			public const int avd_hide_password = 2130837589;
 			
-			// aapt resource value: 0x7f020154
-			public const int avd_hide_password_1 = 2130837844;
-			
 			// aapt resource value: 0x7f020155
-			public const int avd_hide_password_2 = 2130837845;
+			public const int avd_hide_password_1 = 2130837845;
 			
 			// aapt resource value: 0x7f020156
-			public const int avd_hide_password_3 = 2130837846;
+			public const int avd_hide_password_2 = 2130837846;
+			
+			// aapt resource value: 0x7f020157
+			public const int avd_hide_password_3 = 2130837847;
 			
 			// aapt resource value: 0x7f020056
 			public const int avd_show_password = 2130837590;
 			
-			// aapt resource value: 0x7f020157
-			public const int avd_show_password_1 = 2130837847;
-			
 			// aapt resource value: 0x7f020158
-			public const int avd_show_password_2 = 2130837848;
+			public const int avd_show_password_1 = 2130837848;
 			
 			// aapt resource value: 0x7f020159
-			public const int avd_show_password_3 = 2130837849;
+			public const int avd_show_password_2 = 2130837849;
+			
+			// aapt resource value: 0x7f02015a
+			public const int avd_show_password_3 = 2130837850;
 			
 			// aapt resource value: 0x7f020057
 			public const int blog = 2130837591;
@@ -3215,11 +3215,11 @@ namespace ElmishContacts.Droid
 			// aapt resource value: 0x7f020148
 			public const int notification_icon_background = 2130837832;
 			
-			// aapt resource value: 0x7f020152
-			public const int notification_template_icon_bg = 2130837842;
-			
 			// aapt resource value: 0x7f020153
-			public const int notification_template_icon_low_bg = 2130837843;
+			public const int notification_template_icon_bg = 2130837843;
+			
+			// aapt resource value: 0x7f020154
+			public const int notification_template_icon_low_bg = 2130837844;
 			
 			// aapt resource value: 0x7f020149
 			public const int notification_tile_bg = 2130837833;
@@ -3234,19 +3234,22 @@ namespace ElmishContacts.Droid
 			public const int sms = 2130837836;
 			
 			// aapt resource value: 0x7f02014d
-			public const int star = 2130837837;
+			public const int splashscreen = 2130837837;
 			
 			// aapt resource value: 0x7f02014e
-			public const int tooltip_frame_dark = 2130837838;
+			public const int star = 2130837838;
 			
 			// aapt resource value: 0x7f02014f
-			public const int tooltip_frame_light = 2130837839;
+			public const int tooltip_frame_dark = 2130837839;
 			
 			// aapt resource value: 0x7f020150
-			public const int twitter = 2130837840;
+			public const int tooltip_frame_light = 2130837840;
 			
 			// aapt resource value: 0x7f020151
-			public const int xamarin = 2130837841;
+			public const int twitter = 2130837841;
+			
+			// aapt resource value: 0x7f020152
+			public const int xamarin = 2130837842;
 			
 			static Drawable()
 			{
@@ -4488,8 +4491,11 @@ namespace ElmishContacts.Droid
 			// aapt resource value: 0x7f0e016e
 			public const int Animation_Design_BottomSheetDialog = 2131624302;
 			
-			// aapt resource value: 0x7f0e0191
-			public const int AppCompatDialogStyle = 2131624337;
+			// aapt resource value: 0x7f0e0192
+			public const int AppCompatDialogStyle = 2131624338;
+			
+			// aapt resource value: 0x7f0e0193
+			public const int AutoCompleteTextViewStyle = 2131624339;
 			
 			// aapt resource value: 0x7f0e00a9
 			public const int Base_AlertDialog_AppCompat = 2131624105;
@@ -4992,11 +4998,11 @@ namespace ElmishContacts.Droid
 			// aapt resource value: 0x7f0e000e
 			public const int CardView_Light = 2131623950;
 			
-			// aapt resource value: 0x7f0e018f
-			public const int MainTheme = 2131624335;
-			
 			// aapt resource value: 0x7f0e0190
-			public const int MainTheme_Base = 2131624336;
+			public const int MainTheme = 2131624336;
+			
+			// aapt resource value: 0x7f0e0191
+			public const int MainTheme_Base = 2131624337;
 			
 			// aapt resource value: 0x7f0e002d
 			public const int Platform_AppCompat = 2131623981;
@@ -5081,6 +5087,9 @@ namespace ElmishContacts.Droid
 			
 			// aapt resource value: 0x7f0e0047
 			public const int RtlUnderlay_Widget_AppCompat_ActionButton_Overflow = 2131624007;
+			
+			// aapt resource value: 0x7f0e0194
+			public const int SearchViewTheme = 2131624340;
 			
 			// aapt resource value: 0x7f0e00d6
 			public const int TextAppearance_AppCompat = 2131624150;
@@ -5675,6 +5684,9 @@ namespace ElmishContacts.Droid
 			
 			// aapt resource value: 0x7f0e000a
 			public const int Widget_MediaRouter_MediaRouteButton = 2131623946;
+			
+			// aapt resource value: 0x7f0e018f
+			public const int splashscreen = 2131624335;
 			
 			static Style()
 			{

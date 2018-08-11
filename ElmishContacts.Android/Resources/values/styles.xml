@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <resources>
 
+  <style name="splashscreen" parent="Theme.AppCompat.Light.DarkActionBar">
+    <item name="android:windowBackground">@drawable/splashscreen</item>
+    <item name="android:windowNoTitle">true</item>
+    <item name="android:windowIsTranslucent">false</item>
+    <item name="android:windowIsFloating">false</item>
+    <item name="android:backgroundDimEnabled">true</item>
+  </style>
+
   <style name="MainTheme" parent="MainTheme.Base">
   </style>
   <!-- Base theme applied no matter what API -->
@@ -22,9 +30,16 @@
     <item name="windowActionModeOverlay">true</item>
 
     <item name="android:datePickerDialogTheme">@style/AppCompatDialogStyle</item>
+    <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewStyle</item>
+    <item name="searchViewStyle">@style/SearchViewTheme</item> 
   </style>
 
   <style name="AppCompatDialogStyle" parent="Theme.AppCompat.Light.Dialog">
     <item name="colorAccent">@color/colorAccent</item>
   </style>
+
+    <style name="AutoCompleteTextViewStyle" parent="Widget.AppCompat.Light.AutoCompleteTextView">
+        <!-- Gets rid of the "underline" in the text -->
+        <item name="android:textColor">@android:color/white</item>
+    </style>
 </resources>

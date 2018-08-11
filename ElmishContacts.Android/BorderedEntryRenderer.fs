@@ -14,13 +14,19 @@ type BorderedEntryRenderer(context) =
         base.OnElementChanged(e)
 
         if (e.NewElement <> null) then
-            ()
+            if this.BorderedEntry.BorderColor = Xamarin.Forms.Color.FromHex("#FF0000") then
+                this.Control.Error <- "Field required"
+            else
+                this.Control.Error <- null
         else
             ()
 
     override this.OnElementPropertyChanged(sender: obj, e: PropertyChangedEventArgs) =
         if e.PropertyName = "BorderColor" then
-            ()
+            if this.BorderedEntry.BorderColor = Xamarin.Forms.Color.FromHex("#FF0000") then
+                this.Control.Error <- "Field required"
+            else
+                this.Control.Error <- null
         else
             ()
 
