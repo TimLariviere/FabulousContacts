@@ -14,9 +14,9 @@ module App =
                | GoToDetail of Contact
                | GoToEdit of Contact option
                | GoToAbout
-               | UpdateMainWithContactAdded of Contact
-               | UpdateMainWithContactUpdated of Contact
-               | UpdateMainWithContactDeleted of Contact
+               | UpdateWhenContactAdded of Contact
+               | UpdateWhenContactUpdated of Contact
+               | UpdateWhenContactDeleted of Contact
                | NavigationPopped
 
     type Model = 
@@ -25,11 +25,11 @@ module App =
             DetailPageModel: DetailPage.Model option
             EditPageModel: EditPage.Model option
             AboutPageModel: bool option
-            ManualNavPop: bool
 
             // Workaround Cmd limitation -- Can not pop a page in page stack and send Cmd at the same time
             // Otherwise it would pop pages 2 times in NavigationPage
-            ManualNavPopPendingCmd: Cmd<Msg>
+            WorkaroundNavPageBug: bool
+            WorkaroundNavPageBugPendingCmd: Cmd<Msg>
         }
 
     let init dbPath () = 
@@ -39,8 +39,8 @@ module App =
             DetailPageModel = None
             EditPageModel = None
             AboutPageModel = None
-            ManualNavPop = false
-            ManualNavPopPendingCmd = Cmd.none
+            WorkaroundNavPageBug = false
+            WorkaroundNavPageBugPendingCmd = Cmd.none
         }, Cmd.batch [ (Cmd.map MainPageMsg mainMsg) ]
 
     let update dbPath msg model =
@@ -81,17 +81,17 @@ module App =
                 | EditPage.ExternalMsg.NoOp ->
                     Cmd.none
                 | EditPage.ExternalMsg.GoBackAfterContactAdded contact ->
-                    Cmd.ofMsg (UpdateMainWithContactAdded contact)
+                    Cmd.ofMsg (UpdateWhenContactAdded contact)
                 | EditPage.ExternalMsg.GoBackAfterContactUpdated contact ->
-                    Cmd.ofMsg (UpdateMainWithContactUpdated contact)
+                    Cmd.ofMsg (UpdateWhenContactUpdated contact)
                 | EditPage.ExternalMsg.GoBackAfterContactDeleted contact ->
-                    Cmd.ofMsg (UpdateMainWithContactDeleted contact)
+                    Cmd.ofMsg (UpdateWhenContactDeleted contact)
 
             { model with EditPageModel = Some m }, Cmd.batch [ (Cmd.map EditPageMsg cmd); cmd2 ]
 
         | NavigationPopped ->
-            match model.ManualNavPop, (model.AboutPageModel, model.DetailPageModel, model.EditPageModel) with
-            | true, _ -> { model with ManualNavPop = false; ManualNavPopPendingCmd = Cmd.none }, model.ManualNavPopPendingCmd // Do not pop pages if already done manually
+            match model.WorkaroundNavPageBug, (model.AboutPageModel, model.DetailPageModel, model.EditPageModel) with
+            | true, _ -> { model with WorkaroundNavPageBug = false; WorkaroundNavPageBugPendingCmd = Cmd.none }, model.WorkaroundNavPageBugPendingCmd // Do not pop pages if already done manually
             | false, (None, None, None) -> model, Cmd.none
             | false, (Some _, None, None) -> { model with AboutPageModel = None }, Cmd.none
             | false, (_, Some _, None) -> { model with DetailPageModel = None }, Cmd.none
@@ -108,14 +108,22 @@ module App =
             let m, cmd = EditPage.init contact
             { model with EditPageModel = Some m }, (Cmd.map EditPageMsg cmd)
 
-        | UpdateMainWithContactAdded contact ->
-            { model with EditPageModel = None; ManualNavPop = true; ManualNavPopPendingCmd = (Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactAdded contact))) }, Cmd.none
+        | UpdateWhenContactAdded contact ->
+            let mainMsg = Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactAdded contact))
+            { model with EditPageModel = None }, mainMsg
 
-        | UpdateMainWithContactUpdated contact ->
-            { model with EditPageModel = None; ManualNavPop = true; ManualNavPopPendingCmd = (Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactUpdated contact))) }, Cmd.none
+        | UpdateWhenContactUpdated contact ->
+            let pendingCmds =
+                Cmd.batch
+                    [
+                        Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactUpdated contact))
+                        Cmd.ofMsg (DetailPageMsg (DetailPage.Msg.ContactUpdated contact))
+                    ]
+            { model with EditPageModel = None; WorkaroundNavPageBug = true; WorkaroundNavPageBugPendingCmd = pendingCmds }, Cmd.none
 
-        | UpdateMainWithContactDeleted contact ->
-            { model with EditPageModel = None; ManualNavPop = true; ManualNavPopPendingCmd = (Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactDeleted contact))) }, Cmd.none
+        | UpdateWhenContactDeleted contact ->
+            let mainMsg = Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactDeleted contact))
+            { model with DetailPageModel = None; EditPageModel = None }, mainMsg
 
 
     let view (model: Model) dispatch =

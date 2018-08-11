@@ -13,6 +13,7 @@ module DetailPage =
                | CallTapped
                | SmsTapped
                | EmailTapped
+               | ContactUpdated of Contact
 
     type ExternalMsg = NoOp
                        | EditContact of Contact
@@ -68,6 +69,7 @@ module DetailPage =
         | CallTapped -> model, Cmd.ofAsyncMsgOption (dialNumber model.Contact.Phone), ExternalMsg.NoOp
         | SmsTapped -> model, Cmd.ofAsyncMsgOption (composeSms model.Contact.Phone), ExternalMsg.NoOp
         | EmailTapped -> model, Cmd.ofAsyncMsgOption (composeEmail model.Contact.Email), ExternalMsg.NoOp
+        | ContactUpdated contact -> { model with Contact = contact }, Cmd.none, ExternalMsg.NoOp
 
     let view model dispatch =
         View.ContentPage(
