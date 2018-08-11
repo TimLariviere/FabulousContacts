@@ -135,7 +135,7 @@ module MainPage =
 
         | Some _ ->
             let tabAllContacts = (ContactsListPage.view "All" model.TabAllContactsModel (TabAllContactsMsg >> dispatch)).Icon("alltab.png")
-            let tabFavContacts = (ContactsListPage.view "Favorite" model.TabFavContactsModel (TabFavContactsMsg >> dispatch)).Icon("favoritetab.png")
+            let tabFavContacts = (ContactsListPage.view "Favorites" model.TabFavContactsModel (TabFavContactsMsg >> dispatch)).Icon("favoritetab.png")
             let tabMap = MapPage.view model.TabMapModel (TabMapMsg >> dispatch)
 
             dependsOn model (fun model _ ->

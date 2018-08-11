@@ -7,14 +7,6 @@ open ElmishContacts.Models
 open System
 
 module App =
-    type Model = 
-        {
-            MainPageModel: MainPage.Model
-            DetailPageModel: DetailPage.Model option
-            EditPageModel: EditPage.Model option
-            AboutPageModel: bool option
-            ManualNavPop: bool
-        }
 
     type Msg = | MainPageMsg of MainPage.Msg
                | DetailPageMsg of DetailPage.Msg
@@ -27,6 +19,19 @@ module App =
                | UpdateMainWithContactDeleted of Contact
                | NavigationPopped
 
+    type Model = 
+        {
+            MainPageModel: MainPage.Model
+            DetailPageModel: DetailPage.Model option
+            EditPageModel: EditPage.Model option
+            AboutPageModel: bool option
+            ManualNavPop: bool
+
+            // Workaround Cmd limitation -- Can not pop a page in page stack and send Cmd at the same time
+            // Otherwise it would pop pages 2 times in NavigationPage
+            ManualNavPopPendingCmd: Cmd<Msg>
+        }
+
     let init dbPath () = 
         let mainModel, mainMsg = MainPage.init dbPath ()
         {
@@ -35,6 +40,7 @@ module App =
             EditPageModel = None
             AboutPageModel = None
             ManualNavPop = false
+            ManualNavPopPendingCmd = Cmd.none
         }, Cmd.batch [ (Cmd.map MainPageMsg mainMsg) ]
 
     let update dbPath msg model =
@@ -85,7 +91,7 @@ module App =
 
         | NavigationPopped ->
             match model.ManualNavPop, (model.AboutPageModel, model.DetailPageModel, model.EditPageModel) with
-            | true, _ -> { model with ManualNavPop = false }, Cmd.none // Do not pop pages if already done manually
+            | true, _ -> { model with ManualNavPop = false; ManualNavPopPendingCmd = Cmd.none }, model.ManualNavPopPendingCmd // Do not pop pages if already done manually
             | false, (None, None, None) -> model, Cmd.none
             | false, (Some _, None, None) -> { model with AboutPageModel = None }, Cmd.none
             | false, (_, Some _, None) -> { model with DetailPageModel = None }, Cmd.none
@@ -103,16 +109,30 @@ module App =
             { model with EditPageModel = Some m }, (Cmd.map EditPageMsg cmd)
 
         | UpdateMainWithContactAdded contact ->
-            { model with EditPageModel = None; ManualNavPop = true }, Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactAdded contact))
+            { model with EditPageModel = None; ManualNavPop = true; ManualNavPopPendingCmd = (Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactAdded contact))) }, Cmd.none
 
         | UpdateMainWithContactUpdated contact ->
-            { model with EditPageModel = None; ManualNavPop = true }, Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactUpdated contact))
+            { model with EditPageModel = None; ManualNavPop = true; ManualNavPopPendingCmd = (Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactUpdated contact))) }, Cmd.none
 
         | UpdateMainWithContactDeleted contact ->
-            { model with EditPageModel = None; ManualNavPop = true }, Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactDeleted contact))
+            { model with EditPageModel = None; ManualNavPop = true; ManualNavPopPendingCmd = (Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactDeleted contact))) }, Cmd.none
 
 
     let view (model: Model) dispatch =
+        // Workaround iOS bug: https://github.com/xamarin/Xamarin.Forms/issues/3509
+        let dispatchNavPopped =
+            let mutable lastRemovedPageIdentifier: int = -1
+            let apply dispatch (e: Xamarin.Forms.NavigationEventArgs) =
+                let removedPageIdentifier = e.Page.GetHashCode()
+                match lastRemovedPageIdentifier = removedPageIdentifier with
+                | false ->
+                    lastRemovedPageIdentifier <- removedPageIdentifier
+                    dispatch NavigationPopped
+                | true ->
+                    ()
+            apply
+
+
         let mainPage = MainPage.view model.MainPageModel (MainPageMsg >> dispatch)
 
         let detailPage =
@@ -133,7 +153,7 @@ module App =
         View.NavigationPage(
             barTextColor=Style.accentTextColor,
             barBackgroundColor=Style.accentColor,
-            popped=(fun _ -> NavigationPopped |> dispatch),
+            popped=(dispatchNavPopped dispatch),
             pages=
                 match aboutPage, detailPage, editPage with
                 | None, None, None -> [ mainPage ]
@@ -152,6 +172,7 @@ type App (dbPath) as app =
 
     let runner = 
         Program.mkProgram init update view
+        //|> Program.withConsoleTrace
         |> Program.runWithDynamicView app
 
 
