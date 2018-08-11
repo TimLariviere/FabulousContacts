@@ -38,17 +38,23 @@ module MapPage =
 
             let gettingPositions =
                 contacts
+                |> List.filter (fun c -> not (System.String.IsNullOrWhiteSpace(c.Address)))
                 |> List.map (fun c -> async {
-                    let! positions = geocoder.GetPositionsForAddressAsync(c.Address) |> Async.AwaitTask
-                    let position = positions |> Seq.tryHead
-                    return (c, position)
+                    try
+                        let! positions = geocoder.GetPositionsForAddressAsync(c.Address) |> Async.AwaitTask
+                        let position = positions |> Seq.tryHead
+                        return Some (c, position)
+                    with exn ->
+                        return None
                 })
                 |> Async.Parallel
 
             let! contactsAndPositions = gettingPositions
 
             let pins = contactsAndPositions
-                       |> Array.filter (fun (_, p) -> Option.isSome p)
+                       |> Array.filter Option.isSome
+                       |> Array.map (fun v -> v.Value)
+                       |> Array.filter (snd >> Option.isSome)
                        |> Array.map (fun (c, p) -> { Position = p.Value; Label = (c.FirstName + " " + c.LastName); PinType = PinType.Place; Address = c.Address})
                        |> Array.toList
 
