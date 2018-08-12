@@ -14,10 +14,7 @@ The purpose of this sample was to give a test drive to Elmish.XamarinForms, and 
 ElmishContacts is now live in the stores!  
 Download it from [Google Play Store](https://play.google.com/store/apps/details?id=com.timothelariviere.elmishcontacts) and [Apple's App Store](https://itunes.apple.com/us/app/elmishcontacts/id1425100357)
 
-<img src="docs/attachments/home.png" alt="Home" heigth="100" />
-<img src="docs/attachments/detail.png" alt="Detail" heigth="100" />
-<img src="docs/attachments/edit.png" alt="Edit" heigth="100" />
-<img src="docs/attachments/map.png" alt="map" heigth="100" />
+<img src="docs/attachments/home.png" alt="Home" height="400" /> <img src="docs/attachments/detail.png" alt="Detail" height="400" /> <img src="docs/attachments/edit.png" alt="Edit" height="400" /> <img src="docs/attachments/map.png" alt="map" height="400" />
 
 ## Running the sample
 If you want to build and run your own version of ElmishContacts, you will need to get a key for Google Maps on Android.
