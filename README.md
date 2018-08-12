@@ -12,7 +12,7 @@ The purpose of this sample was to give a test drive to Elmish.XamarinForms, and 
 - And finally, check if it could be used for real production apps
 
 ElmishContacts is now live in the stores!  
-Download it from [Google Play Store](https://play.google.com/store/apps/details?id=com.timothelariviere.elmishcontacts) and [Apple's App Store](https://itunes.apple.com/us/app/elmishcontacts/id1425100357)
+<a href='https://play.google.com/store/apps/details?id=com.timothelariviere.elmishcontacts'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width='200' height='75' /></a> <a href="https://itunes.apple.com/us/app/elmishcontacts/id1425100357"><img src='https://linkmaker.itunes.apple.com/assets/shared/badges/en-us/appstore-lrg.svg' width='200' height='75' /></a>
 
 <img src="docs/attachments/home.png" alt="Home" height="400" /> <img src="docs/attachments/detail.png" alt="Detail" height="400" /> <img src="docs/attachments/edit.png" alt="Edit" height="400" /> <img src="docs/attachments/map.png" alt="map" height="400" />
 
