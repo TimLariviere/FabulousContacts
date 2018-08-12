@@ -74,29 +74,25 @@ module ContactsListPage =
                     View.ToolbarItem(text="+", command=(fun() -> dispatch AddNewContactTapped))
                 ],
                 content=View.StackLayout(
+                    spacing=0.,
                     children=[
-                        View.StackLayout(
-                            spacing=0.,
-                            children=[
-                                View.SearchBar(text=mFilterText, textChanged=(fun e -> e.NewTextValue |> UpdateFilterText |> dispatch), backgroundColor=accentColor, cancelButtonColor=accentTextColor)
-                                View.ListViewGrouped_XF31(
-                                    verticalOptions=LayoutOptions.FillAndExpand,
-                                    rowHeight=60,
-                                    selectionMode=ListViewSelectionMode.None,
-                                    showJumpList=(mContacts.Length > 10),
-                                    itemTapped=(findContactIn groupedContacts >> ContactSelected >> dispatch),
-                                    items=
-                                        [
-                                            for (groupName, items) in groupedContacts do
-                                                yield groupName, mkGroupView groupName,
-                                                        [
-                                                            for contact in items do
-                                                                let address = contact.Address.Replace("\n", " ")
-                                                                yield mkCachedCellView contact.Picture (contact.FirstName + " " + contact.LastName) address contact.IsFavorite
-                                                        ]
-                                        ]
-                                )
-                            ]
+                        View.SearchBar(text=mFilterText, textChanged=(fun e -> e.NewTextValue |> UpdateFilterText |> dispatch), backgroundColor=accentColor, cancelButtonColor=accentTextColor)
+                        View.ListViewGrouped_XF31(
+                            verticalOptions=LayoutOptions.FillAndExpand,
+                            rowHeight=60,
+                            selectionMode=ListViewSelectionMode.None,
+                            showJumpList=(mContacts.Length > 10),
+                            itemTapped=(findContactIn groupedContacts >> ContactSelected >> dispatch),
+                            items=
+                                [
+                                    for (groupName, items) in groupedContacts do
+                                        yield groupName, mkGroupView groupName,
+                                                [
+                                                    for contact in items do
+                                                        let address = contact.Address.Replace("\n", " ")
+                                                        yield mkCachedCellView contact.Picture (contact.FirstName + " " + contact.LastName) address contact.IsFavorite
+                                                ]
+                                ]
                         )
                     ]
                 )
