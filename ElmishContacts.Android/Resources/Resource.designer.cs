@@ -5088,9 +5088,6 @@ namespace ElmishContacts.Droid
 			// aapt resource value: 0x7f0e0047
 			public const int RtlUnderlay_Widget_AppCompat_ActionButton_Overflow = 2131624007;
 			
-			// aapt resource value: 0x7f0e0194
-			public const int SearchViewTheme = 2131624340;
-			
 			// aapt resource value: 0x7f0e00d6
 			public const int TextAppearance_AppCompat = 2131624150;
 			
