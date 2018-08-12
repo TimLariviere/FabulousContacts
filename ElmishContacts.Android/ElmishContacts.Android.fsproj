@@ -236,10 +236,10 @@
     <Folder Include="Resources\drawable-ldpi\" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-ldpi\splashscreen.png" />
     <None Include="Properties\AndroidManifest.xml" />
     <Compile Include="Properties\AssemblyInfo.fs" />
     <None Include="Assets\AboutAssets.txt" />
+    <AndroidResource Include="Resources\drawable-ldpi\splashscreen.png" />
     <AndroidResource Include="Resources\drawable\addphoto.png" />
     <AndroidResource Include="Resources\drawable\icon.png" />
     <AndroidResource Include="Resources\drawable\launcher_foreground.png" />
