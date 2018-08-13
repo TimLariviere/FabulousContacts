@@ -6,6 +6,7 @@ Sample contact manager app entirely written in F# and [Elmish.XamarinForms](http
 The purpose of this sample was to give a test drive to Elmish.XamarinForms, and showcase :
 - Why F# and the Elm paradigm are great to make apps
 - How easy it is to use
+- How to use SQLite with Elmish.XamarinForms
 - How to make multipages app
 - How to use the Maps control
 - How to make custom controls
