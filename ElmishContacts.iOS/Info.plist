@@ -36,11 +36,11 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>For a better experience, ElmishContacts wants to use your position as the center of the map. If you refuse, it will center on Paris, France.</string>
+	<string>ElmishContacts wants to use your position to help you find nearby contacts quickly.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>For a better experience, ElmishContacts wants to use your position as the center of the map. If you refuse, it will center on Paris, France.</string>
+	<string>ElmishContacts wants to use your position to help you find nearby contacts quickly.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>For a better experience, ElmishContacts wants to use your position as the center of the map. If you refuse, it will center on Paris, France.</string>
+	<string>ElmishContacts wants to use your position to help you find nearby contacts quickly.</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>UIStatusBarStyle</key>
@@ -52,6 +52,6 @@
 	<key>NSCalendarsUsageDescription</key>
 	<string>Needs Calendar Permission</string>
 	<key>CFBundleVersion</key>
-	<string>3</string>
+	<string>4</string>
 </dict>
 </plist>

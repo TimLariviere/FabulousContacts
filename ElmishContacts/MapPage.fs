@@ -11,6 +11,7 @@ open Xamarin.Forms.Maps
 module MapPage =
     // Declarations
     type Msg = | LoadPins of Contact list
+               | RetrieveUserPosition
                | PinsLoaded of ContactPin list
                | UserPositionRetrieved of (double * double)
 
@@ -69,12 +70,14 @@ module MapPage =
         {
             Pins = None
             UserPosition = None
-        }, Cmd.ofAsyncMsgOption (getUserPositionAsync ())
+        }, Cmd.none
 
     let update msg model =
         match msg with
         | LoadPins contacts ->
             model, Cmd.ofAsyncMsgOption (loadPinsAsync contacts)
+        | RetrieveUserPosition ->
+            model, Cmd.ofAsyncMsgOption (getUserPositionAsync ())
         | PinsLoaded pins ->
             { model with Pins = Some pins }, Cmd.none
         | UserPositionRetrieved location ->
@@ -90,6 +93,7 @@ module MapPage =
             View.ContentPage(
                 title="Map",
                 icon="maptab.png",
+                appearing=(fun () -> dispatch RetrieveUserPosition),
                 content=
                     match pins with
                     | None ->
