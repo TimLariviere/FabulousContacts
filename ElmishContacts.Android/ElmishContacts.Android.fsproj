@@ -183,12 +183,6 @@
     <Reference Include="Xamarin.GooglePlayServices.Tasks">
       <HintPath>..\packages\Xamarin.GooglePlayServices.Tasks.42.1021.1\lib\MonoAndroid70\Xamarin.GooglePlayServices.Tasks.dll</HintPath>
     </Reference>
-    <Reference Include="Elmish.XamarinForms.Maps">
-      <HintPath>..\Libs\Elmish.XamarinForms.Maps.dll</HintPath>
-    </Reference>
-    <Reference Include="Elmish.XamarinForms">
-      <HintPath>..\Libs\Elmish.XamarinForms.dll</HintPath>
-    </Reference>
     <Reference Include="FSharp.Core">
       <HintPath>..\packages\FSharp.Core.4.5.2\lib\netstandard1.6\FSharp.Core.dll</HintPath>
     </Reference>
@@ -225,6 +219,12 @@
     </Reference>
     <Reference Include="Plugin.Media">
       <HintPath>..\packages\Xam.Plugin.Media.4.0.1.1\lib\monoandroid71\Plugin.Media.dll</HintPath>
+    </Reference>
+    <Reference Include="Elmish.XamarinForms">
+      <HintPath>..\packages\Elmish.XamarinForms.0.17.0\lib\netstandard2.0\Elmish.XamarinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Elmish.XamarinForms.Maps">
+      <HintPath>..\packages\Elmish.XamarinForms.Maps.0.17.0\lib\netstandard2.0\Elmish.XamarinForms.Maps.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

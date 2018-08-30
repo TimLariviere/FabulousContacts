@@ -3,19 +3,8 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DefineConstants>TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_0;</DefineConstants>
-  </PropertyGroup>
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="4.5.2" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Elmish.XamarinForms">
-      <HintPath>..\Libs\Elmish.XamarinForms.dll</HintPath>
-    </Reference>
-    <Reference Include="Elmish.XamarinForms.Maps">
-      <HintPath>..\Libs\Elmish.XamarinForms.Maps.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controls\" />
@@ -43,5 +32,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="Xam.Plugin.Media" Version="4.0.1.1" />
     <PackageReference Include="Plugin.Permissions" Version="3.0.0.12" />
+    <PackageReference Include="Elmish.XamarinForms" Version="0.17.0" />
+    <PackageReference Include="Elmish.XamarinForms.Maps" Version="0.17.0" />
   </ItemGroup>
 </Project>
