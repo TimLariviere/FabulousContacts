@@ -1,7 +1,7 @@
-﻿namespace ElmishContacts
+namespace ElmishContacts
 
 open Xamarin.Forms
-open Elmish.XamarinForms.DynamicViews
+open Fabulous.DynamicViews
 open ElmishContacts.Controls
 
 module Style =

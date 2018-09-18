@@ -1,6 +1,6 @@
-﻿namespace ElmishContacts.Controls
+namespace ElmishContacts.Controls
 
-open Elmish.XamarinForms.DynamicViews
+open Fabulous.DynamicViews
 open Xamarin.Forms
 
 type UnderlinedLabel() =
@@ -8,7 +8,7 @@ type UnderlinedLabel() =
 
 [<AutoOpen>]
 module DynamicViewsUnderlinedLabel =
-    type Elmish.XamarinForms.DynamicViews.View with
+    type Fabulous.DynamicViews.View with
         static member UnderlinedLabel(?text, ?gestureRecognizers, ?verticalOptions) =
             let attribs =
                 View.BuildLabel(0, ?text=text, ?gestureRecognizers=gestureRecognizers, ?verticalOptions=verticalOptions)

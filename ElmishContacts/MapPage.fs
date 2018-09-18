@@ -1,10 +1,10 @@
-﻿namespace ElmishContacts
+namespace ElmishContacts
 
 open Helpers
 open Models
 open Style
-open Elmish.XamarinForms
-open Elmish.XamarinForms.DynamicViews
+open Fabulous.Core
+open Fabulous.DynamicViews
 open Xamarin.Essentials
 open Xamarin.Forms.Maps
 

@@ -1,7 +1,7 @@
-﻿namespace ElmishContacts
+namespace ElmishContacts
 
-open Elmish.XamarinForms
-open Elmish.XamarinForms.DynamicViews
+open Fabulous.Core
+open Fabulous.DynamicViews
 open Xamarin.Forms
 open ElmishContacts.Models
 open System

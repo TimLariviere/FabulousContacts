@@ -1,10 +1,10 @@
-﻿namespace ElmishContacts
+namespace ElmishContacts
 
 open Models
 open Repository
 open Style
-open Elmish.XamarinForms
-open Elmish.XamarinForms.DynamicViews
+open Fabulous.Core
+open Fabulous.DynamicViews
 
 module MainPage =
     // Declarations

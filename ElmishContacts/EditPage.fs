@@ -1,11 +1,11 @@
-﻿namespace ElmishContacts
+namespace ElmishContacts
 
 open Helpers
 open Models
 open Repository
 open Style
-open Elmish.XamarinForms
-open Elmish.XamarinForms.DynamicViews
+open Fabulous.Core
+open Fabulous.DynamicViews
 open Xamarin.Forms
 open Plugin.Permissions.Abstractions
 open Plugin.Media

@@ -1,6 +1,6 @@
-﻿namespace ElmishContacts
+namespace ElmishContacts
 
-open Elmish.XamarinForms.DynamicViews
+open Fabulous.DynamicViews
 open Xamarin.Forms
 open Style
 open Xamarin.Essentials
@@ -47,10 +47,10 @@ module AboutPage =
                                         ]
                                     )
                                     View.StackLayout(
-                                        gestureRecognizers=[ openBrowser "https://github.com/fsprojects/Elmish.XamarinForms" ],
+                                        gestureRecognizers=[ openBrowser "https://github.com/fsprojects/Fabulous.Core" ],
                                         children=[
                                             View.Image(source="xamarin.png", heightRequest=50., widthRequest=50.)
-                                            View.Label(text="Elmish.XamarinForms", horizontalTextAlignment=TextAlignment.Center)
+                                            View.Label(text="Fabulous", horizontalTextAlignment=TextAlignment.Center)
                                         ]
                                     )
                                 ]

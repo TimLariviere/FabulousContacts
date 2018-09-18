@@ -1,4 +1,3 @@
-﻿// Copyright 2018 Elmish.XamarinForms contributors. See LICENSE.md for license.
 namespace ElmishContacts.iOS
 
 open System

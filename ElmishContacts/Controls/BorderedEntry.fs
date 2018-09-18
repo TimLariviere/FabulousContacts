@@ -1,6 +1,6 @@
-﻿namespace ElmishContacts.Controls
+namespace ElmishContacts.Controls
 
-open Elmish.XamarinForms.DynamicViews
+open Fabulous.DynamicViews
 open Xamarin.Forms
 
 type BorderedEntry() =
@@ -16,7 +16,7 @@ type BorderedEntry() =
 module DynamicViewsBorderedEntry =
     let BorderedEntryBorderColorAttributeKey = AttributeKey<_> "BorderedEntry_BorderColor"    
 
-    type Elmish.XamarinForms.DynamicViews.View with
+    type Fabulous.DynamicViews.View with
         static member BorderedEntry(?borderColor: Color,
                                     ?placeholder, ?text, ?textChanged, ?keyboard) =
             let attribCount = match borderColor with None -> 0 | Some _ -> 1

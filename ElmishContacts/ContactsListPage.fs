@@ -1,9 +1,9 @@
-﻿namespace ElmishContacts
+namespace ElmishContacts
 
 open Models
 open Style
-open Elmish.XamarinForms
-open Elmish.XamarinForms.DynamicViews
+open Fabulous.Core
+open Fabulous.DynamicViews
 open Xamarin.Forms
 
 module ContactsListPage =
@@ -77,7 +77,7 @@ module ContactsListPage =
                     spacing=0.,
                     children=[
                         View.SearchBar(text=mFilterText, textChanged=(fun e -> e.NewTextValue |> UpdateFilterText |> dispatch), backgroundColor=accentColor, cancelButtonColor=accentTextColor)
-                        View.ListViewGrouped_XF31(
+                        View.ListViewGrouped(
                             verticalOptions=LayoutOptions.FillAndExpand,
                             rowHeight=60,
                             selectionMode=ListViewSelectionMode.None,
