@@ -1,12 +1,12 @@
 # ElmishContacts
 [![iOS Build status](https://build.appcenter.ms/v0.1/apps/0c7b91ea-28c5-4aa8-a73d-56905deff5cc/branches/master/badge)](https://appcenter.ms) [![Android Build status](https://build.appcenter.ms/v0.1/apps/a86d2a7f-6b5b-4c7c-b858-383580c2a866/branches/master/badge)](https://appcenter.ms)
 
-Sample contact manager app entirely written in F# and [Elmish.XamarinForms](https://github.com/fsprojects/Elmish.XamarinForms)  
+Sample contact manager app entirely written in F# and [Fabulous](https://github.com/fsprojects/Fabulous)  
 
-The purpose of this sample was to give a test drive to Elmish.XamarinForms, and showcase :
+The purpose of this sample was to give a test drive to Fabulous, and showcase :
 - Why F# and the Elm paradigm are great to make apps
 - How easy it is to use
-- How to use SQLite with Elmish.XamarinForms
+- How to use SQLite with Fabulous
 - How to make multipages app
 - How to use the Maps control
 - How to make custom controls
