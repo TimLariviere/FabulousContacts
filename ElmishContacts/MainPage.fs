@@ -5,6 +5,7 @@ open Repository
 open Style
 open Fabulous.Core
 open Fabulous.DynamicViews
+open Xamarin.Forms.PlatformConfiguration.AndroidSpecific
 
 module MainPage =
     // Declarations
@@ -138,9 +139,10 @@ module MainPage =
             let tabFavContacts = (ContactsListPage.view "Favorites" model.TabFavContactsModel (TabFavContactsMsg >> dispatch)).Icon("favoritetab.png")
             let tabMap = MapPage.view model.TabMapModel (TabMapMsg >> dispatch)
 
-            dependsOn model (fun model _ ->
-                View.BottomTabbedPage_XF31(
+            dependsOn (tabAllContacts, tabFavContacts, tabMap) (fun _ (contacts, favorites, map) ->
+                View.TabbedPage(
+                    created=(fun target -> target.On<Xamarin.Forms.PlatformConfiguration.Android>().SetToolbarPlacement(ToolbarPlacement.Bottom) |> ignore),
                     title=title,
-                    children=[ tabAllContacts; tabFavContacts; tabMap ]
+                    children=[ contacts; favorites; map ]
                 )
             )

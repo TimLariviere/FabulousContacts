@@ -92,8 +92,8 @@ module DetailPage =
                                     backgroundColor=Color.White,
                                     horizontalOptions=LayoutOptions.Center,
                                     children=[
-                                        View.ImageEx(source=(match model.Contact.Picture with null -> box "addphoto.png" | picture -> box picture), aspect=Aspect.AspectFill)
-                                        View.ImageEx(source="star.png", isVisible=model.Contact.IsFavorite, heightRequest=35., widthRequest=35., horizontalOptions=LayoutOptions.Start, verticalOptions=LayoutOptions.Start)
+                                        View.Image(source=(match model.Contact.Picture with null -> box "addphoto.png" | picture -> box picture), aspect=Aspect.AspectFill)
+                                        View.Image(source="star.png", isVisible=model.Contact.IsFavorite, heightRequest=35., widthRequest=35., horizontalOptions=LayoutOptions.Start, verticalOptions=LayoutOptions.Start)
                                     ]
                                 )
                                 View.StackLayout(

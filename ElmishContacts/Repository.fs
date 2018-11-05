@@ -1,10 +1,9 @@
-﻿namespace ElmishContacts
+namespace ElmishContacts
 
 open SQLite
+open Models
 
 module Repository =
-    open Models
-
     type ContactObject() =
         [<PrimaryKey>][<AutoIncrement>]
         member val Id = 0 with get, set

@@ -46,7 +46,7 @@ module Style =
             padding=5.,
             spacing=10.,
             children=[
-                View.ImageEx(source=source, aspect=Aspect.AspectFill, margin=Thickness(15., 0., 0., 0.), heightRequest=50., widthRequest=50.)
+                View.Image(source=source, aspect=Aspect.AspectFill, margin=Thickness(15., 0., 0., 0.), heightRequest=50., widthRequest=50.)
                 View.StackLayout(
                     spacing=5.,
                     horizontalOptions=LayoutOptions.FillAndExpand,

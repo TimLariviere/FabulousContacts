@@ -1,7 +1,8 @@
-﻿namespace ElmishContacts
+namespace ElmishContacts
+
+open Xamarin.Forms.Maps
 
 module Models =
-    open Xamarin.Forms.Maps
 
     type Contact =
         {

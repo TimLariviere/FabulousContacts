@@ -7,7 +7,6 @@ open ElmishContacts.Models
 open System
 
 module App =
-
     type Msg = | MainPageMsg of MainPage.Msg
                | DetailPageMsg of DetailPage.Msg
                | EditPageMsg of EditPage.Msg

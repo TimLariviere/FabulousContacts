@@ -1,4 +1,4 @@
-﻿namespace ElmishContacts
+namespace ElmishContacts
 
 open Plugin.Media
 open Plugin.Media.Abstractions
