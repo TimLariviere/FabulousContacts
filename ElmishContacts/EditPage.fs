@@ -13,43 +13,42 @@ open Plugin.Media
 module EditPage =
     /// Declarations
     type Msg = 
-               // Fields update
-               | UpdateFirstName of string
-               | UpdateLastName of string
-               | UpdateEmail of string
-               | UpdatePhone of string
-               | UpdateAddress of string
-               | UpdateIsFavorite of bool
-               | UpdatePicture
-               | SetPicture of byte array option
+        // Fields update
+        | UpdateFirstName of string
+        | UpdateLastName of string
+        | UpdateEmail of string
+        | UpdatePhone of string
+        | UpdateAddress of string
+        | UpdateIsFavorite of bool
+        | UpdatePicture
+        | SetPicture of byte array option
 
-               // Actions
-               | SaveContact
-               | DeleteContact of Contact
+        // Actions
+        | SaveContact
+        | DeleteContact of Contact
 
-               // Events
-               | ContactAdded of Contact
-               | ContactUpdated of Contact
-               | ContactDeleted of Contact
+        // Events
+        | ContactAdded of Contact
+        | ContactUpdated of Contact
+        | ContactDeleted of Contact
 
-    type ExternalMsg = | NoOp
-                       | GoBackAfterContactAdded of Contact
-                       | GoBackAfterContactUpdated of Contact
-                       | GoBackAfterContactDeleted of Contact
+    type ExternalMsg =
+        | NoOp
+        | GoBackAfterContactAdded of Contact
+        | GoBackAfterContactUpdated of Contact
+        | GoBackAfterContactDeleted of Contact
 
     type Model =
-        {
-            Contact: Contact option
-            FirstName: string
-            LastName: string
-            Email: string
-            Phone: string
-            Address: string
-            IsFavorite: bool
-            Picture: byte array option
-            IsFirstNameValid: bool
-            IsLastNameValid: bool
-        }
+        { Contact: Contact option
+          FirstName: string
+          LastName: string
+          Email: string
+          Phone: string
+          Address: string
+          IsFavorite: bool
+          Picture: byte array option
+          IsFirstNameValid: bool
+          IsLastNameValid: bool }
 
     /// Functions
     let saveAsync dbPath contact = async {

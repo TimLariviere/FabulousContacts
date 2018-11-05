@@ -7,40 +7,39 @@ open ElmishContacts.Models
 open System
 
 module App =
-    type Msg = | MainPageMsg of MainPage.Msg
-               | DetailPageMsg of DetailPage.Msg
-               | EditPageMsg of EditPage.Msg
-               | GoToDetail of Contact
-               | GoToEdit of Contact option
-               | GoToAbout
-               | UpdateWhenContactAdded of Contact
-               | UpdateWhenContactUpdated of Contact
-               | UpdateWhenContactDeleted of Contact
-               | NavigationPopped
+    type Msg =
+        | MainPageMsg of MainPage.Msg
+        | DetailPageMsg of DetailPage.Msg
+        | EditPageMsg of EditPage.Msg
+        | GoToDetail of Contact
+        | GoToEdit of Contact option
+        | GoToAbout
+        | UpdateWhenContactAdded of Contact
+        | UpdateWhenContactUpdated of Contact
+        | UpdateWhenContactDeleted of Contact
+        | NavigationPopped
 
     type Model = 
-        {
-            MainPageModel: MainPage.Model
-            DetailPageModel: DetailPage.Model option
-            EditPageModel: EditPage.Model option
-            AboutPageModel: bool option
+        { MainPageModel: MainPage.Model
+          DetailPageModel: DetailPage.Model option
+          EditPageModel: EditPage.Model option
+          AboutPageModel: bool option
 
-            // Workaround Cmd limitation -- Can not pop a page in page stack and send Cmd at the same time
-            // Otherwise it would pop pages 2 times in NavigationPage
-            WorkaroundNavPageBug: bool
-            WorkaroundNavPageBugPendingCmd: Cmd<Msg>
-        }
+          // Workaround Cmd limitation -- Can not pop a page in page stack and send Cmd at the same time
+          // Otherwise it would pop pages 2 times in NavigationPage
+          WorkaroundNavPageBug: bool
+          WorkaroundNavPageBugPendingCmd: Cmd<Msg> }
 
     let init dbPath () = 
         let mainModel, mainMsg = MainPage.init dbPath ()
-        {
-            MainPageModel = mainModel
-            DetailPageModel = None
-            EditPageModel = None
-            AboutPageModel = None
-            WorkaroundNavPageBug = false
-            WorkaroundNavPageBugPendingCmd = Cmd.none
-        }, Cmd.batch [ (Cmd.map MainPageMsg mainMsg) ]
+
+        { MainPageModel = mainModel
+          DetailPageModel = None
+          EditPageModel = None
+          AboutPageModel = None
+          WorkaroundNavPageBug = false
+          WorkaroundNavPageBugPendingCmd = Cmd.none
+        }, (Cmd.map MainPageMsg mainMsg)
 
     let update dbPath msg model =
         match msg with

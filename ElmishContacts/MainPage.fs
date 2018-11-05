@@ -9,28 +9,28 @@ open Xamarin.Forms.PlatformConfiguration.AndroidSpecific
 
 module MainPage =
     // Declarations
-    type Msg = | TabAllContactsMsg of ContactsListPage.Msg
-               | TabFavContactsMsg of ContactsListPage.Msg
-               | TabMapMsg of MapPage.Msg
-               | ContactsLoaded of Contact list
-               | ContactAdded of Contact
-               | ContactUpdated of Contact
-               | ContactDeleted of Contact
-               | NoContactAboutTapped
-               | NoContactAddNewContactTapped
+    type Msg =
+        | TabAllContactsMsg of ContactsListPage.Msg
+        | TabFavContactsMsg of ContactsListPage.Msg
+        | TabMapMsg of MapPage.Msg
+        | ContactsLoaded of Contact list
+        | ContactAdded of Contact
+        | ContactUpdated of Contact
+        | ContactDeleted of Contact
+        | NoContactAboutTapped
+        | NoContactAddNewContactTapped
 
-    type ExternalMsg = | NoOp
-                       | NavigateToAbout
-                       | NavigateToNewContact
-                       | NavigateToDetail of Contact
+    type ExternalMsg =
+        | NoOp
+        | NavigateToAbout
+        | NavigateToNewContact
+        | NavigateToDetail of Contact
 
     type Model =
-        {
-            Contacts: Contact list option
-            TabAllContactsModel: ContactsListPage.Model
-            TabFavContactsModel: ContactsListPage.Model
-            TabMapModel: MapPage.Model
-        }
+        { Contacts: Contact list option
+          TabAllContactsModel: ContactsListPage.Model
+          TabFavContactsModel: ContactsListPage.Model
+          TabMapModel: MapPage.Model }
 
     // Functions
     let loadAsync dbPath = async {
@@ -40,15 +40,14 @@ module MainPage =
 
     // Lifecycle
     let init dbPath () =
-        let (modelAllContacts, msgAllContacts) = ContactsListPage.init ()
-        let (modelFavContacts, msgFavContacts) = ContactsListPage.init ()
-        let (modelMap, msgMap) = MapPage.init ()
+        let (modelAllContacts, msgAllContacts) = ContactsListPage.init()
+        let (modelFavContacts, msgFavContacts) = ContactsListPage.init()
+        let (modelMap, msgMap) = MapPage.init()
 
-        {
-            Contacts = None
-            TabAllContactsModel = modelAllContacts
-            TabFavContactsModel = modelFavContacts
-            TabMapModel = modelMap
+        { Contacts = None
+          TabAllContactsModel = modelAllContacts
+          TabFavContactsModel = modelFavContacts
+          TabMapModel = modelMap
         }, Cmd.batch [
             Cmd.ofAsyncMsg (loadAsync dbPath)
             Cmd.map TabAllContactsMsg msgAllContacts

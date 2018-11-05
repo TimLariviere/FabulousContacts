@@ -7,24 +7,24 @@ open Xamarin.Forms
 open Style
 open Xamarin.Essentials
 open Helpers
+open System
 
 module DetailPage =
-    type Msg = | EditTapped
-               | CallTapped
-               | SmsTapped
-               | EmailTapped
-               | ContactUpdated of Contact
+    type Msg =
+        | EditTapped
+        | CallTapped
+        | SmsTapped
+        | EmailTapped
+        | ContactUpdated of Contact
 
-    type ExternalMsg = NoOp
-                       | EditContact of Contact
+    type ExternalMsg =
+        | NoOp
+        | EditContact of Contact
 
     type Model =
-        {
-            Contact: Contact
-        }
+        { Contact: Contact }
 
-    let hasSetField field =
-        (System.String.IsNullOrWhiteSpace(field) = false)
+    let hasSetField = not << String.IsNullOrWhiteSpace
 
     let dialNumber phoneNumber = async {
         try
@@ -59,22 +59,25 @@ module DetailPage =
     }
 
     let init (contact: Contact) =
-        {
-            Contact = contact
-        }, Cmd.none
+        { Contact = contact }, Cmd.none
 
     let update msg model =
         match msg with
-        | EditTapped -> model, Cmd.none, (ExternalMsg.EditContact model.Contact)
-        | CallTapped -> model, Cmd.ofAsyncMsgOption (dialNumber model.Contact.Phone), ExternalMsg.NoOp
-        | SmsTapped -> model, Cmd.ofAsyncMsgOption (composeSms model.Contact.Phone), ExternalMsg.NoOp
-        | EmailTapped -> model, Cmd.ofAsyncMsgOption (composeEmail model.Contact.Email), ExternalMsg.NoOp
-        | ContactUpdated contact -> { model with Contact = contact }, Cmd.none, ExternalMsg.NoOp
+        | EditTapped ->
+            model, Cmd.none, (ExternalMsg.EditContact model.Contact)
+        | CallTapped ->
+            model, Cmd.ofAsyncMsgOption (dialNumber model.Contact.Phone), ExternalMsg.NoOp
+        | SmsTapped ->
+            model, Cmd.ofAsyncMsgOption (composeSms model.Contact.Phone), ExternalMsg.NoOp
+        | EmailTapped ->
+            model, Cmd.ofAsyncMsgOption (composeEmail model.Contact.Email), ExternalMsg.NoOp
+        | ContactUpdated contact ->
+            { model with Contact = contact }, Cmd.none, ExternalMsg.NoOp
 
     let view model dispatch =
         View.ContentPage(
             toolbarItems=[
-                View.ToolbarItem(order=ToolbarItemOrder.Primary, text="Edit", command=(fun () -> dispatch EditTapped))
+                View.ToolbarItem(order=ToolbarItemOrder.Primary, text="Edit", command=(fun() -> dispatch EditTapped))
             ],
             content=View.ScrollView(
                 content=View.StackLayout(
@@ -103,10 +106,10 @@ module DetailPage =
                                     spacing=20.,
                                     children=[
                                         if hasSetField model.Contact.Phone then
-                                            yield mkDetailActionButton "call.png" (fun () -> dispatch CallTapped)
-                                            yield mkDetailActionButton "sms.png" (fun () -> dispatch SmsTapped)
+                                            yield mkDetailActionButton "call.png" (fun() -> dispatch CallTapped)
+                                            yield mkDetailActionButton "sms.png" (fun() -> dispatch SmsTapped)
                                         if hasSetField model.Contact.Email then
-                                            yield mkDetailActionButton "email.png" (fun () -> dispatch EmailTapped)
+                                            yield mkDetailActionButton "email.png" (fun() -> dispatch EmailTapped)
                                     ]
                                 )
                             ]

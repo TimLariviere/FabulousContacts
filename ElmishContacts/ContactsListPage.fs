@@ -8,29 +8,33 @@ open Xamarin.Forms
 
 module ContactsListPage =
     // Declarations
-    type Msg = | AboutTapped
-               | AddNewContactTapped
-               | UpdateFilterText of string
-               | ContactsLoaded of Contact list
-               | ContactSelected of Contact
+    type Msg =
+        | AboutTapped
+        | AddNewContactTapped
+        | UpdateFilterText of string
+        | ContactsLoaded of Contact list
+        | ContactSelected of Contact
 
-    type ExternalMsg = | NoOp
-                       | NavigateToAbout
-                       | NavigateToNewContact
-                       | NavigateToDetail of Contact
+    type ExternalMsg =
+        | NoOp
+        | NavigateToAbout
+        | NavigateToNewContact
+        | NavigateToDetail of Contact
 
     type Model =
-        {
-            Contacts: Contact list
-            FilterText: string
-            FilteredContacts: Contact list
-        }
+        { Contacts: Contact list
+          FilterText: string
+          FilteredContacts: Contact list }
 
     // Functions
     let filterContacts filterText (contacts: Contact list) =
         match filterText with
         | null | "" -> contacts
-        | _ -> contacts |> List.filter (fun c ->(c.FirstName.Contains(filterText) || c.LastName.Contains(filterText)))
+        | _ ->
+            contacts
+            |> List.filter (fun c ->
+                c.FirstName.Contains(filterText) || c.LastName.Contains(filterText)
+            )
 
     let groupContacts contacts =
         contacts
@@ -44,11 +48,9 @@ module ContactsListPage =
 
     // Lifecycle
     let init () =
-        {
-            Contacts = []
-            FilterText = ""
-            FilteredContacts = []
-        }, Cmd.none
+        { Contacts = []
+          FilterText = ""
+          FilteredContacts = [] }, Cmd.none
 
     let update msg model =
         match msg with
@@ -83,16 +85,14 @@ module ContactsListPage =
                             selectionMode=ListViewSelectionMode.None,
                             showJumpList=(mContacts.Length > 10),
                             itemTapped=(findContactIn groupedContacts >> ContactSelected >> dispatch),
-                            items=
-                                [
-                                    for (groupName, items) in groupedContacts do
-                                        yield groupName, mkGroupView groupName,
-                                                [
-                                                    for contact in items do
-                                                        let address = contact.Address.Replace("\n", " ")
-                                                        yield mkCachedCellView contact.Picture (contact.FirstName + " " + contact.LastName) address contact.IsFavorite
-                                                ]
-                                ]
+                            items= [
+                                for (groupName, items) in groupedContacts do
+                                    yield groupName, mkGroupView groupName, [
+                                        for contact in items do
+                                            let address = contact.Address.Replace("\n", " ")
+                                            yield mkCachedCellView contact.Picture (contact.FirstName + " " + contact.LastName) address contact.IsFavorite
+                                    ]
+                            ]
                         )
                     ]
                 )

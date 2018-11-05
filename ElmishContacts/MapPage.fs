@@ -7,19 +7,21 @@ open Fabulous.Core
 open Fabulous.DynamicViews
 open Xamarin.Essentials
 open Xamarin.Forms.Maps
+open System
 
 module MapPage =
+    let paris = Position(48.8566, 2.3522)
+
     // Declarations
-    type Msg = | LoadPins of Contact list
-               | RetrieveUserPosition
-               | PinsLoaded of ContactPin list
-               | UserPositionRetrieved of (double * double)
+    type Msg =
+        | LoadPins of Contact list
+        | RetrieveUserPosition
+        | PinsLoaded of ContactPin list
+        | UserPositionRetrieved of (double * double)
 
     type Model =
-        {
-            Pins: ContactPin list option
-            UserPosition: (double * double) option
-        }
+        { Pins: ContactPin list option
+          UserPosition: (double * double) option }
 
     // Functions
     let getUserPositionAsync() = async {
@@ -39,7 +41,7 @@ module MapPage =
 
             let gettingPositions =
                 contacts
-                |> List.filter (fun c -> not (System.String.IsNullOrWhiteSpace(c.Address)))
+                |> List.filter (fun c -> c.Address |> (not << String.IsNullOrWhiteSpace))
                 |> List.map (fun c -> async {
                     try
                         let! positions = geocoder.GetPositionsForAddressAsync(c.Address) |> Async.AwaitTask
@@ -52,12 +54,13 @@ module MapPage =
 
             let! contactsAndPositions = gettingPositions
 
-            let pins = contactsAndPositions
-                       |> Array.filter Option.isSome
-                       |> Array.map (fun v -> v.Value)
-                       |> Array.filter (snd >> Option.isSome)
-                       |> Array.map (fun (c, p) -> { Position = p.Value; Label = (c.FirstName + " " + c.LastName); PinType = PinType.Place; Address = c.Address})
-                       |> Array.toList
+            let pins =
+                contactsAndPositions
+                |> Array.filter Option.isSome
+                |> Array.map (fun v -> v.Value)
+                |> Array.filter (snd >> Option.isSome)
+                |> Array.map (fun (c, p) -> { Position = p.Value; Label = (c.FirstName + " " + c.LastName); PinType = PinType.Place; Address = c.Address})
+                |> Array.toList
 
             return Some (PinsLoaded pins)
         with exn ->
@@ -67,17 +70,15 @@ module MapPage =
 
     // Lifecycle
     let init () =
-        {
-            Pins = None
-            UserPosition = None
-        }, Cmd.none
+        { Pins = None
+          UserPosition = None }, Cmd.none
 
     let update msg model =
         match msg with
         | LoadPins contacts ->
             model, Cmd.ofAsyncMsgOption (loadPinsAsync contacts)
         | RetrieveUserPosition ->
-            model, Cmd.ofAsyncMsgOption (getUserPositionAsync ())
+            model, Cmd.ofAsyncMsgOption (getUserPositionAsync())
         | PinsLoaded pins ->
             { model with Pins = Some pins }, Cmd.none
         | UserPositionRetrieved location ->
@@ -87,13 +88,13 @@ module MapPage =
         dependsOn (model.UserPosition, model.Pins) (fun model (userPosition, pins) ->
             let center =
                 match userPosition with
-                | None -> Position(48.8566, 2.3522) // Default on Paris
+                | None -> paris // Default on Paris
                 | Some (lat, long) -> Position(lat, long)
 
             View.ContentPage(
                 title="Map",
                 icon="maptab.png",
-                appearing=(fun () -> dispatch RetrieveUserPosition),
+                appearing=(fun() -> dispatch RetrieveUserPosition),
                 content=
                     match pins with
                     | None ->
