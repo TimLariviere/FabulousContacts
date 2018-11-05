@@ -9,6 +9,7 @@ open Fabulous.DynamicViews
 open Xamarin.Forms
 open Plugin.Permissions.Abstractions
 open Plugin.Media
+open System
 
 module EditPage =
     /// Declarations
@@ -123,42 +124,35 @@ module EditPage =
         displayAlert("Invalid contact", "Please fill all mandatory fields", "OK")
 
     /// Validations
-    let validateFirstName v =
-        (System.String.IsNullOrWhiteSpace(v) = false)
-
-    let validateLastName v =
-        (System.String.IsNullOrWhiteSpace(v) = false)
+    let validateFirstName = not << String.IsNullOrWhiteSpace
+    let validateLastName = not << String.IsNullOrWhiteSpace
 
     /// Lifecycle
     let init (contact: Contact option) =
         let model =
             match contact with
             | Some c ->
-                {
-                    Contact = Some c
-                    FirstName = c.FirstName
-                    LastName = c.LastName
-                    Email = c.Email
-                    Phone = c.Phone
-                    Address = c.Address
-                    IsFavorite = c.IsFavorite
-                    Picture = if c.Picture <> null then Some c.Picture else None
-                    IsFirstNameValid = true
-                    IsLastNameValid = true
-                }
+                { Contact = Some c
+                  FirstName = c.FirstName
+                  LastName = c.LastName
+                  Email = c.Email
+                  Phone = c.Phone
+                  Address = c.Address
+                  IsFavorite = c.IsFavorite
+                  Picture = if c.Picture <> null then Some c.Picture else None
+                  IsFirstNameValid = true
+                  IsLastNameValid = true }
             | None ->
-                {
-                    Contact = None
-                    FirstName = ""
-                    LastName = ""
-                    Email = ""
-                    Phone = ""
-                    Address = ""
-                    IsFavorite = false
-                    Picture = None
-                    IsFirstNameValid = false
-                    IsLastNameValid = false
-                }
+                { Contact = None
+                  FirstName = ""
+                  LastName = ""
+                  Email = ""
+                  Phone = ""
+                  Address = ""
+                  IsFavorite = false
+                  Picture = None
+                  IsFirstNameValid = false
+                  IsLastNameValid = false }
 
         model, Cmd.none
 
@@ -180,7 +174,6 @@ module EditPage =
             model, Cmd.ofAsyncMsgOption (updatePictureAsync model.Picture), ExternalMsg.NoOp
         | SetPicture picture ->
             { model with Picture = picture}, Cmd.none, ExternalMsg.NoOp
-
         | SaveContact ->
             if model.IsFirstNameValid = false || model.IsLastNameValid = false then
                 do sayContactNotValid() |> ignore
@@ -220,7 +213,12 @@ module EditPage =
                 | Some _ -> true
 
             View.ContentPage(
-                title=(if (mModel.FirstName = "" && mModel.LastName = "") then "New Contact" else mModel.FirstName + " " + mModel.LastName),
+                title=(
+                    match mModel.Contact, mModel.FirstName, mModel.LastName with
+                    | None, "", "" -> "New Contact"
+                    | Some _, "", "" -> "Add a name"
+                    | _, firstName, lastName -> firstName + " " + lastName
+                ),
                 toolbarItems=[
                     mkToolbarButton "Save" (fun() -> dispatch SaveContact)
                 ],
@@ -236,7 +234,11 @@ module EditPage =
                                 children=[
                                     match mModel.Picture with
                                     | None -> 
-                                        yield View.Button(image="addphoto.png", backgroundColor=Color.White, command=(fun() -> dispatch UpdatePicture)).GridRowSpan(2)
+                                        yield View.Button(
+                                                image="addphoto.png",
+                                                backgroundColor=Color.White,
+                                                command=(fun() -> dispatch UpdatePicture)
+                                              ).GridRowSpan(2)
                                     | Some picture ->
                                         yield View.Image(
                                                 source=picture,

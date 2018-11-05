@@ -118,20 +118,12 @@ module DetailPage =
                             padding=Thickness(20., 10., 20., 20.),
                             spacing=10.,
                             children=[
-                                yield mkDetailFieldTitle "Email"
-                                match model.Contact.Email with
-                                | "" -> yield View.Label(text="Not specified", fontAttributes=FontAttributes.Italic)
-                                | _ -> yield View.Label(text=model.Contact.Email)
-
-                                yield mkDetailFieldTitle "Phone"
-                                match model.Contact.Phone with
-                                | "" -> yield View.Label(text="Not specified", fontAttributes=FontAttributes.Italic)
-                                | _ -> yield View.Label(text=model.Contact.Phone)
-
-                                yield mkDetailFieldTitle "Address"
-                                match model.Contact.Address with
-                                | "" -> yield View.Label(text="Not specified", fontAttributes=FontAttributes.Italic)
-                                | _ -> yield View.Label(text=model.Contact.Address)
+                                mkDetailFieldTitle "Email"
+                                mkOptionalLabel model.Contact.Email
+                                mkDetailFieldTitle "Phone"
+                                mkOptionalLabel model.Contact.Phone
+                                mkDetailFieldTitle "Address"
+                                mkOptionalLabel model.Contact.Address
                             ]
                         )
                     ]

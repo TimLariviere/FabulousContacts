@@ -10,8 +10,6 @@ open Xamarin.Forms.Maps
 open System
 
 module MapPage =
-    let paris = Position(48.8566, 2.3522)
-
     // Declarations
     type Msg =
         | LoadPins of Contact list
@@ -86,6 +84,7 @@ module MapPage =
 
     let view model dispatch =
         dependsOn (model.UserPosition, model.Pins) (fun model (userPosition, pins) ->
+            let paris = Position(48.8566, 2.3522)
             let center =
                 match userPosition with
                 | None -> paris // Default on Paris

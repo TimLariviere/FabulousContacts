@@ -61,10 +61,15 @@ module Style =
         )
 
     let mkCachedCellView picture name address isFavorite =
-        dependsOn (picture, name, address, isFavorite) (fun _ (cPicture, cName, cAddress, cIsFavorite) -> mkCellView cPicture cName cAddress cIsFavorite)
+        dependsOn (picture, name, address, isFavorite) (fun _ (p, n, a, i) -> mkCellView p n a i)
 
     let mkDetailActionButton image command=
         View.Button(image=image, command=command, backgroundColor=accentColor, heightRequest=35., horizontalOptions=LayoutOptions.FillAndExpand)
 
     let mkDetailFieldTitle text =
         View.Label(text=text, fontAttributes=FontAttributes.Bold, margin=Thickness(0., 10., 0., 0.))
+
+    let mkOptionalLabel text =
+        match text with
+        | "" -> View.Label(text="Not specified", fontAttributes=FontAttributes.Italic)
+        | _ -> View.Label(text=text)
