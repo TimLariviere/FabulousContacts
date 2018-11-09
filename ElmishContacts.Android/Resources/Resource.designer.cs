@@ -3234,7 +3234,7 @@ namespace ElmishContacts.Droid
 			public const int sms = 2130837836;
 			
 			// aapt resource value: 0x7f02014d
-			public const int splashscreen = 2130837837;
+			public const int splash_background = 2130837837;
 			
 			// aapt resource value: 0x7f02014e
 			public const int star = 2130837838;
@@ -4491,12 +4491,6 @@ namespace ElmishContacts.Droid
 			// aapt resource value: 0x7f0e016e
 			public const int Animation_Design_BottomSheetDialog = 2131624302;
 			
-			// aapt resource value: 0x7f0e0192
-			public const int AppCompatDialogStyle = 2131624338;
-			
-			// aapt resource value: 0x7f0e0193
-			public const int AutoCompleteTextViewStyle = 2131624339;
-			
 			// aapt resource value: 0x7f0e00a9
 			public const int Base_AlertDialog_AppCompat = 2131624105;
 			
@@ -4998,11 +4992,17 @@ namespace ElmishContacts.Droid
 			// aapt resource value: 0x7f0e000e
 			public const int CardView_Light = 2131623950;
 			
+			// aapt resource value: 0x7f0e018f
+			public const int ElmishContactsTheme = 2131624335;
+			
 			// aapt resource value: 0x7f0e0190
-			public const int MainTheme = 2131624336;
+			public const int ElmishContactsTheme_AppCompatDialogStyle = 2131624336;
 			
 			// aapt resource value: 0x7f0e0191
-			public const int MainTheme_Base = 2131624337;
+			public const int ElmishContactsTheme_AutoCompleteTextViewStyle = 2131624337;
+			
+			// aapt resource value: 0x7f0e0192
+			public const int ElmishContactsTheme_Splash = 2131624338;
 			
 			// aapt resource value: 0x7f0e002d
 			public const int Platform_AppCompat = 2131623981;
@@ -5681,9 +5681,6 @@ namespace ElmishContacts.Droid
 			
 			// aapt resource value: 0x7f0e000a
 			public const int Widget_MediaRouter_MediaRouteButton = 2131623946;
-			
-			// aapt resource value: 0x7f0e018f
-			public const int splashscreen = 2131624335;
 			
 			static Style()
 			{

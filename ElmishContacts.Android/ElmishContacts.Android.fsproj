@@ -83,47 +83,6 @@
     <Error Condition="!Exists('..\packages\Xamarin.Forms.3.3.0.967583\build\Xamarin.Forms.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Forms.3.3.0.967583\build\Xamarin.Forms.targets'))" />
   </Target>
   <ItemGroup>
-    <None Include="Properties\AndroidManifest.xml" />
-    <Compile Include="Properties\AssemblyInfo.fs" />
-    <None Include="Assets\AboutAssets.txt" />
-    <AndroidResource Include="Resources\drawable-ldpi\splashscreen.png" />
-    <AndroidResource Include="Resources\drawable\addphoto.png" />
-    <AndroidResource Include="Resources\drawable\icon.png" />
-    <AndroidResource Include="Resources\drawable\launcher_foreground.png" />
-    <AndroidResource Include="Resources\drawable\star.png" />
-    <AndroidResource Include="Resources\drawable\call.png" />
-    <AndroidResource Include="Resources\drawable\email.png" />
-    <AndroidResource Include="Resources\drawable\sms.png" />
-    <AndroidResource Include="Resources\drawable\fsharp.png" />
-    <AndroidResource Include="Resources\drawable\xamarin.png" />
-    <AndroidResource Include="Resources\drawable\github.png" />
-    <AndroidResource Include="Resources\drawable\slack.png" />
-    <AndroidResource Include="Resources\drawable\twitter.png" />
-    <AndroidResource Include="Resources\drawable\blog.png" />
-    <AndroidResource Include="Resources\drawable\alltab.png" />
-    <AndroidResource Include="Resources\drawable\favoritetab.png" />
-    <AndroidResource Include="Resources\drawable\maptab.png" />
-    <AndroidResource Include="Resources\drawable\splashscreen.png" />
-    <AndroidResource Include="Resources\layout\Tabbar.axml" />
-    <AndroidResource Include="Resources\layout\Toolbar.axml" />
-    <AndroidResource Include="Resources\mipmap-anydpi-v26\icon.xml" />
-    <AndroidResource Include="Resources\mipmap-anydpi-v26\icon_round.xml" />
-    <AndroidResource Include="Resources\values\colors.xml" />
-    <AndroidResource Include="Resources\values\keys.xml" />
-    <AndroidResource Include="Resources\values\styles.xml" />
-    <AndroidResource Include="Resources\xml\file_paths.xml" />
-    <None Include="Resources\AboutResources.txt" />
-    <AndroidResource Include="Resources\drawable-xxxhdpi\splashscreen.png" />
-    <AndroidResource Include="Resources\drawable-xxhdpi\splashscreen.png" />
-    <AndroidResource Include="Resources\drawable-xhdpi\splashscreen.png" />
-    <AndroidResource Include="Resources\drawable-hdpi\splashscreen.png" />
-    <AndroidResource Include="Resources\drawable-mdpi\splashscreen.png" />
-    <Compile Include="BorderedEntryRenderer.fs" />
-    <Compile Include="UnderlinedLabelRenderer.fs" />
-    <Compile Include="MainActivity.fs" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="Fabulous.Core">
       <HintPath>..\packages\Fabulous.Core.0.25.0\lib\netstandard2.0\Fabulous.Core.dll</HintPath>
     </Reference>
@@ -244,10 +203,6 @@
     <Reference Include="Plugin.Permissions">
       <HintPath>..\packages\Plugin.Permissions.3.0.0.12\lib\monoandroid71\Plugin.Permissions.dll</HintPath>
     </Reference>
-    <ProjectReference Include="..\ElmishContacts\ElmishContacts.fsproj">
-      <Project>{AD454E78-7578-4EB2-99EA-1F3F6F21A950}</Project>
-      <Name>ElmishContacts</Name>
-    </ProjectReference>
     <Reference Include="Xamarin.Forms.Core">
       <HintPath>..\packages\Xamarin.Forms.3.3.0.967583\lib\MonoAndroid10\Xamarin.Forms.Core.dll</HintPath>
     </Reference>
@@ -278,6 +233,45 @@
     <Reference Include="Xamarin.GooglePlayServices.Tasks">
       <HintPath>..\packages\Xamarin.GooglePlayServices.Tasks.60.1142.1\lib\MonoAndroid80\Xamarin.GooglePlayServices.Tasks.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\AndroidManifest.xml" />
+    <Compile Include="Properties\AssemblyInfo.fs" />
+    <None Include="Assets\AboutAssets.txt" />
+    <AndroidResource Include="Resources\drawable\addphoto.png" />
+    <AndroidResource Include="Resources\drawable\icon.png" />
+    <AndroidResource Include="Resources\drawable\launcher_foreground.png" />
+    <AndroidResource Include="Resources\drawable\star.png" />
+    <AndroidResource Include="Resources\drawable\call.png" />
+    <AndroidResource Include="Resources\drawable\email.png" />
+    <AndroidResource Include="Resources\drawable\sms.png" />
+    <AndroidResource Include="Resources\drawable\fsharp.png" />
+    <AndroidResource Include="Resources\drawable\xamarin.png" />
+    <AndroidResource Include="Resources\drawable\github.png" />
+    <AndroidResource Include="Resources\drawable\slack.png" />
+    <AndroidResource Include="Resources\drawable\twitter.png" />
+    <AndroidResource Include="Resources\drawable\blog.png" />
+    <AndroidResource Include="Resources\drawable\alltab.png" />
+    <AndroidResource Include="Resources\drawable\favoritetab.png" />
+    <AndroidResource Include="Resources\drawable\maptab.png" />
+    <AndroidResource Include="Resources\drawable\splash_background.xml" />
+    <AndroidResource Include="Resources\layout\Tabbar.axml" />
+    <AndroidResource Include="Resources\layout\Toolbar.axml" />
+    <AndroidResource Include="Resources\mipmap-anydpi-v26\icon.xml" />
+    <AndroidResource Include="Resources\mipmap-anydpi-v26\icon_round.xml" />
+    <AndroidResource Include="Resources\values\colors.xml" />
+    <AndroidResource Include="Resources\values\keys.xml" />
+    <AndroidResource Include="Resources\values\styles.xml" />
+    <AndroidResource Include="Resources\xml\file_paths.xml" />
+    <None Include="Resources\AboutResources.txt" />
+    <Compile Include="BorderedEntryRenderer.fs" />
+    <Compile Include="UnderlinedLabelRenderer.fs" />
+    <Compile Include="MainActivity.fs" />
+    <None Include="packages.config" />
+    <ProjectReference Include="..\ElmishContacts\ElmishContacts.fsproj">
+      <Project>{AD454E78-7578-4EB2-99EA-1F3F6F21A950}</Project>
+      <Name>ElmishContacts</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="..\packages\Xamarin.GooglePlayServices.Basement.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Basement.targets" Condition="Exists('..\packages\Xamarin.GooglePlayServices.Basement.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Basement.targets')" />
   <Import Project="..\packages\Xamarin.GooglePlayServices.Tasks.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Tasks.targets" Condition="Exists('..\packages\Xamarin.GooglePlayServices.Tasks.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Tasks.targets')" />
