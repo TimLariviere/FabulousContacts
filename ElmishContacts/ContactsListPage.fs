@@ -5,6 +5,7 @@ open Style
 open Fabulous.Core
 open Fabulous.DynamicViews
 open Xamarin.Forms
+open Extensions
 
 module ContactsListPage =
     // Declarations
@@ -78,7 +79,12 @@ module ContactsListPage =
                 content=View.StackLayout(
                     spacing=0.,
                     children=[
-                        View.SearchBar(text=mFilterText, textChanged=(fun e -> e.NewTextValue |> UpdateFilterText |> dispatch), backgroundColor=accentColor, cancelButtonColor=accentTextColor)
+                        View.SearchBar(
+                            text=mFilterText,
+                            textChanged=(debounce 250 (fun e -> e.NewTextValue |> UpdateFilterText |> dispatch)),
+                            backgroundColor=accentColor,
+                            cancelButtonColor=accentTextColor
+                        )
                         View.ListViewGrouped(
                             verticalOptions=LayoutOptions.FillAndExpand,
                             rowHeight=60,
