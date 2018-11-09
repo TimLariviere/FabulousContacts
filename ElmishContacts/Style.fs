@@ -3,6 +3,7 @@ namespace ElmishContacts
 open Xamarin.Forms
 open Fabulous.DynamicViews
 open ElmishContacts.Controls
+open Extensions
 
 module Style =
     let accentTextColor = Color.White
@@ -15,11 +16,12 @@ module Style =
         View.Label(text=text, margin=new Thickness(0., 20., 0., 5.))
 
     let mkFormEntry placeholder text keyboard isValid textChanged =
-        View.BorderedEntry(placeholder=placeholder, text=text, keyboard=keyboard, textChanged=(fun e -> e.NewTextValue |> textChanged),
+        View.BorderedEntry(placeholder=placeholder, text=text, keyboard=keyboard,
+                           textChanged=(debounce250 (fun e -> e.NewTextValue |> textChanged)),
                            borderColor=(match isValid with true -> Color.Default | false -> Color.Red))
 
     let mkFormEditor text textChanged =
-        View.Editor(text=text, textChanged=(fun e -> e.NewTextValue |> textChanged), heightRequest=100.)
+        View.Editor(text=text, textChanged=(debounce250 (fun e -> e.NewTextValue |> textChanged)), heightRequest=100.)
 
     let mkDestroyButton text command isVisible =
         View.Button(text=text, command=command, isVisible=isVisible, backgroundColor=Color.Red, textColor=Color.White, margin=new Thickness(0., 20., 0., 0.), verticalOptions=LayoutOptions.EndAndExpand)

@@ -37,3 +37,5 @@ module Extensions =
                 | _ -> ()
             })
             |> (fun task -> Async.StartImmediate(task, cts.Token))
+
+    let debounce250<'T> = debounce<'T> 250

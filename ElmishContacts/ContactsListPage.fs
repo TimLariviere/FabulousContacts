@@ -81,7 +81,7 @@ module ContactsListPage =
                     children=[
                         View.SearchBar(
                             text=mFilterText,
-                            textChanged=(debounce 250 (fun e -> e.NewTextValue |> UpdateFilterText |> dispatch)),
+                            textChanged=(debounce250 (fun e -> e.NewTextValue |> UpdateFilterText |> dispatch)),
                             backgroundColor=accentColor,
                             cancelButtonColor=accentTextColor
                         )
