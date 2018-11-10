@@ -15,13 +15,14 @@ module Style =
     let mkFormLabel text =
         View.Label(text=text, margin=new Thickness(0., 20., 0., 5.))
 
-    let mkFormEntry placeholder text keyboard isValid textChanged =
-        View.BorderedEntry(placeholder=placeholder, text=text, keyboard=keyboard,
+    let mkFormEntry id placeholder text keyboard isValid textChanged =
+        View.BorderedEntry(automationId=id,
+                           placeholder=placeholder, text=text, keyboard=keyboard,
                            textChanged=(debounce250 (fun e -> e.NewTextValue |> textChanged)),
                            borderColor=(match isValid with true -> Color.Default | false -> Color.Red))
 
-    let mkFormEditor text textChanged =
-        View.Editor(text=text, textChanged=(debounce250 (fun e -> e.NewTextValue |> textChanged)), heightRequest=100.)
+    let mkFormEditor id text textChanged =
+        View.Editor(automationId=id, text=text, textChanged=(debounce250 (fun e -> e.NewTextValue |> textChanged)), heightRequest=100.)
 
     let mkDestroyButton text command isVisible =
         View.Button(text=text, command=command, isVisible=isVisible, backgroundColor=Color.Red, textColor=Color.White, margin=new Thickness(0., 20., 0., 0.), verticalOptions=LayoutOptions.EndAndExpand)

@@ -246,8 +246,8 @@ module EditPage =
                                                 gestureRecognizers=[ View.TapGestureRecognizer(command=(fun() -> dispatch UpdatePicture)) ]
                                               ).GridRowSpan(2)
 
-                                    yield (mkFormEntry "First name*" mModel.FirstName Keyboard.Text mModel.IsFirstNameValid (UpdateFirstName >> dispatch)).VerticalOptions(LayoutOptions.Center).GridColumn(1)
-                                    yield (mkFormEntry "Last name*" mModel.LastName Keyboard.Text mModel.IsLastNameValid (UpdateLastName >> dispatch)).VerticalOptions(LayoutOptions.Center).GridColumn(1).GridRow(1)
+                                    yield (mkFormEntry "FirstName" "First name*" mModel.FirstName Keyboard.Text mModel.IsFirstNameValid (UpdateFirstName >> dispatch)).VerticalOptions(LayoutOptions.Center).GridColumn(1)
+                                    yield (mkFormEntry "LastName" "Last name*" mModel.LastName Keyboard.Text mModel.IsLastNameValid (UpdateLastName >> dispatch)).VerticalOptions(LayoutOptions.Center).GridColumn(1).GridRow(1)
                                 ]
                             )
 
@@ -255,19 +255,19 @@ module EditPage =
                                 orientation=StackOrientation.Horizontal,
                                 margin=new Thickness(0., 20., 0., 0.),
                                 children=[
-                                    View.Label(text="Mark as Favorite", verticalOptions=LayoutOptions.Center)
+                                    View.Label(automationId="MarkAsFavorite", text="Mark as Favorite", verticalOptions=LayoutOptions.Center)
                                     View.Switch(isToggled=mModel.IsFavorite, toggled=(fun e -> e.Value |> UpdateIsFavorite |> dispatch), horizontalOptions=LayoutOptions.EndAndExpand, verticalOptions=LayoutOptions.Center)
                                 ]
                             )
 
                             mkFormLabel "Email"
-                            mkFormEntry "Email" mModel.Email Keyboard.Email true (UpdateEmail >> dispatch)
+                            mkFormEntry "Email" "Email" mModel.Email Keyboard.Email true (UpdateEmail >> dispatch)
 
                             mkFormLabel "Phone"
-                            mkFormEntry "Phone" mModel.Phone Keyboard.Telephone true (UpdatePhone >> dispatch)
+                            mkFormEntry "Phone" "Phone" mModel.Phone Keyboard.Telephone true (UpdatePhone >> dispatch)
 
                             mkFormLabel "Address"
-                            mkFormEditor mModel.Address (UpdateAddress >> dispatch)
+                            mkFormEditor "Address" mModel.Address (UpdateAddress >> dispatch)
 
                             mkDestroyButton "Delete" (fun () -> mModel.Contact.Value |> DeleteContact |> dispatch) isDeleteButtonVisible
                         ]
