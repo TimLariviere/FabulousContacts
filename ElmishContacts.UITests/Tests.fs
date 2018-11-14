@@ -63,6 +63,6 @@ type Tests() =
         |> screenshot "Normal contact"
         |> goBack
         |> MainPage.waitForPage
-        |> UseCases.switchToFavoriteTab
+        |> UseCases.switchToFavoritesTab
         |> screenshot "Favorite tab"
         |> ignore

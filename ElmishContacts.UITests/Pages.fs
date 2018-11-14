@@ -26,11 +26,13 @@ module Pages =
     module MainPage =
         let about = marked "About"
         let add = marked "+"
+        let favoritesTab = marked "Favorites"
 
         let waitForPage app = waitFor about app
         let goToAboutPage app = tap about app
         let addNewContact app = tap add app
         let selectContact name = tap (fun a -> a.Marked name)
+        let switchToFavoritesTab app = tap favoritesTab app
 
     module AboutPage =
         let icon = marked "Icon"

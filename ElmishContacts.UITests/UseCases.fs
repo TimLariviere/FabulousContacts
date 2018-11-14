@@ -2,6 +2,8 @@ namespace ElmishContacts.UITests
 
 open Xamarin.UITest
 open Pages
+open UITestFunctions
+open Common
 
 module UseCases =
     type NewUser =
@@ -39,14 +41,15 @@ module UseCases =
         |> MainPage.waitForPage
         |> MainPage.addNewContact
         |> EditPage.waitForPage
-        |> Common.screenshot "Edit page"
+        |> screenshot "Edit page"
+        |> sleepFor 1000
         |> EditPage.setFirstName user.FirstName
         |> EditPage.setLastName user.LastName
         |> EditPage.markIsFavorite user.IsFavorite
         |> applySet EditPage.setEmail user.Email
         |> applySet EditPage.setPhone user.Phone
         |> applySet EditPage.setAddress user.Address
-        |> Common.screenshot "Edit page filled"
+        |> screenshot "Edit page filled"
         |> EditPage.saveContact
         |> MainPage.waitForPage
 
@@ -54,11 +57,11 @@ module UseCases =
         app
         |> MainPage.selectContact user.FullName
         |> DetailPage.waitForPage
-        |> Common.screenshot "Detail page"
+        |> screenshot "Detail page"
         |> DetailPage.editContact
         |> EditPage.waitForPage
         |> EditPage.deleteContact
-        |> Common.confirm
+        |> confirm
         |> MainPage.waitForPage
 
     let goToDetail (user: SelectUser) (app: IApp) =
@@ -66,5 +69,6 @@ module UseCases =
         |> MainPage.selectContact user.FullName
         |> DetailPage.waitForPage
 
-    let switchToFavoriteTab (app: IApp) =
+    let switchToFavoritesTab (app: IApp) =
         app
+        |> MainPage.switchToFavoritesTab
