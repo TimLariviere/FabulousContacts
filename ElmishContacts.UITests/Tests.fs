@@ -28,6 +28,8 @@ type Tests() =
         |> screenshot "Contact deleted"
         |> ignore
 
+    [<TestCase (Platform.Android)>]
+    [<TestCase (Platform.iOS)>]
     member this.FavoriteContacts (platform: Platform) =
         AppInitializer.startApp platform
         |> UseCases.waitForAppLoaded
@@ -63,3 +65,4 @@ type Tests() =
         |> MainPage.waitForPage
         |> UseCases.switchToFavoriteTab
         |> screenshot "Favorite tab"
+        |> ignore

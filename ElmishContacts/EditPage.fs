@@ -255,19 +255,19 @@ module EditPage =
                                 orientation=StackOrientation.Horizontal,
                                 margin=new Thickness(0., 20., 0., 0.),
                                 children=[
-                                    View.Label(automationId="MarkAsFavorite", text="Mark as Favorite", verticalOptions=LayoutOptions.Center)
-                                    View.Switch(isToggled=mModel.IsFavorite, toggled=(fun e -> e.Value |> UpdateIsFavorite |> dispatch), horizontalOptions=LayoutOptions.EndAndExpand, verticalOptions=LayoutOptions.Center)
+                                    View.Label(text="Mark as Favorite", verticalOptions=LayoutOptions.Center)
+                                    View.Switch(automationId="MarkAsFavorite", isToggled=mModel.IsFavorite, toggled=(fun e -> e.Value |> UpdateIsFavorite |> dispatch), horizontalOptions=LayoutOptions.EndAndExpand, verticalOptions=LayoutOptions.Center)
                                 ]
                             )
 
                             mkFormLabel "Email"
-                            mkFormEntry "Email" "Email" mModel.Email Keyboard.Email true (UpdateEmail >> dispatch)
+                            mkFormEntry "EmailField" "Email" mModel.Email Keyboard.Email true (UpdateEmail >> dispatch)
 
                             mkFormLabel "Phone"
-                            mkFormEntry "Phone" "Phone" mModel.Phone Keyboard.Telephone true (UpdatePhone >> dispatch)
+                            mkFormEntry "PhoneField" "Phone" mModel.Phone Keyboard.Telephone true (UpdatePhone >> dispatch)
 
                             mkFormLabel "Address"
-                            mkFormEditor "Address" mModel.Address (UpdateAddress >> dispatch)
+                            mkFormEditor "AddressField" mModel.Address (UpdateAddress >> dispatch)
 
                             mkDestroyButton "Delete" (fun () -> mModel.Contact.Value |> DeleteContact |> dispatch) isDeleteButtonVisible
                         ]

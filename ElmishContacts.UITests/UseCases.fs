@@ -42,7 +42,7 @@ module UseCases =
         |> Common.screenshot "Edit page"
         |> EditPage.setFirstName user.FirstName
         |> EditPage.setLastName user.LastName
-        |> applyToggle EditPage.toggleFavorite user.IsFavorite
+        |> EditPage.markIsFavorite user.IsFavorite
         |> applySet EditPage.setEmail user.Email
         |> applySet EditPage.setPhone user.Phone
         |> applySet EditPage.setAddress user.Address

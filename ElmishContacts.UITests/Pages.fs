@@ -1,6 +1,9 @@
 namespace ElmishContacts.UITests
 
 open Xamarin.UITest
+open Xamarin.UITest.Android
+open Xamarin.UITest.iOS
+open System.Linq
 open UITestFunctions
 
 module Common =
@@ -39,9 +42,9 @@ module Pages =
         let firstName = marked "FirstName"
         let lastName = marked "LastName"
         let markAsFavorite = marked "MarkAsFavorite"
-        let email = marked "Email"
-        let phone = marked "Phone"
-        let address = marked "Address"
+        let email = marked "EmailField"
+        let phone = marked "PhoneField"
+        let address = marked "AddressField"
         let delete = marked "Delete"
 
         let waitForPage app = waitFor save app
@@ -50,9 +53,20 @@ module Pages =
         let setEmail value = enterText email value
         let setPhone value = enterText phone value
         let setAddress value = enterText address value
-        let markIsFavorite app = tap markAsFavorite app
         let saveContact app = tap save app
         let deleteContact app = tap delete app
+
+        let markIsFavorite value (app: IApp) =
+            let isOn =
+                match app with
+                | :? iOSApp -> app.Query(fun a -> let switch = markAsFavorite a in switch.Invoke("isOn").Value<int>()).First() = 1
+                | :? AndroidApp -> app.Query(fun a -> let switch = markAsFavorite a in switch.Invoke("isChecked").Value<bool>()).First()
+                | _ -> false
+
+            match isOn, value with
+            | true, false | false, true -> tap markAsFavorite app
+            | _ -> app
+
 
     module DetailPage =
         let picture = marked "Picture"
