@@ -223,6 +223,7 @@ module EditPage =
                     mkToolbarButton "Save" (fun() -> dispatch SaveContact)
                 ],
                 content=View.ScrollView(
+                    automationId="ScrollView",
                     content=View.StackLayout(
                         padding=Thickness(20.),
                         children=[

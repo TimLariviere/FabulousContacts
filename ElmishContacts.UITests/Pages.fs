@@ -31,7 +31,7 @@ module Pages =
         let waitForPage app = waitFor about app
         let goToAboutPage app = tap about app
         let addNewContact app = tap add app
-        let selectContact name = tap (fun a -> a.Marked name)
+        let selectContact name = tap (marked name)
         let switchToFavoritesTab app = tap favoritesTab app
 
     module AboutPage =
@@ -48,21 +48,22 @@ module Pages =
         let phone = marked "PhoneField"
         let address = marked "AddressField"
         let delete = marked "Delete"
+        let scrollView = marked "ScrollView"
 
         let waitForPage app = waitFor save app
-        let setFirstName value = enterText firstName value
-        let setLastName value = enterText lastName value
-        let setEmail value = enterText email value
-        let setPhone value = enterText phone value
-        let setAddress value = enterText address value
-        let saveContact app = tap save app
-        let deleteContact app = tap delete app
+        let setFirstName value = scrollAndEnterText firstName scrollView value
+        let setLastName value = scrollAndEnterText lastName scrollView value
+        let setEmail value = scrollAndEnterText email scrollView value
+        let setPhone value = scrollAndEnterText phone scrollView value
+        let setAddress value = scrollAndEnterText address scrollView value
+        let saveContact app = scrollAndTap save scrollView app
+        let deleteContact app = scrollAndTap delete scrollView app
 
         let markIsFavorite value (app: IApp) =
             let isOn =
                 match app with
-                | :? iOSApp -> app.Query(fun a -> let switch = markAsFavorite a in switch.Invoke("isOn").Value<int>()).First() = 1
-                | :? AndroidApp -> app.Query(fun a -> let switch = markAsFavorite a in switch.Invoke("isChecked").Value<bool>()).First()
+                | :? iOSApp -> app.Query(fun a -> let switch = a |> markAsFavorite.Query in switch.Invoke("isOn").Value<int>()).First() = 1
+                | :? AndroidApp -> app.Query(fun a -> let switch = a |> markAsFavorite.Query in switch.Invoke("isChecked").Value<bool>()).First()
                 | _ -> false
 
             match isOn, value with
