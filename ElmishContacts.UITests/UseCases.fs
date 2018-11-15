@@ -42,7 +42,7 @@ module UseCases =
         |> MainPage.addNewContact
         |> EditPage.waitForPage
         |> screenshot "Edit page"
-        |> sleepFor 1000
+        |> sleepFor 1000 // Need to pause here to let Android catch up
         |> EditPage.setFirstName user.FirstName
         |> EditPage.setLastName user.LastName
         |> EditPage.markIsFavorite user.IsFavorite
