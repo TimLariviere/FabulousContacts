@@ -1,12 +1,7 @@
 namespace ElmishContacts
 
-open Fabulous.Core
 open System.Collections.Generic
 open System.Threading
-
-module Cmd =
-    let ofAsyncMsgOption (p: Async<'msg option>) : Cmd<'msg> =
-        [ fun dispatch -> async { let! msg = p in match msg with None -> () | Some msg -> dispatch msg } |> Async.StartImmediate ]
 
 module Extensions =
     let debounce<'T> =

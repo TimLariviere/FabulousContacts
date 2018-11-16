@@ -39,9 +39,9 @@ module ContactsListPage =
 
     let groupContacts contacts =
         contacts
+        |> List.sortBy (fun c -> c.FirstName)
         |> List.groupBy (fun c -> c.LastName.[0].ToString().ToUpper())
-        |> List.map (fun (k, cs) -> (k, cs |> List.sortBy (fun c -> c.FirstName)))
-        |> List.sortBy (fun (k, cs) -> k)
+        |> List.sortBy (fun (k, _) -> k)
 
     let findContactIn (groupedContacts: (string * Contact list) list) (gIndex: int, iIndex: int) =
         groupedContacts.[gIndex]
@@ -65,7 +65,6 @@ module ContactsListPage =
             { model with Contacts = contacts; FilteredContacts = (filterContacts model.FilterText contacts) }, Cmd.none, ExternalMsg.NoOp
         | ContactSelected contact ->
             model, Cmd.none, (ExternalMsg.NavigateToDetail contact)
-
 
     let view title model dispatch =
         dependsOn (title, model.FilterText, model.FilteredContacts) (fun model (mTitle, mFilterText, mContacts) ->

@@ -123,6 +123,25 @@ module EditPage =
     let sayContactNotValid() =
         displayAlert("Invalid contact", "Please fill all mandatory fields", "OK")
 
+    let getSaveContactCmd dbPath model =
+        if model.IsFirstNameValid = false || model.IsLastNameValid = false then
+            do sayContactNotValid() |> ignore
+            Cmd.none
+        else
+            let id = (match model.Contact with None -> 0 | Some c -> c.Id)
+            let bytes = (match model.Picture with None -> null | Some arr -> arr)
+            let newContact =
+                { Id = id
+                  FirstName = model.FirstName
+                  LastName = model.LastName
+                  Email = model.Email
+                  Phone = model.Phone
+                  Address = model.Address
+                  IsFavorite = model.IsFavorite
+                  Picture = bytes }
+            Cmd.ofAsyncMsg (saveAsync dbPath newContact)
+
+
     /// Validations
     let validateFirstName = not << String.IsNullOrWhiteSpace
     let validateLastName = not << String.IsNullOrWhiteSpace
@@ -175,25 +194,7 @@ module EditPage =
         | SetPicture picture ->
             { model with Picture = picture}, Cmd.none, ExternalMsg.NoOp
         | SaveContact ->
-            if model.IsFirstNameValid = false || model.IsLastNameValid = false then
-                do sayContactNotValid() |> ignore
-                model, Cmd.none, ExternalMsg.NoOp
-            else
-                let id = (match model.Contact with None -> 0 | Some c -> c.Id)
-                let bytes = (match model.Picture with None -> null | Some arr -> arr)
-                let newContact =
-                    { 
-                        Id = id
-                        FirstName = model.FirstName
-                        LastName = model.LastName
-                        Email = model.Email
-                        Phone = model.Phone
-                        Address = model.Address
-                        IsFavorite = model.IsFavorite
-                        Picture = bytes
-                    }
-                model, Cmd.ofAsyncMsg (saveAsync dbPath newContact), ExternalMsg.NoOp
-
+            model, (getSaveContactCmd dbPath model), ExternalMsg.NoOp
         | DeleteContact contact ->
             model, Cmd.ofAsyncMsgOption (deleteAsync dbPath contact), ExternalMsg.NoOp
         | ContactAdded contact -> 

@@ -30,8 +30,8 @@ module DetailPage =
         try
             PhoneDialer.Open(phoneNumber)
         with
-        | :? FeatureNotSupportedException as fnse -> do! displayAlert("Can't dial number", "Phone Dialer is not supported on this device", "OK")
-        | exn -> do! displayAlert("Can't dial number", "An error has occurred", "OK")
+        | :? FeatureNotSupportedException -> do! displayAlert("Can't dial number", "Phone Dialer is not supported on this device", "OK")
+        | _ -> do! displayAlert("Can't dial number", "An error has occurred", "OK")
 
         return None
     }
@@ -41,8 +41,8 @@ module DetailPage =
             let message = SmsMessage("", phoneNumber)
             do! Sms.ComposeAsync(message) |> Async.AwaitTask
         with
-        | :? FeatureNotSupportedException as fnse -> do! displayAlert("Can't send SMS", "Sms is not supported on this device", "OK")
-        | exn -> do! displayAlert("Can't send SMS", "An error has occurred", "OK")
+        | :? FeatureNotSupportedException -> do! displayAlert("Can't send SMS", "Sms is not supported on this device", "OK")
+        | _ -> do! displayAlert("Can't send SMS", "An error has occurred", "OK")
 
         return None
     }
@@ -52,8 +52,8 @@ module DetailPage =
             let message = EmailMessage("", "", [| emailAddress |])
             do! Email.ComposeAsync(message) |> Async.AwaitTask
         with
-        | :? FeatureNotSupportedException as fnse -> do! displayAlert("Can't send email", "Email is not supported on this device", "OK")
-        | exn -> do! displayAlert("Can't send email", "An error has occurred", "OK")
+        | :? FeatureNotSupportedException -> do! displayAlert("Can't send email", "Email is not supported on this device", "OK")
+        | _ -> do! displayAlert("Can't send email", "An error has occurred", "OK")
 
         return None
     }

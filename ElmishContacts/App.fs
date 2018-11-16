@@ -4,7 +4,6 @@ open Fabulous.Core
 open Fabulous.DynamicViews
 open Xamarin.Forms
 open ElmishContacts.Models
-open System
 
 module App =
     type Msg =
