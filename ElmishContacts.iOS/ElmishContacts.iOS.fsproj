@@ -189,12 +189,6 @@
     </ImageAsset>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Fabulous.Core">
-      <HintPath>..\packages\Fabulous.Core.0.25.0\lib\netstandard2.0\Fabulous.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Fabulous.Maps">
-      <HintPath>..\packages\Fabulous.Maps.0.25.0\lib\netstandard2.0\Fabulous.Maps.dll</HintPath>
-    </Reference>
     <Reference Include="Plugin.Media">
       <HintPath>..\packages\Xam.Plugin.Media.4.0.1.5\lib\xamarinios10\Plugin.Media.dll</HintPath>
     </Reference>
@@ -253,6 +247,15 @@
       <Project>{AD454E78-7578-4EB2-99EA-1F3F6F21A950}</Project>
       <Name>ElmishContacts</Name>
     </ProjectReference>
+    <Reference Include="Calabash">
+      <HintPath>..\packages\Xamarin.TestCloud.Agent.0.21.7\lib\Xamarin.iOS\Calabash.dll</HintPath>
+    </Reference>
+    <Reference Include="Fabulous.Core">
+      <HintPath>..\packages\Fabulous.Core.0.26.0\lib\netstandard2.0\Fabulous.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Fabulous.Maps">
+      <HintPath>..\packages\Fabulous.Maps.0.26.0\lib\netstandard2.0\Fabulous.Maps.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

@@ -6,6 +6,7 @@ open Style
 open Fabulous.Core
 open Fabulous.DynamicViews
 open Xamarin.Forms.PlatformConfiguration.AndroidSpecific
+open Xamarin.Forms.PlatformConfiguration
 
 module MainPage =
     // Declarations
@@ -44,47 +45,54 @@ module MainPage =
         let (modelFavContacts, msgFavContacts) = ContactsListPage.init()
         let (modelMap, msgMap) = MapPage.init()
 
-        { Contacts = None
-          TabAllContactsModel = modelAllContacts
-          TabFavContactsModel = modelFavContacts
-          TabMapModel = modelMap
-        }, Cmd.batch [
+        let model =
+            { Contacts = None
+              TabAllContactsModel = modelAllContacts
+              TabFavContactsModel = modelFavContacts
+              TabMapModel = modelMap }
+
+        let cmd = Cmd.batch [
             Cmd.ofAsyncMsg (loadAsync dbPath)
             Cmd.map TabAllContactsMsg msgAllContacts
             Cmd.map TabFavContactsMsg msgFavContacts
             Cmd.map TabMapMsg msgMap
         ]
 
-    let updateContactsList msg mapMsgFunc model =
-        let m, cmd, externalMsg = ContactsListPage.update msg model
+        model, cmd
 
-        let cmd2, externalMsg2 =
-            match externalMsg with
-            | ContactsListPage.ExternalMsg.NoOp -> Cmd.none, ExternalMsg.NoOp
-            | ContactsListPage.ExternalMsg.NavigateToAbout -> Cmd.none, ExternalMsg.NavigateToAbout
-            | ContactsListPage.ExternalMsg.NavigateToNewContact -> Cmd.none, ExternalMsg.NavigateToNewContact
-            | ContactsListPage.ExternalMsg.NavigateToDetail contact -> Cmd.none, (ExternalMsg.NavigateToDetail contact)
+    let updateContactsList msg model =
+        let pageModel, pageCmd, pageExternalMsg = ContactsListPage.update msg model
 
-        m, Cmd.batch [ Cmd.map mapMsgFunc cmd; cmd2 ], externalMsg2
+        let externalMsg =
+            match pageExternalMsg with
+            | ContactsListPage.ExternalMsg.NoOp -> ExternalMsg.NoOp
+            | ContactsListPage.ExternalMsg.NavigateToAbout -> ExternalMsg.NavigateToAbout
+            | ContactsListPage.ExternalMsg.NavigateToNewContact -> ExternalMsg.NavigateToNewContact
+            | ContactsListPage.ExternalMsg.NavigateToDetail contact -> (ExternalMsg.NavigateToDetail contact)
+
+        pageModel, pageCmd, externalMsg
 
     let updateContacts model contacts =
         let allMsg = (ContactsListPage.Msg.ContactsLoaded contacts)
         let favMsg = (ContactsListPage.Msg.ContactsLoaded (contacts |> List.filter (fun c -> c.IsFavorite)))
         let mapMsg = (MapPage.Msg.LoadPins contacts)
 
-        { model with Contacts = Some contacts }, Cmd.batch [
+        let model = { model with Contacts = Some contacts }
+        let cmd = Cmd.batch [
             Cmd.ofMsg (TabAllContactsMsg allMsg)
             Cmd.ofMsg (TabFavContactsMsg favMsg)
             Cmd.ofMsg (TabMapMsg mapMsg)
-        ], ExternalMsg.NoOp
+        ]
+
+        model, cmd, ExternalMsg.NoOp
 
     let update msg model =
         match msg with
         | TabAllContactsMsg msg ->
-            let m, cmd, externalMsg = updateContactsList msg TabAllContactsMsg model.TabAllContactsModel
+            let m, cmd, externalMsg = updateContactsList msg model.TabAllContactsModel
             { model with TabAllContactsModel = m }, cmd, externalMsg
         | TabFavContactsMsg msg ->
-            let m, cmd, externalMsg = updateContactsList msg TabFavContactsMsg model.TabFavContactsModel
+            let m, cmd, externalMsg = updateContactsList msg model.TabFavContactsModel
             { model with TabFavContactsModel = m }, cmd, externalMsg
         | TabMapMsg msg ->
             let m, cmd = MapPage.update msg model.TabMapModel
@@ -140,7 +148,7 @@ module MainPage =
 
             dependsOn (tabAllContacts, tabFavContacts, tabMap) (fun _ (contacts, favorites, map) ->
                 View.TabbedPage(
-                    created=(fun target -> target.On<Xamarin.Forms.PlatformConfiguration.Android>().SetToolbarPlacement(ToolbarPlacement.Bottom) |> ignore),
+                    created=(fun target -> target.On<Android>().SetToolbarPlacement(ToolbarPlacement.Bottom) |> ignore),
                     title=title,
                     children=[ contacts; favorites; map ]
                 )

@@ -26,6 +26,9 @@ type AppDelegate () =
         Path.Combine(libFolder, "Contacts.db3")
 
     override this.FinishedLaunching (app, options) =
+#if !ENABLE_TEST_CLOUD
+        Xamarin.Calabash.Start()
+#endif
         Forms.Init()
         FormsMaps.Init()
         CrossMedia.Current.Initialize() |> Async.AwaitTask |> ignore

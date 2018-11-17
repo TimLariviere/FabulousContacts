@@ -30,8 +30,8 @@ module DetailPage =
         try
             PhoneDialer.Open(phoneNumber)
         with
-        | :? FeatureNotSupportedException as fnse -> do! displayAlert("Can't dial number", "Phone Dialer is not supported on this device", "OK")
-        | exn -> do! displayAlert("Can't dial number", "An error has occurred", "OK")
+        | :? FeatureNotSupportedException -> do! displayAlert("Can't dial number", "Phone Dialer is not supported on this device", "OK")
+        | _ -> do! displayAlert("Can't dial number", "An error has occurred", "OK")
 
         return None
     }
@@ -41,8 +41,8 @@ module DetailPage =
             let message = SmsMessage("", phoneNumber)
             do! Sms.ComposeAsync(message) |> Async.AwaitTask
         with
-        | :? FeatureNotSupportedException as fnse -> do! displayAlert("Can't send SMS", "Sms is not supported on this device", "OK")
-        | exn -> do! displayAlert("Can't send SMS", "An error has occurred", "OK")
+        | :? FeatureNotSupportedException -> do! displayAlert("Can't send SMS", "Sms is not supported on this device", "OK")
+        | _ -> do! displayAlert("Can't send SMS", "An error has occurred", "OK")
 
         return None
     }
@@ -52,8 +52,8 @@ module DetailPage =
             let message = EmailMessage("", "", [| emailAddress |])
             do! Email.ComposeAsync(message) |> Async.AwaitTask
         with
-        | :? FeatureNotSupportedException as fnse -> do! displayAlert("Can't send email", "Email is not supported on this device", "OK")
-        | exn -> do! displayAlert("Can't send email", "An error has occurred", "OK")
+        | :? FeatureNotSupportedException -> do! displayAlert("Can't send email", "Email is not supported on this device", "OK")
+        | _ -> do! displayAlert("Can't send email", "An error has occurred", "OK")
 
         return None
     }
@@ -95,7 +95,7 @@ module DetailPage =
                                     backgroundColor=Color.White,
                                     horizontalOptions=LayoutOptions.Center,
                                     children=[
-                                        View.Image(source=(match model.Contact.Picture with null -> box "addphoto.png" | picture -> box picture), aspect=Aspect.AspectFill)
+                                        View.Image(automationId="Picture", source=(match model.Contact.Picture with null -> box "addphoto.png" | picture -> box picture), aspect=Aspect.AspectFill)
                                         View.Image(source="star.png", isVisible=model.Contact.IsFavorite, heightRequest=35., widthRequest=35., horizontalOptions=LayoutOptions.Start, verticalOptions=LayoutOptions.Start)
                                     ]
                                 )

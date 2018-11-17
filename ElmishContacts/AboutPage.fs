@@ -25,7 +25,7 @@ module AboutPage =
                                 backgroundColor=accentColor,
                                 padding=15.,
                                 children=[
-                                    View.Image(source="icon.png")
+                                    View.Image(automationId="Icon", source="icon.png")
                                 ]
                             )
                             View.Label(text="ElmishContacts v1.0", fontAttributes=FontAttributes.Bold, horizontalOptions=LayoutOptions.Center)

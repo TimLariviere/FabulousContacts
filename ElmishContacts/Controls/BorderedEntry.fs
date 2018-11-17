@@ -17,11 +17,11 @@ module DynamicViewsBorderedEntry =
     let BorderedEntryBorderColorAttributeKey = AttributeKey<_> "BorderedEntry_BorderColor"    
 
     type Fabulous.DynamicViews.View with
-        static member BorderedEntry(?borderColor: Color,
+        static member BorderedEntry(?automationId: string, ?borderColor: Color,
                                     ?placeholder, ?text, ?textChanged, ?keyboard) =
             let attribCount = match borderColor with None -> 0 | Some _ -> 1
             let attribs =
-                View.BuildEntry(attribCount, ?placeholder=placeholder, ?text=text, ?textChanged=textChanged, ?keyboard=keyboard)
+                View.BuildEntry(attribCount, ?automationId=automationId, ?placeholder=placeholder, ?text=text, ?textChanged=textChanged, ?keyboard=keyboard)
 
             match borderColor with None -> () | Some v -> attribs.Add(BorderedEntryBorderColorAttributeKey, v)
 

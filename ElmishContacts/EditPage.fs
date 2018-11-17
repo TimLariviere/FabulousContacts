@@ -123,6 +123,25 @@ module EditPage =
     let sayContactNotValid() =
         displayAlert("Invalid contact", "Please fill all mandatory fields", "OK")
 
+    let getSaveContactCmd dbPath model =
+        if model.IsFirstNameValid = false || model.IsLastNameValid = false then
+            do sayContactNotValid() |> ignore
+            Cmd.none
+        else
+            let id = (match model.Contact with None -> 0 | Some c -> c.Id)
+            let bytes = (match model.Picture with None -> null | Some arr -> arr)
+            let newContact =
+                { Id = id
+                  FirstName = model.FirstName
+                  LastName = model.LastName
+                  Email = model.Email
+                  Phone = model.Phone
+                  Address = model.Address
+                  IsFavorite = model.IsFavorite
+                  Picture = bytes }
+            Cmd.ofAsyncMsg (saveAsync dbPath newContact)
+
+
     /// Validations
     let validateFirstName = not << String.IsNullOrWhiteSpace
     let validateLastName = not << String.IsNullOrWhiteSpace
@@ -175,25 +194,7 @@ module EditPage =
         | SetPicture picture ->
             { model with Picture = picture}, Cmd.none, ExternalMsg.NoOp
         | SaveContact ->
-            if model.IsFirstNameValid = false || model.IsLastNameValid = false then
-                do sayContactNotValid() |> ignore
-                model, Cmd.none, ExternalMsg.NoOp
-            else
-                let id = (match model.Contact with None -> 0 | Some c -> c.Id)
-                let bytes = (match model.Picture with None -> null | Some arr -> arr)
-                let newContact =
-                    { 
-                        Id = id
-                        FirstName = model.FirstName
-                        LastName = model.LastName
-                        Email = model.Email
-                        Phone = model.Phone
-                        Address = model.Address
-                        IsFavorite = model.IsFavorite
-                        Picture = bytes
-                    }
-                model, Cmd.ofAsyncMsg (saveAsync dbPath newContact), ExternalMsg.NoOp
-
+            model, (getSaveContactCmd dbPath model), ExternalMsg.NoOp
         | DeleteContact contact ->
             model, Cmd.ofAsyncMsgOption (deleteAsync dbPath contact), ExternalMsg.NoOp
         | ContactAdded contact -> 
@@ -223,6 +224,7 @@ module EditPage =
                     mkToolbarButton "Save" (fun() -> dispatch SaveContact)
                 ],
                 content=View.ScrollView(
+                    automationId="ScrollView",
                     content=View.StackLayout(
                         padding=Thickness(20.),
                         children=[
@@ -246,8 +248,8 @@ module EditPage =
                                                 gestureRecognizers=[ View.TapGestureRecognizer(command=(fun() -> dispatch UpdatePicture)) ]
                                               ).GridRowSpan(2)
 
-                                    yield (mkFormEntry "First name*" mModel.FirstName Keyboard.Text mModel.IsFirstNameValid (UpdateFirstName >> dispatch)).VerticalOptions(LayoutOptions.Center).GridColumn(1)
-                                    yield (mkFormEntry "Last name*" mModel.LastName Keyboard.Text mModel.IsLastNameValid (UpdateLastName >> dispatch)).VerticalOptions(LayoutOptions.Center).GridColumn(1).GridRow(1)
+                                    yield (mkFormEntry "FirstName" "First name*" mModel.FirstName Keyboard.Text mModel.IsFirstNameValid (UpdateFirstName >> dispatch)).VerticalOptions(LayoutOptions.Center).GridColumn(1)
+                                    yield (mkFormEntry "LastName" "Last name*" mModel.LastName Keyboard.Text mModel.IsLastNameValid (UpdateLastName >> dispatch)).VerticalOptions(LayoutOptions.Center).GridColumn(1).GridRow(1)
                                 ]
                             )
 
@@ -256,18 +258,18 @@ module EditPage =
                                 margin=new Thickness(0., 20., 0., 0.),
                                 children=[
                                     View.Label(text="Mark as Favorite", verticalOptions=LayoutOptions.Center)
-                                    View.Switch(isToggled=mModel.IsFavorite, toggled=(fun e -> e.Value |> UpdateIsFavorite |> dispatch), horizontalOptions=LayoutOptions.EndAndExpand, verticalOptions=LayoutOptions.Center)
+                                    View.Switch(automationId="MarkAsFavorite", isToggled=mModel.IsFavorite, toggled=(fun e -> e.Value |> UpdateIsFavorite |> dispatch), horizontalOptions=LayoutOptions.EndAndExpand, verticalOptions=LayoutOptions.Center)
                                 ]
                             )
 
                             mkFormLabel "Email"
-                            mkFormEntry "Email" mModel.Email Keyboard.Email true (UpdateEmail >> dispatch)
+                            mkFormEntry "EmailField" "Email" mModel.Email Keyboard.Email true (UpdateEmail >> dispatch)
 
                             mkFormLabel "Phone"
-                            mkFormEntry "Phone" mModel.Phone Keyboard.Telephone true (UpdatePhone >> dispatch)
+                            mkFormEntry "PhoneField" "Phone" mModel.Phone Keyboard.Telephone true (UpdatePhone >> dispatch)
 
                             mkFormLabel "Address"
-                            mkFormEditor mModel.Address (UpdateAddress >> dispatch)
+                            mkFormEditor "AddressField" mModel.Address (UpdateAddress >> dispatch)
 
                             mkDestroyButton "Delete" (fun () -> mModel.Contact.Value |> DeleteContact |> dispatch) isDeleteButtonVisible
                         ]

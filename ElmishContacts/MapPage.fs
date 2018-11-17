@@ -57,7 +57,11 @@ module MapPage =
                 |> Array.filter Option.isSome
                 |> Array.map (fun v -> v.Value)
                 |> Array.filter (snd >> Option.isSome)
-                |> Array.map (fun (c, p) -> { Position = p.Value; Label = (c.FirstName + " " + c.LastName); PinType = PinType.Place; Address = c.Address})
+                |> Array.map (fun (c, p) ->
+                    { Position = p.Value
+                      Label = (c.FirstName + " " + c.LastName)
+                      PinType = PinType.Place
+                      Address = c.Address })
                 |> Array.toList
 
             return Some (PinsLoaded pins)
@@ -76,7 +80,7 @@ module MapPage =
         | LoadPins contacts ->
             model, Cmd.ofAsyncMsgOption (loadPinsAsync contacts)
         | RetrieveUserPosition ->
-            model, Cmd.ofAsyncMsgOption (getUserPositionAsync())
+            model, Cmd.ofAsyncMsgOption (getUserPositionAsync ())
         | PinsLoaded pins ->
             { model with Pins = Some pins }, Cmd.none
         | UserPositionRetrieved location ->
