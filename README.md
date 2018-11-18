@@ -23,7 +23,7 @@ Follow the instructions here: https://docs.microsoft.com/en-us/xamarin/android/p
 
 Once you have a key, simply replace `REPLACE_WITH_GOOGLE_API_KEY` in the keys.xml file in the Android project: https://github.com/TimLariviere/ElmishContacts/blob/master/ElmishContacts.Android/Resources/values/keys.xml#L3
 
-If you have an [AppCenter](appcenter.ms) account, you can also enable analytics and diagnostics by setting your own app secret keys in the AppCenter.fs file:
+If you have an [AppCenter](https://appcenter.ms) account, you can also enable analytics and diagnostics by setting your own app secret keys in the AppCenter.fs file:
 https://github.com/TimLariviere/ElmishContacts/blob/master/ElmishContacts/AppCenter.fs#L13
 
 Follow the instructions here: https://docs.microsoft.com/en-us/appcenter/sdk/getting-started/xamarin#43-replace-the-placeholder-with-your-app-secret
