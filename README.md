@@ -22,3 +22,11 @@ If you want to build and run your own version of ElmishContacts, you will need t
 Follow the instructions here: https://docs.microsoft.com/en-us/xamarin/android/platform/maps-and-location/maps/obtaining-a-google-maps-api-key
 
 Once you have a key, simply replace `REPLACE_WITH_GOOGLE_API_KEY` in the keys.xml file in the Android project: https://github.com/TimLariviere/ElmishContacts/blob/master/ElmishContacts.Android/Resources/values/keys.xml#L3
+
+## AppCenter
+
+If you have an [AppCenter](https://appcenter.ms) account, you can also enable analytics and diagnostics by following the instructions here:  
+https://docs.microsoft.com/en-us/appcenter/sdk/getting-started/xamarin#43-replace-the-placeholder-with-your-app-secret
+
+Once you have your keys, replace `REPLACE_WITH_APPCENTER_IOS_SECRET` and `REPLACE_WITH_APPCENTER_ANDROID_SECRET` in the AppCenter.fs file:
+https://github.com/TimLariviere/ElmishContacts/blob/master/ElmishContacts/AppCenter.fs#L13
