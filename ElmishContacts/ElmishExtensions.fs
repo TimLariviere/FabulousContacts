@@ -1,36 +1,30 @@
 namespace ElmishContacts
 
+open System
 open System.Collections.Generic
 open System.Threading
+open Xamarin.Forms
 
 module Extensions =
-    let debounce<'T> =
+    /// Debounce multiple calls to a single function
+    let debounce<'T> (timeout: int) =
         let memoizations = Dictionary<obj, CancellationTokenSource>(HashIdentity.Structural)
-
-        fun (timeout: int) (fn: 'T -> unit) value ->
+        fun (fn: 'T -> unit) value ->
             let key = fn.GetType()
-
-            // Cancel previous debouncer
             match memoizations.TryGetValue(key) with
-            | true, cts -> cts.Cancel()
+            | true, previousCts -> previousCts.Cancel()
             | _ -> ()
 
-            // Create a new cancellation token and memoize it
             let cts = new CancellationTokenSource()
             memoizations.[key] <- cts
 
-            // Start a new debouncer
-            (async {
-                try
-                    // Wait timeout to see if another event will cancel this one
-                    do! Async.Sleep timeout
-
-                    // If still not cancelled, then proceed to invoke the callback and discard the unused token
+            Device.StartTimer(TimeSpan.FromMilliseconds(float timeout), (fun () ->
+                match cts.IsCancellationRequested with
+                | false ->
                     memoizations.Remove(key) |> ignore
                     fn value
-                with
                 | _ -> ()
-            })
-            |> (fun task -> Async.StartImmediate(task, cts.Token))
+                false // Do not let the timer trigger a second time
+            ))
 
     let debounce250<'T> = debounce<'T> 250
