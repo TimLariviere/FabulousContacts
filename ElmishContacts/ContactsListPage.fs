@@ -72,8 +72,8 @@ module ContactsListPage =
             View.ContentPage(
                 title=mTitle,
                 toolbarItems=[
-                    View.ToolbarItem(text="About", command=(fun() -> dispatch AboutTapped))
-                    View.ToolbarItem(text="+", command=(fun() -> dispatch AddNewContactTapped))
+                    View.ToolbarItem(text="About", priority=0, command=(fun() -> dispatch AboutTapped))
+                    View.ToolbarItem(text="+", priority=1, command=(fun() -> dispatch AddNewContactTapped))
                 ],
                 content=View.StackLayout(
                     spacing=0.,

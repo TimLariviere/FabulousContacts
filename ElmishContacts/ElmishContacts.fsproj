@@ -25,7 +25,7 @@
     <Compile Include="EditPage.fs" />
     <Compile Include="AboutPage.fs" />
     <Compile Include="Root.fs" />
-    <PackageReference Include="Fabulous.Maps" Version="0.26.0" />
+    <PackageReference Include="Fabulous.Maps" Version="0.27.1" />
     <PackageReference Include="sqlite-net-pcl" Version="1.5.231" />
     <PackageReference Include="Xamarin.Essentials" Version="0.8.0-preview" />
     <PackageReference Include="FSharp.Core" Version="4.5.2" />

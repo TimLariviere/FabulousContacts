@@ -17,8 +17,7 @@
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
     <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <NuGetPackageImportStamp></NuGetPackageImportStamp>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <RestorePackages>true</RestorePackages>
     <SelectedDevice>new_device</SelectedDevice>
@@ -226,12 +225,6 @@
     <Reference Include="Xamarin.GooglePlayServices.Tasks">
       <HintPath>..\packages\Xamarin.GooglePlayServices.Tasks.60.1142.1\lib\MonoAndroid80\Xamarin.GooglePlayServices.Tasks.dll</HintPath>
     </Reference>
-    <Reference Include="Fabulous.Core">
-      <HintPath>..\packages\Fabulous.Core.0.26.0\lib\netstandard2.0\Fabulous.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Fabulous.Maps">
-      <HintPath>..\packages\Fabulous.Maps.0.26.0\lib\netstandard2.0\Fabulous.Maps.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.AppCenter.Android.Bindings">
       <HintPath>..\packages\Microsoft.AppCenter.1.10.0\lib\MonoAndroid403\Microsoft.AppCenter.Android.Bindings.dll</HintPath>
     </Reference>
@@ -249,6 +242,15 @@
     </Reference>
     <Reference Include="Microsoft.AppCenter.Crashes">
       <HintPath>..\packages\Microsoft.AppCenter.Crashes.1.10.0\lib\MonoAndroid403\Microsoft.AppCenter.Crashes.dll</HintPath>
+    </Reference>
+    <Reference Include="Fabulous.CustomControls">
+      <HintPath>..\packages\Fabulous.CustomControls.0.27.1\lib\netstandard2.0\Fabulous.CustomControls.dll</HintPath>
+    </Reference>
+    <Reference Include="Fabulous.Core">
+      <HintPath>..\packages\Fabulous.Core.0.27.1\lib\netstandard2.0\Fabulous.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Fabulous.Maps">
+      <HintPath>..\packages\Fabulous.Maps.0.27.1\lib\netstandard2.0\Fabulous.Maps.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

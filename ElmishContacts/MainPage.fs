@@ -132,8 +132,8 @@ module MainPage =
                 View.ContentPage(
                     title=title,
                     toolbarItems=[
-                        View.ToolbarItem(text="About", command=(fun() -> dispatch NoContactAboutTapped))
-                        View.ToolbarItem(text="+", command=(fun() -> dispatch NoContactAddNewContactTapped))
+                        View.ToolbarItem(text="About", priority=0, command=(fun() -> dispatch NoContactAboutTapped))
+                        View.ToolbarItem(text="+", priority=1, command=(fun() -> dispatch NoContactAddNewContactTapped))
                     ],
                     content=View.StackLayout(
                         children=[ mkCentralLabel "No contact" ]
