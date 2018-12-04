@@ -38,7 +38,7 @@ module DetailPage =
 
     let composeSms phoneNumber = async {
         try
-            let message = SmsMessage("", phoneNumber)
+            let message = SmsMessage("", [ phoneNumber ])
             do! Sms.ComposeAsync(message) |> Async.AwaitTask
         with
         | :? FeatureNotSupportedException -> do! displayAlert("Can't send SMS", "Sms is not supported on this device", "OK")
