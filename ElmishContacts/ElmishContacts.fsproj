@@ -12,7 +12,6 @@
   <ItemGroup>
     <Compile Include="Controls\BorderedEntry.fs" />
     <Compile Include="Controls\UnderlinedLabel.fs" />
-    <Compile Include="ElmishExtensions.fs" />
     <Compile Include="AppCenter.fs" />
     <Compile Include="Helpers.fs" />
     <Compile Include="Style.fs" />
@@ -25,15 +24,15 @@
     <Compile Include="EditPage.fs" />
     <Compile Include="AboutPage.fs" />
     <Compile Include="Root.fs" />
-    <PackageReference Include="Fabulous.Maps" Version="0.26.0" />
+    <PackageReference Include="Fabulous.Maps" Version="0.33.0" />
     <PackageReference Include="sqlite-net-pcl" Version="1.5.231" />
-    <PackageReference Include="Xamarin.Essentials" Version="0.8.0-preview" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.0.1" />
     <PackageReference Include="FSharp.Core" Version="4.5.2" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="Xam.Plugin.Media" Version="4.0.1.5" />
     <PackageReference Include="Plugin.Permissions" Version="3.0.0.12" />
-    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="1.10.0" />
-    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="1.10.0" />
+    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="1.13.2" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="1.13.2" />
     <Compile Include="App.fs" />
   </ItemGroup>
 </Project>

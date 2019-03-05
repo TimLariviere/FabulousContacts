@@ -3,38 +3,45 @@
 open Fabulous.Core
 open Xamarin.Forms
 open System
+open AppCenter
 
 module Tracing =
     let hasValue = (not << String.IsNullOrEmpty) >> string
 
     let rules msg _ =
         match msg with
-        | Root.Msg.GoToAbout -> Some ("Navigation", [ ("Page", "About") ])
-        | Root.Msg.GoToDetail _ -> Some ("Navigation", [ ("Page", "Detail") ])
+        | Root.Msg.GoToAbout ->
+            Some { EventName = "Page"; AdditionalParameters = [ { Key = "Page"; Value = "About"} ] }
+        | Root.Msg.GoToDetail _ ->
+            Some { EventName = "Page"; AdditionalParameters = [ { Key = "Page"; Value = "Detail"} ] }
         | Root.Msg.GoToEdit c ->
             match c with
-            | Some _ -> Some ("Navigation", [ ("Page", "Edit") ])
-            | None -> Some ("Navigation", [ ("Page", "Create") ])
+            | Some _ ->
+                Some { EventName = "Page"; AdditionalParameters = [ { Key = "Page"; Value = "Edit"} ] }
+            | None ->
+                Some { EventName = "Page"; AdditionalParameters = [ { Key = "Page"; Value = "Create"} ] }
         | Root.Msg.NavigationPopped ->
-            Some ("Back Navigation", [])
+            Some { EventName = "BackNavigation"; AdditionalParameters = [ ] }
         | Root.Msg.UpdateWhenContactAdded c ->
-            Some ("Contact added", [
-                ("Has Email", hasValue c.Email)
-                ("Has Phone", hasValue c.Phone)
-                ("Has Address", hasValue c.Address)
-            ])
+            Some
+                { EventName = "Contact added"
+                  AdditionalParameters = 
+                    [ { Key = "Has Email"; Value = hasValue c.Email }
+                      { Key = "Has Phone"; Value = hasValue c.Phone }
+                      { Key = "Has Address"; Value = hasValue c.Address } ] }
         | Root.Msg.UpdateWhenContactUpdated c ->
-            Some ("Contact updated", [
-                ("Has Email", hasValue c.Email)
-                ("Has Phone", hasValue c.Phone)
-                ("Has Address", hasValue c.Address)
-            ])
+            Some
+                { EventName = "Contact updated"
+                  AdditionalParameters = 
+                    [ { Key = "Has Email"; Value = hasValue c.Email }
+                      { Key = "Has Phone"; Value = hasValue c.Phone }
+                      { Key = "Has Address"; Value = hasValue c.Address } ] }
         | Root.Msg.UpdateWhenContactDeleted _ ->
-            Some ("Contact deleted", [])
+            Some { EventName = "Contact deleted"; AdditionalParameters = [ ] }
         | Root.Msg.MainPageMsg (MainPage.Msg.TabMapMsg (MapPage.Msg.RetrieveUserPosition)) ->
-            Some ("User Position", [ ( "Event", "Requested") ])
+            Some { EventName = "User Position"; AdditionalParameters = [ { Key = "Event"; Value = "Requested"} ] }
         | Root.Msg.MainPageMsg (MainPage.Msg.TabMapMsg (MapPage.Msg.UserPositionRetrieved _)) ->
-            Some ("User Position", [( "Event", "Retrieved") ])
+            Some { EventName = "User Position"; AdditionalParameters = [ { Key = "Event"; Value = "Retrieved"} ] }
         | _ -> None
 
 

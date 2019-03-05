@@ -16,7 +16,7 @@ type Resources = ElmishContacts.Droid.Resource
 [<assembly: AssemblyDescription("")>]
 [<assembly: AssemblyConfiguration("")>]
 [<assembly: AssemblyCompany("")>]
-[<assembly: AssemblyProduct("ElmishContacts.Android")>]
+[<assembly: AssemblyProduct("ElmishContacts.Droid")>]
 [<assembly: AssemblyCopyright("Copyright ©  2018")>]
 [<assembly: AssemblyTrademark("")>]
 [<assembly: AssemblyCulture("")>]
