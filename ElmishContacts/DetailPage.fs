@@ -36,7 +36,7 @@ module DetailPage =
         return None
     }
 
-    let composeSms phoneNumber = async {
+    let composeSms (phoneNumber: string) = async {
         try
             let message = SmsMessage("", phoneNumber)
             do! Sms.ComposeAsync(message) |> Async.AwaitTask

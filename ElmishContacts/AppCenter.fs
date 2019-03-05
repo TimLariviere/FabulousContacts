@@ -6,7 +6,15 @@ open Microsoft.AppCenter.Crashes
 open Fabulous.Core
 
 module AppCenter =
-    type UpdateTracer<'msg, 'model> = 'msg -> 'model -> (string * (string * string) list) option
+    type TraceParameter =
+        { Key: string
+          Value: string }
+
+    type TraceData =
+        { EventName: string
+          AdditionalParameters: TraceParameter list }
+
+    type UpdateTracer<'msg, 'model> = 'msg -> 'model -> TraceData option
 
     /// Initialize AppCenter Analytics and Crashes modules
     let start() =
@@ -16,8 +24,15 @@ module AppCenter =
     let withAppCenterTrace (shouldTraceUpdate: UpdateTracer<_, _>) (program: Program<_, _, _>) =
         let traceUpdate msg model =
             match shouldTraceUpdate msg model with
-            | Some (key, value) -> Analytics.TrackEvent (key, dict value)
             | None -> ()
+            | Some data ->
+                let dictionary =
+                    data.AdditionalParameters
+                    |> List.map (fun p -> p.Key, p.Value)
+                    |> dict
+
+                Analytics.TrackEvent (data.EventName, dictionary)
+
             program.update msg model
 
         let traceError (message, exn) =

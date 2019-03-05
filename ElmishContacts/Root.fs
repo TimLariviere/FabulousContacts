@@ -30,14 +30,14 @@ module Root =
 
     let init dbPath () = 
         let mainModel, mainMsg = MainPage.init dbPath ()
+        let cmd = (Cmd.map MainPageMsg mainMsg)
 
         { MainPageModel = mainModel
           DetailPageModel = None
           EditPageModel = None
           AboutPageModel = None
           WorkaroundNavPageBug = false
-          WorkaroundNavPageBugPendingCmd = Cmd.none
-        }, (Cmd.map MainPageMsg mainMsg)
+          WorkaroundNavPageBugPendingCmd = Cmd.none }, cmd
 
     let update dbPath msg model =
         match msg with
@@ -123,20 +123,6 @@ module Root =
 
 
     let view (model: Model) dispatch =
-        // Workaround iOS bug: https://github.com/xamarin/Xamarin.Forms/issues/3509
-        let dispatchNavPopped =
-            let mutable lastRemovedPageIdentifier: int = -1
-            let apply dispatch (e: Xamarin.Forms.NavigationEventArgs) =
-                let removedPageIdentifier = e.Page.GetHashCode()
-                match lastRemovedPageIdentifier = removedPageIdentifier with
-                | false ->
-                    lastRemovedPageIdentifier <- removedPageIdentifier
-                    dispatch NavigationPopped
-                | true ->
-                    ()
-            apply
-
-
         let mainPage = MainPage.view model.MainPageModel (MainPageMsg >> dispatch)
 
         let detailPage =
@@ -157,7 +143,7 @@ module Root =
         View.NavigationPage(
             barTextColor=Style.accentTextColor,
             barBackgroundColor=Style.accentColor,
-            popped=(dispatchNavPopped dispatch),
+            popped=(fun _ -> dispatch NavigationPopped),
             pages=
                 match aboutPage, detailPage, editPage with
                 | None, None, None -> [ mainPage ]

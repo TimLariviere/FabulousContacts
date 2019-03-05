@@ -11,9 +11,9 @@ module DynamicViewsUnderlinedLabel =
     type Fabulous.DynamicViews.View with
         static member UnderlinedLabel(?text, ?gestureRecognizers, ?verticalOptions) =
             let attribs =
-                View.BuildLabel(0, ?text=text, ?gestureRecognizers=gestureRecognizers, ?verticalOptions=verticalOptions)
+                ViewBuilders.BuildLabel(0, ?text=text, ?gestureRecognizers=gestureRecognizers, ?verticalOptions=verticalOptions)
 
             let update (prevOpt: ViewElement voption) (source: ViewElement) (target: UnderlinedLabel) =
-                View.UpdateLabel(prevOpt, source, target)
+                ViewBuilders.UpdateLabel(prevOpt, source, target)
 
             ViewElement.Create(UnderlinedLabel, update, attribs)

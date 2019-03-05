@@ -21,12 +21,12 @@ module DynamicViewsBorderedEntry =
                                     ?placeholder, ?text, ?textChanged, ?keyboard) =
             let attribCount = match borderColor with None -> 0 | Some _ -> 1
             let attribs =
-                View.BuildEntry(attribCount, ?automationId=automationId, ?placeholder=placeholder, ?text=text, ?textChanged=textChanged, ?keyboard=keyboard)
+                ViewBuilders.BuildEntry(attribCount, ?automationId=automationId, ?placeholder=placeholder, ?text=text, ?textChanged=textChanged, ?keyboard=keyboard)
 
             match borderColor with None -> () | Some v -> attribs.Add(BorderedEntryBorderColorAttributeKey, v)
 
             let update (prevOpt: ViewElement voption) (source: ViewElement) (target: BorderedEntry) =
-                View.UpdateEntry(prevOpt, source, target)
+                ViewBuilders.UpdateEntry(prevOpt, source, target)
                 source.UpdatePrimitive(prevOpt, target, BorderedEntryBorderColorAttributeKey, (fun target v -> target.BorderColor <- v))
 
             ViewElement.Create(BorderedEntry, update, attribs)
