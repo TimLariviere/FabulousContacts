@@ -142,14 +142,15 @@ module MainPage =
             )
 
         | Some _ ->
-            let tabAllContacts = (ContactsListPage.view "All" model.TabAllContactsModel (TabAllContactsMsg >> dispatch)).Icon("alltab.png")
-            let tabFavContacts = (ContactsListPage.view "Favorites" model.TabFavContactsModel (TabFavContactsMsg >> dispatch)).Icon("favoritetab.png")
-            let tabMap = MapPage.view model.TabMapModel (TabMapMsg >> dispatch)
+            dependsOn (model.TabAllContactsModel, model.TabFavContactsModel, model.TabMapModel) (fun _ (contacts, favorites, map) ->
 
-            dependsOn (tabAllContacts, tabFavContacts, tabMap) (fun _ (contacts, favorites, map) ->
+                let tabAllContacts = (ContactsListPage.view "All" contacts (TabAllContactsMsg >> dispatch)).Icon("alltab.png")
+                let tabFavContacts = (ContactsListPage.view "Favorites" favorites (TabFavContactsMsg >> dispatch)).Icon("favoritetab.png")
+                let tabMap = MapPage.view map (TabMapMsg >> dispatch)
+
                 View.TabbedPage(
                     created=(fun target -> target.On<Android>().SetToolbarPlacement(ToolbarPlacement.Bottom) |> ignore),
                     title=title,
-                    children=[ contacts; favorites; map ]
+                    children=[ tabAllContacts; tabFavContacts; tabMap ]
                 )
             )

@@ -215,10 +215,10 @@
       <HintPath>..\packages\Xamarin.Forms.3.5.0.169047\lib\Xamarin.iOS10\Xamarin.Forms.Xaml.dll</HintPath>
     </Reference>
     <Reference Include="Fabulous.CustomControls">
-      <HintPath>..\packages\Fabulous.CustomControls.0.33.0\lib\netstandard2.0\Fabulous.CustomControls.dll</HintPath>
+      <HintPath>..\packages\Fabulous.CustomControls.0.33.1\lib\netstandard2.0\Fabulous.CustomControls.dll</HintPath>
     </Reference>
     <Reference Include="Fabulous.Core">
-      <HintPath>..\packages\Fabulous.Core.0.33.0\lib\netstandard2.0\Fabulous.Core.dll</HintPath>
+      <HintPath>..\packages\Fabulous.Core.0.33.1\lib\netstandard2.0\Fabulous.Core.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Forms.Maps">
       <HintPath>..\packages\Xamarin.Forms.Maps.3.5.0.169047\lib\Xamarin.iOS10\Xamarin.Forms.Maps.dll</HintPath>
@@ -227,13 +227,13 @@
       <HintPath>..\packages\Xamarin.Forms.Maps.3.5.0.169047\lib\Xamarin.iOS10\Xamarin.Forms.Maps.iOS.dll</HintPath>
     </Reference>
     <Reference Include="Fabulous.Maps">
-      <HintPath>..\packages\Fabulous.Maps.0.33.0\lib\netstandard2.0\Fabulous.Maps.dll</HintPath>
+      <HintPath>..\packages\Fabulous.Maps.0.33.1\lib\netstandard2.0\Fabulous.Maps.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Fabulous.LiveUpdate">
-      <HintPath>..\packages\Fabulous.LiveUpdate.0.33.0\lib\netstandard2.0\Fabulous.LiveUpdate.dll</HintPath>
+      <HintPath>..\packages\Fabulous.LiveUpdate.0.33.1\lib\netstandard2.0\Fabulous.LiveUpdate.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AppCenter">
       <HintPath>..\packages\Microsoft.AppCenter.1.13.2\lib\Xamarin.iOS10\Microsoft.AppCenter.dll</HintPath>

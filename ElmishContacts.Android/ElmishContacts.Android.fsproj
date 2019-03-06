@@ -131,10 +131,10 @@
       <HintPath>..\packages\Xamarin.Forms.3.5.0.169047\lib\MonoAndroid90\Xamarin.Forms.Xaml.dll</HintPath>
     </Reference>
     <Reference Include="Fabulous.CustomControls">
-      <HintPath>..\packages\Fabulous.CustomControls.0.33.0\lib\netstandard2.0\Fabulous.CustomControls.dll</HintPath>
+      <HintPath>..\packages\Fabulous.CustomControls.0.33.1\lib\netstandard2.0\Fabulous.CustomControls.dll</HintPath>
     </Reference>
     <Reference Include="Fabulous.Core">
-      <HintPath>..\packages\Fabulous.Core.0.33.0\lib\netstandard2.0\Fabulous.Core.dll</HintPath>
+      <HintPath>..\packages\Fabulous.Core.0.33.1\lib\netstandard2.0\Fabulous.Core.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.GooglePlayServices.Basement">
       <HintPath>..\packages\Xamarin.GooglePlayServices.Basement.60.1142.1\lib\MonoAndroid80\Xamarin.GooglePlayServices.Basement.dll</HintPath>
@@ -155,7 +155,7 @@
       <HintPath>..\packages\Xamarin.Forms.Maps.3.5.0.169047\lib\MonoAndroid90\Xamarin.Forms.Maps.dll</HintPath>
     </Reference>
     <Reference Include="Fabulous.Maps">
-      <HintPath>..\packages\Fabulous.Maps.0.33.0\lib\netstandard2.0\Fabulous.Maps.dll</HintPath>
+      <HintPath>..\packages\Fabulous.Maps.0.33.1\lib\netstandard2.0\Fabulous.Maps.dll</HintPath>
     </Reference>
     <Reference Include="Java.Interop" />
     <Reference Include="Xamarin.Android.Arch.Core.Runtime">

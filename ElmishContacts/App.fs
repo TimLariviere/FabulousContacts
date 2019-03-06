@@ -44,6 +44,12 @@ module Tracing =
             Some { EventName = "User Position"; AdditionalParameters = [ { Key = "Event"; Value = "Retrieved"} ] }
         | _ -> None
 
+module DesignTime =
+    let programLiveUpdate = 
+        let init = Root.init ""
+        let update = Root.update ""
+        let view = Root.view
+        Program.mkProgram init update view
 
 type App (dbPath) as app = 
     inherit Application ()
@@ -62,3 +68,5 @@ type App (dbPath) as app =
         |> AppCenter.withAppCenterTrace Tracing.rules
 #endif
         |> Program.runWithDynamicView app
+
+    do runner.EnableLiveUpdate()

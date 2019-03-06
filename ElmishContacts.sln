@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.10
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "ElmishContacts", "ElmishContacts\ElmishContacts.fsproj", "{AD454E78-7578-4EB2-99EA-1F3F6F21A950}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ElmishContacts", "ElmishContacts\ElmishContacts.fsproj", "{AD454E78-7578-4EB2-99EA-1F3F6F21A950}"
 EndProject
-Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "ElmishContacts.Android", "ElmishContacts.Android\ElmishContacts.Android.fsproj", "{972B4228-1B72-4B7A-8CC2-2161D0C23AB0}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ElmishContacts.Android", "ElmishContacts.Android\ElmishContacts.Android.fsproj", "{972B4228-1B72-4B7A-8CC2-2161D0C23AB0}"
 EndProject
-Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "ElmishContacts.iOS", "ElmishContacts.iOS\ElmishContacts.iOS.fsproj", "{2F7DD06D-101D-43C4-BF2A-895B004B174D}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ElmishContacts.iOS", "ElmishContacts.iOS\ElmishContacts.iOS.fsproj", "{2F7DD06D-101D-43C4-BF2A-895B004B174D}"
 EndProject
-Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "ElmishContacts.UITests", "ElmishContacts.UITests\ElmishContacts.UITests.fsproj", "{7089F8DC-FC47-445F-8559-8D9D0CC0E561}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ElmishContacts.UITests", "ElmishContacts.UITests\ElmishContacts.UITests.fsproj", "{7089F8DC-FC47-445F-8559-8D9D0CC0E561}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,13 +1,11 @@
-namespace ElmishContacts
+﻿namespace ElmishContacts
 
-#if !DISABLE_LIVEUPDATE
+#if DISABLE_LIVEUPDATE
 
-open SQLite
 open Models
 
 module Repository =
     type ContactObject() =
-        [<PrimaryKey>][<AutoIncrement>]
         member val Id = 0 with get, set
         member val FirstName = "" with get, set
         member val LastName = "" with get, set
@@ -39,38 +37,29 @@ module Repository =
           IsFavorite = obj.IsFavorite
           Picture = obj.Picture }
 
-    let connect dbPath = async {
-        let db = new SQLiteAsyncConnection(dbPath)
-        do! db.CreateTableAsync<ContactObject>() |> Async.AwaitTask |> Async.Ignore
-        return db
-    }
-
     let loadAllContacts dbPath = async {
-        let! database = connect dbPath
-        let! objs = database.Table<ContactObject>().ToListAsync() |> Async.AwaitTask
-        return objs |> Seq.toList |> List.map convertToModel
+        return [
+            { Id = 1
+              FirstName = "Roberts"
+              LastName = "The Pirate"
+              Email = "pirate.robert@lab.com"
+              Phone = ""
+              Address = ""
+              IsFavorite = true
+              Picture = [||] }
+        ]
     }
 
     let insertContact dbPath contact = async {
-        let! database = connect dbPath
-        let obj = convertToObject contact
-        do! database.InsertAsync(obj) |> Async.AwaitTask |> Async.Ignore
-        let! rowIdObj = database.ExecuteScalarAsync("select last_insert_rowid()", [||]) |> Async.AwaitTask
-        let rowId = rowIdObj |> int
-        return { contact with Id = rowId }
+        return { contact with Id = 2 }
     }
 
     let updateContact dbPath contact = async {
-        let! database = connect dbPath
-        let obj = convertToObject contact
-        do! database.UpdateAsync(obj) |> Async.AwaitTask |> Async.Ignore
         return contact
     }
 
     let deleteContact dbPath contact = async {
-        let! database = connect dbPath
-        let obj = convertToObject contact
-        do! database.DeleteAsync(obj) |> Async.AwaitTask |> Async.Ignore
+        return ()
     }
 
 #endif
