@@ -5,7 +5,6 @@ open Style
 open Fabulous.Core
 open Fabulous.DynamicViews
 open Xamarin.Forms
-open Extensions
 
 module ContactsListPage =
     // Declarations
@@ -81,7 +80,7 @@ module ContactsListPage =
                     children=[
                         View.SearchBar(
                             text=mFilterText,
-                            textChanged=(debounce250 (fun e -> e.NewTextValue |> UpdateFilterText |> dispatch)),
+                            textChanged=(debounce 250 (fun e -> e.NewTextValue |> UpdateFilterText |> dispatch)),
                             backgroundColor=accentColor,
                             cancelButtonColor=accentTextColor
                         )
