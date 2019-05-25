@@ -19,7 +19,7 @@
     <Compile Include="App.fs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Fabulous.Maps" Version="0.34.0" />
+    <PackageReference Include="Fabulous.Maps" Version="0.35.0" />
     <PackageReference Include="sqlite-net-pcl" Version="1.5.231" />
     <PackageReference Include="Xamarin.Essentials" Version="1.1.0" />
     <PackageReference Include="FSharp.Core" Version="4.6.2" />
