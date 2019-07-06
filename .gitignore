@@ -329,4 +329,8 @@ ASALocalRun/
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
 
-ElmishContacts.Android/Resources/values/keys.xml
+FabulousContacts.Android/Resources/values/keys.xml
+
+\.DS_Store
+
+\.ionide/symbolCache\.db
