@@ -1,6 +1,7 @@
-namespace FabulousContacts.Controls
+﻿namespace FabulousContacts.Controls
 
-open Fabulous.DynamicViews
+open Fabulous
+open Fabulous.XamarinForms
 open Xamarin.Forms
 
 type BorderedEntry() =
@@ -16,7 +17,7 @@ type BorderedEntry() =
 module DynamicViewsBorderedEntry =
     let BorderedEntryBorderColorAttributeKey = AttributeKey<_> "BorderedEntry_BorderColor"    
 
-    type Fabulous.DynamicViews.View with
+    type Fabulous.XamarinForms.View with
         static member BorderedEntry(?borderColor: Color,
                                     ?placeholder, ?text, ?textChanged, ?keyboard) =
             let attribCount = match borderColor with None -> 0 | Some _ -> 1

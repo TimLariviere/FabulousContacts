@@ -200,7 +200,7 @@
       <HintPath>..\packages\Fabulous.Core.0.36.0\lib\netstandard2.0\Fabulous.Core.dll</HintPath>
     </Reference>
     <Reference Include="Fabulous.LiveUpdate">
-      <HintPath>..\packages\Fabulous.LiveUpdate.0.36.0\lib\netstandard2.0\Fabulous.LiveUpdate.dll</HintPath>
+      <HintPath>..\packages\Fabulous.LiveUpdate.0.40.3\lib\netstandard2.0\Fabulous.LiveUpdate.dll</HintPath>
     </Reference>
     <Reference Include="Fabulous.CustomControls">
       <HintPath>..\packages\Fabulous.CustomControls.0.36.0\lib\netstandard2.0\Fabulous.CustomControls.dll</HintPath>
@@ -233,9 +233,6 @@
     <Reference Include="Xamarin.Forms.Maps">
       <HintPath>..\packages\Xamarin.Forms.Maps.4.0.0.425677\lib\MonoAndroid90\Xamarin.Forms.Maps.dll</HintPath>
     </Reference>
-    <Reference Include="Fabulous.Maps">
-      <HintPath>..\packages\Fabulous.Maps.0.36.0\lib\netstandard2.0\Fabulous.Maps.dll</HintPath>
-    </Reference>
     <Reference Include="Plugin.CurrentActivity">
       <HintPath>..\packages\Plugin.CurrentActivity.2.1.0.2\lib\monoandroid44\Plugin.CurrentActivity.dll</HintPath>
     </Reference>
@@ -262,6 +259,21 @@
     </Reference>
     <Reference Include="SQLite-net">
       <HintPath>..\packages\sqlite-net-pcl.1.5.231\lib\netstandard1.1\SQLite-net.dll</HintPath>
+    </Reference>
+    <Reference Include="Fabulous">
+      <HintPath>..\packages\Fabulous.0.40.3\lib\netstandard2.0\Fabulous.dll</HintPath>
+    </Reference>
+    <Reference Include="Fabulous.XamarinForms.Controls">
+      <HintPath>..\packages\Fabulous.XamarinForms.0.40.3\lib\netstandard2.0\Fabulous.XamarinForms.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="Fabulous.XamarinForms">
+      <HintPath>..\packages\Fabulous.XamarinForms.0.40.3\lib\netstandard2.0\Fabulous.XamarinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Fabulous.XamarinForms.Maps">
+      <HintPath>..\packages\Fabulous.XamarinForms.Maps.0.40.3\lib\netstandard2.0\Fabulous.XamarinForms.Maps.dll</HintPath>
+    </Reference>
+    <Reference Include="Fabulous.XamarinForms.LiveUpdate">
+      <HintPath>..\packages\Fabulous.XamarinForms.LiveUpdate.0.40.3\lib\netstandard2.0\Fabulous.XamarinForms.LiveUpdate.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -1,10 +1,10 @@
-namespace FabulousContacts
+﻿namespace FabulousContacts
 
 open Helpers
 open Models
 open Style
-open Fabulous.Core
-open Fabulous.DynamicViews
+open Fabulous
+open Fabulous.XamarinForms
 open Xamarin.Essentials
 open Xamarin.Forms.Maps
 open System

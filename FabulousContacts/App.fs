@@ -1,7 +1,7 @@
-namespace FabulousContacts
+﻿namespace FabulousContacts
 
-open Fabulous.Core
-open Fabulous.DynamicViews
+open Fabulous
+open Fabulous.XamarinForms
 open Xamarin.Forms
 open FabulousContacts.Models
 open System
@@ -165,7 +165,7 @@ type App (dbPath) as app =
     let runner = 
         Program.mkProgram init update view
         //|> Program.withConsoleTrace
-        |> Program.runWithDynamicView app
+        |> XamarinFormsProgram.run app
 
 
 

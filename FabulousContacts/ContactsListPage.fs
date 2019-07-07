@@ -1,9 +1,9 @@
-namespace FabulousContacts
+﻿namespace FabulousContacts
 
 open Models
 open Style
-open Fabulous.Core
-open Fabulous.DynamicViews
+open Fabulous
+open Fabulous.XamarinForms
 open Xamarin.Forms
 
 module ContactsListPage =

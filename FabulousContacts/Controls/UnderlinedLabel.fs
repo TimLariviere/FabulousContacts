@@ -1,6 +1,7 @@
-namespace FabulousContacts.Controls
+﻿namespace FabulousContacts.Controls
 
-open Fabulous.DynamicViews
+open Fabulous
+open Fabulous.XamarinForms
 open Xamarin.Forms
 
 type UnderlinedLabel() =
@@ -8,7 +9,7 @@ type UnderlinedLabel() =
 
 [<AutoOpen>]
 module DynamicViewsUnderlinedLabel =
-    type Fabulous.DynamicViews.View with
+    type Fabulous.XamarinForms.View with
         static member UnderlinedLabel(?text, ?gestureRecognizers, ?verticalOptions) =
             let attribs =
                 ViewBuilders.BuildLabel(0, ?text=text, ?gestureRecognizers=gestureRecognizers, ?verticalOptions=verticalOptions)

@@ -1,10 +1,10 @@
-namespace FabulousContacts
+﻿namespace FabulousContacts
 
 open Models
 open Repository
 open Style
-open Fabulous.Core
-open Fabulous.DynamicViews
+open Fabulous
+open Fabulous.XamarinForms
 open Xamarin.Forms.PlatformConfiguration.AndroidSpecific
 
 module MainPage =

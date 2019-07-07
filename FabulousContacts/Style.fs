@@ -1,7 +1,8 @@
-namespace FabulousContacts
+﻿namespace FabulousContacts
 
+open Fabulous
+open Fabulous.XamarinForms
 open Xamarin.Forms
-open Fabulous.DynamicViews
 open FabulousContacts.Controls
 
 module Style =
