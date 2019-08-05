@@ -8,7 +8,8 @@ open System.ComponentModel
 type BorderedEntryRenderer(context) =
     inherit EntryRenderer(context)
 
-    member this.BorderedEntry with get() = this.Element :?> FabulousContacts.Controls.BorderedEntry
+    member this.BorderedEntry with get() =
+        this.Element :?> FabulousContacts.Controls.BorderedEntry
 
     override this.OnElementChanged(e: ElementChangedEventArgs<Entry>) =
         base.OnElementChanged(e)

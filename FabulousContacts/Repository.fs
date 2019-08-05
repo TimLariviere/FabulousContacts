@@ -1,4 +1,4 @@
-namespace FabulousContacts
+﻿namespace FabulousContacts
 
 open SQLite
 open Models
@@ -28,19 +28,17 @@ module Repository =
         obj
 
     let convertToModel (obj: ContactObject) : Contact =
-        {
-            Id = obj.Id
-            FirstName = obj.FirstName
-            LastName = obj.LastName
-            Email = obj.Email
-            Phone = obj.Phone
-            Address = obj.Address
-            IsFavorite = obj.IsFavorite
-            Picture = obj.Picture
-        }
+        { Id = obj.Id
+          FirstName = obj.FirstName
+          LastName = obj.LastName
+          Email = obj.Email
+          Phone = obj.Phone
+          Address = obj.Address
+          IsFavorite = obj.IsFavorite
+          Picture = obj.Picture }
 
     let connect dbPath = async {
-        let db = new SQLiteAsyncConnection(dbPath)
+        let db = SQLiteAsyncConnection dbPath
         do! db.CreateTableAsync<ContactObject>() |> Async.AwaitTask |> Async.Ignore
         return db
     }

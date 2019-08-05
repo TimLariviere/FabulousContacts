@@ -18,7 +18,7 @@ type AppDelegate () =
         let docFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal)
         let libFolder = Path.Combine(docFolder, "..", "Library", "Databases")
 
-        if Directory.Exists(libFolder) = false then
+        if not (Directory.Exists libFolder) then
             Directory.CreateDirectory(libFolder) |> ignore
         else
             ()

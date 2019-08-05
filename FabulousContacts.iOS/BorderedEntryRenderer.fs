@@ -8,7 +8,8 @@ open System.ComponentModel
 type BorderedEntryRenderer() =
     inherit EntryRenderer()
 
-    member this.BorderedEntry with get() = this.Element :?> ElmishContacts.Controls.BorderedEntry
+    member this.BorderedEntry with get() =
+        this.Element :?> ElmishContacts.Controls.BorderedEntry
 
     override this.OnElementChanged(e: ElementChangedEventArgs<Entry>) =
         base.OnElementChanged(e)

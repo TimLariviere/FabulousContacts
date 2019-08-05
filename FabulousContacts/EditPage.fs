@@ -1,15 +1,15 @@
 ﻿namespace FabulousContacts
 
-open Helpers
-open Models
-open Repository
-open Style
+open System
 open Fabulous
 open Fabulous.XamarinForms
 open Xamarin.Forms
 open Plugin.Permissions.Abstractions
 open Plugin.Media
-open System
+open Models
+open Helpers
+open Repository
+open Style
 
 module EditPage =
     /// Declarations
@@ -64,7 +64,9 @@ module EditPage =
 
     let deleteAsync dbPath (contact: Contact) = async {
         let! shouldDelete = 
-            displayAlertWithConfirm("Delete " + contact.FirstName + " " + contact.LastName, "This action is definitive. Are you sure?", "Yes", "No")
+            let deleteMsg = sprintf "Delete %s %s" contact.FirstName contact.LastName
+            let confirmationMsg = "This action is definitive. Are you sure?"
+            displayAlertWithConfirm(deleteMsg, confirmationMsg, "Yes", "No")
 
         if shouldDelete then
             do! deleteContact dbPath contact
@@ -94,30 +96,25 @@ module EditPage =
         let! action =
             displayActionSheet(None,
                                Some cancel,
-                               (match previousValue with None -> None | Some _ -> Some remove), 
-                               Some [| 
+                               previousValue |> Option.map (fun _ -> remove),
+                               Some [|
                                    if canTakePicture then yield takePicture
                                    if canPickPicture then yield chooseFromGallery
                                |])
 
-        let convertToMsg bytes =
-            match bytes with
-            | None -> None
-            | Some bytes -> Some (SetPicture (Some bytes))
+        let convertToMsg = SetPicture >> Some
 
         match action with
         | s when s = remove ->
-            return Some (SetPicture None)
-
+            return convertToMsg None
         | s when s = takePicture ->
             let! bytes = doAsync takePictureAsync Permission.Camera
             return convertToMsg bytes
-
         | s when s = chooseFromGallery ->
             let! bytes = doAsync pickPictureAsync Permission.Photos
             return convertToMsg bytes
-
-        | _ -> return None
+        | _ ->
+            return None
     }
 
     let sayContactNotValid() =
@@ -156,12 +153,33 @@ module EditPage =
 
         model, Cmd.none
 
+    let saveCmd model dbPath =
+        if not model.IsFirstNameValid || not model.IsLastNameValid then
+            do sayContactNotValid() |> ignore
+            Cmd.none
+        else
+            let id = (match model.Contact with None -> 0 | Some c -> c.Id)
+            let bytes = (match model.Picture with None -> null | Some arr -> arr)
+            let newContact =
+                { Id = id
+                  FirstName = model.FirstName
+                  LastName = model.LastName
+                  Email = model.Email
+                  Phone = model.Phone
+                  Address = model.Address
+                  IsFavorite = model.IsFavorite
+                  Picture = bytes }
+            let msg = saveAsync dbPath newContact
+            Cmd.ofAsyncMsg msg
+
     let update dbPath msg (model: Model) =
         match msg with
         | UpdateFirstName v ->
-            { model with FirstName = v; IsFirstNameValid = (validateFirstName v) }, Cmd.none, ExternalMsg.NoOp
+            let m = { model with FirstName = v; IsFirstNameValid = (validateFirstName v) }
+            m, Cmd.none, ExternalMsg.NoOp
         | UpdateLastName v ->
-            { model with LastName = v; IsLastNameValid = (validateLastName v) }, Cmd.none, ExternalMsg.NoOp
+            let m = { model with LastName = v; IsLastNameValid = (validateLastName v) }
+            m, Cmd.none, ExternalMsg.NoOp
         | UpdateEmail email ->
             { model with Email = email }, Cmd.none, ExternalMsg.NoOp
         | UpdatePhone phone ->
@@ -171,106 +189,102 @@ module EditPage =
         | UpdateIsFavorite isFavorite ->
             { model with IsFavorite = isFavorite }, Cmd.none, ExternalMsg.NoOp
         | UpdatePicture ->
-            model, Cmd.ofAsyncMsgOption (updatePictureAsync model.Picture), ExternalMsg.NoOp
+            let msg = updatePictureAsync model.Picture
+            model, Cmd.ofAsyncMsgOption msg, ExternalMsg.NoOp
         | SetPicture picture ->
             { model with Picture = picture}, Cmd.none, ExternalMsg.NoOp
         | SaveContact ->
-            if model.IsFirstNameValid = false || model.IsLastNameValid = false then
-                do sayContactNotValid() |> ignore
-                model, Cmd.none, ExternalMsg.NoOp
-            else
-                let id = (match model.Contact with None -> 0 | Some c -> c.Id)
-                let bytes = (match model.Picture with None -> null | Some arr -> arr)
-                let newContact =
-                    { 
-                        Id = id
-                        FirstName = model.FirstName
-                        LastName = model.LastName
-                        Email = model.Email
-                        Phone = model.Phone
-                        Address = model.Address
-                        IsFavorite = model.IsFavorite
-                        Picture = bytes
-                    }
-                model, Cmd.ofAsyncMsg (saveAsync dbPath newContact), ExternalMsg.NoOp
-
+            let cmd = saveCmd model dbPath
+            model, cmd, ExternalMsg.NoOp
         | DeleteContact contact ->
-            model, Cmd.ofAsyncMsgOption (deleteAsync dbPath contact), ExternalMsg.NoOp
+            let msg = deleteAsync dbPath contact
+            model, Cmd.ofAsyncMsgOption msg, ExternalMsg.NoOp
         | ContactAdded contact -> 
-            model, Cmd.none, (ExternalMsg.GoBackAfterContactAdded contact)
+            model, Cmd.none, ExternalMsg.GoBackAfterContactAdded contact
         | ContactUpdated contact -> 
-            model, Cmd.none, (ExternalMsg.GoBackAfterContactUpdated contact)
+            model, Cmd.none, ExternalMsg.GoBackAfterContactUpdated contact
         | ContactDeleted contact ->
-            model, Cmd.none, (ExternalMsg.GoBackAfterContactDeleted contact)
+            model, Cmd.none, ExternalMsg.GoBackAfterContactDeleted contact
 
-    let view model dispatch =
-        dependsOn model (fun model mModel ->
+    let mkTitle contact (fullName: string) =
+        match contact, (fullName.Trim()) with
+        | None, "" -> "New Contact"
+        | _, "" -> "Add a name"
+        | _, _ -> fullName
 
-            let isDeleteButtonVisible =
+    let mkToolBarItems dispatch = [
+        mkToolbarButton "Save" (fun() -> dispatch SaveContact)
+    ]
+
+    let mkStackLayoutChildren mModel dispatch =
+        let isDeleteButtonVisible =
                 match mModel.Contact with
                 | None -> false
                 | Some x when x.Id = 0 -> false
                 | Some _ -> true
+        let mkButtonOrPicture =
+            match mModel.Picture with
+            | None ->
+                View.Button(image = "addphoto.png",
+                            backgroundColor = Color.White,
+                            command = fun () -> dispatch UpdatePicture)
+                            .GridRowSpan(2)
+            | Some picture ->
+                View.Image(source = picture,
+                           aspect = Aspect.AspectFill,
+                           gestureRecognizers = [
+                               View.TapGestureRecognizer(
+                                   command = fun() -> dispatch UpdatePicture)
+                           ])
+                           .GridRowSpan(2)
+        let firstNameTxtView =
+            let txtView =
+                mkFormEntry "First name*" mModel.FirstName Keyboard.Text mModel.IsFirstNameValid (UpdateFirstName >> dispatch)
+            txtView.VerticalOptions(LayoutOptions.Center).GridColumn(1)
+        let lastNameTxtView =
+            let textView =
+                mkFormEntry "Last name*" mModel.LastName Keyboard.Text mModel.IsLastNameValid (UpdateLastName >> dispatch)
+            textView.VerticalOptions(LayoutOptions.Center).GridColumn(1).GridRow(1)
+        let gridView =
+            View.Grid(coldefs = [ 100.; GridLength.Star ],
+                      rowdefs = [ 50.; 50. ],
+                      columnSpacing = 10.,
+                      rowSpacing = 0.,
+                      children = [
+                          mkButtonOrPicture
+                          firstNameTxtView
+                          lastNameTxtView
+                      ])
+        let favoriteView =
+            View.StackLayout(orientation = StackOrientation.Horizontal,
+                             margin = Thickness(0., 20., 0., 0.),
+                             children = [
+                                 View.Label(text = "Mark as Favorite",
+                                            verticalOptions = LayoutOptions.Center)
+                                 View.Switch(isToggled = mModel.IsFavorite,
+                                             toggled = (fun e -> e.Value |> UpdateIsFavorite |> dispatch),
+                                             horizontalOptions = LayoutOptions.EndAndExpand,
+                                             verticalOptions = LayoutOptions.Center)
+                             ])
+        [ gridView
+          favoriteView
+          mkFormLabel "Email"
+          mkFormEntry "Email" mModel.Email Keyboard.Email true (UpdateEmail >> dispatch)
+          mkFormLabel "Phone"
+          mkFormEntry "Phone" mModel.Phone Keyboard.Telephone true (UpdatePhone >> dispatch)
+          mkFormLabel "Address"
+          mkFormEditor mModel.Address (UpdateAddress >> dispatch)
+          mkDestroyButton "Delete" (fun () -> mModel.Contact.Value |> DeleteContact |> dispatch) isDeleteButtonVisible ]
 
+    let view model dispatch =
+        dependsOn model (fun _ mModel ->
             View.ContentPage(
-                title=(
-                    match mModel.Contact, mModel.FirstName, mModel.LastName with
-                    | None, "", "" -> "New Contact"
-                    | Some _, "", "" -> "Add a name"
-                    | _, firstName, lastName -> firstName + " " + lastName
-                ),
-                toolbarItems=[
-                    mkToolbarButton "Save" (fun() -> dispatch SaveContact)
-                ],
-                content=View.ScrollView(
-                    content=View.StackLayout(
-                        padding=Thickness(20.),
-                        children=[
-                            View.Grid(
-                                coldefs=[ 100.; GridLength.Star ],
-                                rowdefs=[ 50.; 50. ],
-                                columnSpacing=10.,
-                                rowSpacing=0.,
-                                children=[
-                                    match mModel.Picture with
-                                    | None -> 
-                                        yield View.Button(
-                                                image="addphoto.png",
-                                                backgroundColor=Color.White,
-                                                command=(fun() -> dispatch UpdatePicture)
-                                              ).GridRowSpan(2)
-                                    | Some picture ->
-                                        yield View.Image(
-                                                source=picture,
-                                                aspect=Aspect.AspectFill,
-                                                gestureRecognizers=[ View.TapGestureRecognizer(command=(fun() -> dispatch UpdatePicture)) ]
-                                              ).GridRowSpan(2)
-
-                                    yield (mkFormEntry "First name*" mModel.FirstName Keyboard.Text mModel.IsFirstNameValid (UpdateFirstName >> dispatch)).VerticalOptions(LayoutOptions.Center).GridColumn(1)
-                                    yield (mkFormEntry "Last name*" mModel.LastName Keyboard.Text mModel.IsLastNameValid (UpdateLastName >> dispatch)).VerticalOptions(LayoutOptions.Center).GridColumn(1).GridRow(1)
-                                ]
-                            )
-
-                            View.StackLayout(
-                                orientation=StackOrientation.Horizontal,
-                                margin=new Thickness(0., 20., 0., 0.),
-                                children=[
-                                    View.Label(text="Mark as Favorite", verticalOptions=LayoutOptions.Center)
-                                    View.Switch(isToggled=mModel.IsFavorite, toggled=(fun e -> e.Value |> UpdateIsFavorite |> dispatch), horizontalOptions=LayoutOptions.EndAndExpand, verticalOptions=LayoutOptions.Center)
-                                ]
-                            )
-
-                            mkFormLabel "Email"
-                            mkFormEntry "Email" mModel.Email Keyboard.Email true (UpdateEmail >> dispatch)
-
-                            mkFormLabel "Phone"
-                            mkFormEntry "Phone" mModel.Phone Keyboard.Telephone true (UpdatePhone >> dispatch)
-
-                            mkFormLabel "Address"
-                            mkFormEditor mModel.Address (UpdateAddress >> dispatch)
-
-                            mkDestroyButton "Delete" (fun () -> mModel.Contact.Value |> DeleteContact |> dispatch) isDeleteButtonVisible
-                        ]
+                title = mkTitle mModel.Contact (sprintf "%s %s" mModel.FirstName mModel.LastName),
+                toolbarItems = mkToolBarItems dispatch,
+                content = View.ScrollView(
+                    content = View.StackLayout(
+                        padding = Thickness(20.),
+                        children = mkStackLayoutChildren mModel dispatch
                     )
                 )
             )
