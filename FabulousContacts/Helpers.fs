@@ -52,16 +52,12 @@ module Helpers =
     }
 
     let takePictureAsync() = async {
-        let options = new StoreCameraMediaOptions()
-        options.PhotoSize <- PhotoSize.MaxWidthHeight
-        options.MaxWidthHeight <- Nullable<int>(150)
+        let options = StoreCameraMediaOptions()
         return! CrossMedia.Current.TakePhotoAsync(options) |> Async.AwaitTask
     }
 
     let pickPictureAsync() = async {
-        let options = new PickMediaOptions()
-        options.PhotoSize <- PhotoSize.MaxWidthHeight
-        options.MaxWidthHeight <- Nullable<int>(150)
+        let options = PickMediaOptions()
         return! CrossMedia.Current.PickPhotoAsync(options) |> Async.AwaitTask
     }
 
