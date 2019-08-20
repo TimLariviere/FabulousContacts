@@ -19,7 +19,6 @@
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
-    <AndroidUseLatestPlatformSdk>true</AndroidUseLatestPlatformSdk>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
     <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
     <Name>FabulousContacts.Android</Name>
@@ -51,42 +50,7 @@
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="Properties\AndroidManifest.xml" />
-    <Compile Include="Properties\AssemblyInfo.fs" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\addphoto.png" />
-    <AndroidResource Include="Resources\drawable\alltab.png" />
-    <AndroidResource Include="Resources\drawable\blog.png" />
-    <AndroidResource Include="Resources\drawable\call.png" />
-    <AndroidResource Include="Resources\drawable\email.png" />
-    <AndroidResource Include="Resources\drawable\favoritetab.png" />
-    <AndroidResource Include="Resources\drawable\fsharp.png" />
-    <AndroidResource Include="Resources\drawable\github.png" />
-    <AndroidResource Include="Resources\drawable\icon.png" />
-    <AndroidResource Include="Resources\drawable\launcher_foreground.png" />
-    <AndroidResource Include="Resources\drawable\maptab.png" />
-    <AndroidResource Include="Resources\drawable\slack.png" />
-    <AndroidResource Include="Resources\drawable\sms.png" />
-    <AndroidResource Include="Resources\drawable\splash_background.xml" />
-    <AndroidResource Include="Resources\drawable\star.png" />
-    <AndroidResource Include="Resources\drawable\twitter.png" />
-    <AndroidResource Include="Resources\drawable\xamarin.png" />
-    <AndroidResource Include="Resources\mipmap\icon_round.xml" />
-    <AndroidResource Include="Resources\xml\file_paths.xml" />
-    <AndroidResource Include="Resources\mipmap\icon.xml" />
-    <None Include="Assets\AboutAssets.txt" />
-    <None Include="Resources\AboutResources.txt" />
-    <AndroidResource Include="Resources\layout\Tabbar.axml" />
-    <AndroidResource Include="Resources\layout\Toolbar.axml" />
-    <AndroidResource Include="Resources\values\styles.xml" />
-    <AndroidResource Include="Resources\values\colors.xml" />
-    <AndroidResource Include="Resources\values\keys.xml" />
     <Folder Include="Resources\drawable\" />
-    <Compile Include="UnderlinedLabelRenderer.fs" />
-    <Compile Include="BorderedEntryRenderer.fs" />
-    <Compile Include="MainActivity.fs" />
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.FSharp.targets" />
   <Import Project="..\packages\Xamarin.Android.Support.Compat.28.0.0.1\build\MonoAndroid90\Xamarin.Android.Support.Compat.targets" Condition="Exists('..\packages\Xamarin.Android.Support.Compat.28.0.0.1\build\MonoAndroid90\Xamarin.Android.Support.Compat.targets')" />
@@ -344,10 +308,6 @@
     <Reference Include="Fabulous.XamarinForms.LiveUpdate">
       <HintPath>..\packages\Fabulous.XamarinForms.LiveUpdate.0.41.1\lib\netstandard2.0\Fabulous.XamarinForms.LiveUpdate.dll</HintPath>
     </Reference>
-    <ProjectReference Include="..\FabulousContacts\FabulousContacts.fsproj">
-      <Project>{87F26E07-185E-4FED-97E2-AB0979C52C1F}</Project>
-      <Name>FabulousContacts</Name>
-    </ProjectReference>
     <Reference Include="Xamarin.GooglePlayServices.Base, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Xamarin.GooglePlayServices.Base.60.1142.1\lib\MonoAndroid80\Xamarin.GooglePlayServices.Base.dll</HintPath>
       <Private>True</Private>
@@ -364,6 +324,43 @@
       <HintPath>..\packages\Xamarin.GooglePlayServices.Tasks.60.1142.1\lib\MonoAndroid80\Xamarin.GooglePlayServices.Tasks.dll</HintPath>
       <Private>True</Private>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\AndroidManifest.xml" />
+    <Compile Include="Properties\AssemblyInfo.fs" />
+    <AndroidResource Include="Resources\drawable\addphoto.png" />
+    <AndroidResource Include="Resources\drawable\alltab.png" />
+    <AndroidResource Include="Resources\drawable\blog.png" />
+    <AndroidResource Include="Resources\drawable\call.png" />
+    <AndroidResource Include="Resources\drawable\email.png" />
+    <AndroidResource Include="Resources\drawable\favoritetab.png" />
+    <AndroidResource Include="Resources\drawable\fsharp.png" />
+    <AndroidResource Include="Resources\drawable\github.png" />
+    <AndroidResource Include="Resources\drawable\icon.png" />
+    <AndroidResource Include="Resources\drawable\launcher_foreground.png" />
+    <AndroidResource Include="Resources\drawable\maptab.png" />
+    <AndroidResource Include="Resources\drawable\slack.png" />
+    <AndroidResource Include="Resources\drawable\sms.png" />
+    <AndroidResource Include="Resources\drawable\splash_background.xml" />
+    <AndroidResource Include="Resources\drawable\star.png" />
+    <AndroidResource Include="Resources\drawable\twitter.png" />
+    <AndroidResource Include="Resources\drawable\xamarin.png" />
+    <AndroidResource Include="Resources\mipmap\icon_round.xml" />
+    <AndroidResource Include="Resources\mipmap\icon.xml" />
+    <AndroidResource Include="Resources\xml\file_paths.xml" />
+    <AndroidResource Include="Resources\layout\Tabbar.axml" />
+    <AndroidResource Include="Resources\layout\Toolbar.axml" />
+    <AndroidResource Include="Resources\values\styles.xml" />
+    <AndroidResource Include="Resources\values\colors.xml" />
+    <AndroidResource Include="Resources\values\keys.xml" />
+    <Compile Include="UnderlinedLabelRenderer.fs" />
+    <Compile Include="BorderedEntryRenderer.fs" />
+    <Compile Include="MainActivity.fs" />
+    <None Include="packages.config" />
+    <ProjectReference Include="..\FabulousContacts\FabulousContacts.fsproj">
+      <Project>{AD454E78-7578-4EB2-99EA-1F3F6F21A950}</Project>
+      <Name>FabulousContacts</Name>
+    </ProjectReference>
   </ItemGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
