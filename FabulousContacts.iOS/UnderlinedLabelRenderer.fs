@@ -1,11 +1,9 @@
-﻿namespace ElmishContacts.iOS
+﻿namespace FabulousContacts.iOS
 
-open System
 open Xamarin.Forms
 open Xamarin.Forms.Platform.iOS
 open System.ComponentModel
 open Foundation
-open UIKit
 
 type UnderlinedLabelRenderer() =
     inherit LabelRenderer()
@@ -29,5 +27,5 @@ type UnderlinedLabelRenderer() =
             ()
 
 module Dummy_UnderlinedLabelRenderer =
-    [<assembly: Xamarin.Forms.ExportRenderer(typeof<ElmishContacts.Controls.UnderlinedLabel>, typeof<UnderlinedLabelRenderer>)>]
+    [<assembly: Xamarin.Forms.ExportRenderer(typeof<FabulousContacts.Controls.UnderlinedLabel>, typeof<UnderlinedLabelRenderer>)>]
     do ()

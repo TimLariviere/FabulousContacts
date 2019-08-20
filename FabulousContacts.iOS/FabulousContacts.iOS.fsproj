@@ -172,6 +172,7 @@
   <ItemGroup>
     <Compile Include="AppDelegate.fs" />
     <Compile Include="BorderedEntryRenderer.fs" />
+    <Compile Include="UnderlinedLabelRenderer.fs" />
     <Compile Include="Properties\AssemblyInfo.fs" />
     <None Include="Entitlements.plist" />
     <None Include="Info.plist" />
