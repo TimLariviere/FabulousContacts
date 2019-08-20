@@ -6,7 +6,6 @@ open Foundation
 open Xamarin.Forms
 open Xamarin.Forms.Platform.iOS
 open System.IO
-open SQLite
 open Xamarin
 open Plugin.Media
 

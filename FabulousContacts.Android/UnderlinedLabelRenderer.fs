@@ -1,9 +1,7 @@
 ﻿namespace FabulousContacts.Droid
 
-open System
 open Xamarin.Forms
 open Xamarin.Forms.Platform.Android
-open System.ComponentModel
 
 type UnderlinedLabelRenderer(context) =
     inherit LabelRenderer(context)
