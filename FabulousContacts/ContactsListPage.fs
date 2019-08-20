@@ -2,9 +2,10 @@
 
 open Fabulous
 open Fabulous.XamarinForms
+open FabulousContacts.Components
+open FabulousContacts.Models
+open FabulousContacts.Style
 open Xamarin.Forms
-open Models
-open Style
 
 module ContactsListPage =
     // Declarations

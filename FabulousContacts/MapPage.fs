@@ -1,16 +1,22 @@
 ﻿namespace FabulousContacts
 
-open Helpers
-open Models
+open System
 open Fabulous
 open Fabulous.XamarinForms
+open FabulousContacts.Components
+open FabulousContacts.Helpers
+open FabulousContacts.Models
 open Xamarin.Essentials
 open Xamarin.Forms.Maps
-open System
-open Style
 
 module MapPage =
     // Declarations
+    type ContactPin =
+        { Position: Position
+          Label: string
+          PinType: PinType
+          Address: string }
+        
     type Msg =
         | LoadPins of Contact list
         | RetrieveUserPosition

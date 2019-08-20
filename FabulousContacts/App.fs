@@ -2,8 +2,8 @@
 
 open Fabulous
 open Fabulous.XamarinForms
-open Xamarin.Forms
 open FabulousContacts.Models
+open Xamarin.Forms
 
 module App =
     type Msg =

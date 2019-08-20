@@ -3,10 +3,10 @@
 open System
 open Fabulous
 open Fabulous.XamarinForms
+open FabulousContacts.Controls
+open FabulousContacts.Style
 open Xamarin.Forms
 open Xamarin.Essentials
-open FabulousContacts.Controls
-open Style
 
 module AboutPage =
     let fabulousContactsRepositoryUrl = "https://github.com/TimLariviere/FabulousContacts"
@@ -23,12 +23,12 @@ module AboutPage =
     let authorSlackHandle = "@Timothé Larivière"
     
     let logo =
-        View.StackLayout(heightRequest=100.,
-                         widthRequest=100.,
-                         horizontalOptions=LayoutOptions.Center,
-                         backgroundColor=accentColor,
-                         padding=15.,
-                         children=[
+        View.StackLayout(heightRequest = 100.,
+                         widthRequest = 100.,
+                         horizontalOptions = LayoutOptions.Center,
+                         backgroundColor = accentColor,
+                         padding = 15.,
+                         children = [
             View.Image(source="icon.png")
         ])
         

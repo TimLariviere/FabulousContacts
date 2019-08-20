@@ -1,5 +1,6 @@
 namespace FabulousContacts
 
+[<RequireQualifiedAccess>]
 module Strings =
     let Common_NotSpecified = "Not specified"
     let Common_About = "About"

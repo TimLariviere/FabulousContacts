@@ -2,10 +2,11 @@
 
 open Fabulous
 open Fabulous.XamarinForms
+open FabulousContacts.Components
+open FabulousContacts.Models
+open FabulousContacts.Repository
+open Xamarin.Forms.PlatformConfiguration
 open Xamarin.Forms.PlatformConfiguration.AndroidSpecific
-open Models
-open Repository
-open Style
 
 module MainPage =
     // Declarations
@@ -167,14 +168,14 @@ module MainPage =
         
         dependsOn (tabAllContacts, tabFavContacts, tabMap) (fun model (contacts, favorites, map) ->
             View.TabbedPage(
-                created = (fun target -> target.On<Xamarin.Forms.PlatformConfiguration.Android>().SetToolbarPlacement(ToolbarPlacement.Bottom) |> ignore),
+                created = (fun target -> target.On<Android>().SetToolbarPlacement(ToolbarPlacement.Bottom) |> ignore),
                 title = title,
                 children = [ contacts; favorites; map ]
             )
         )
 
     let view model dispatch =
-        let title = "FabulousContacts"
+        let title = Strings.MainPage_Title
         match model.Contacts with
         | None ->
             loadingView title

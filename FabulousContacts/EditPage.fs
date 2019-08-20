@@ -3,13 +3,13 @@
 open System
 open Fabulous
 open Fabulous.XamarinForms
-open Xamarin.Forms
+open FabulousContacts.Components
+open FabulousContacts.Helpers
+open FabulousContacts.Models
+open FabulousContacts.Repository
 open Plugin.Permissions.Abstractions
 open Plugin.Media
-open Models
-open Helpers
-open Repository
-open Style
+open Xamarin.Forms
 
 module EditPage =
     // Declarations

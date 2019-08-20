@@ -1,7 +1,7 @@
 ﻿namespace FabulousContacts
 
+open FabulousContacts.Models
 open SQLite
-open Models
 
 module Repository =
     type ContactObject() =

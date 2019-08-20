@@ -3,11 +3,12 @@
 open System
 open Fabulous
 open Fabulous.XamarinForms
+open FabulousContacts.Components
+open FabulousContacts.Helpers
+open FabulousContacts.Models
+open FabulousContacts.Style
 open Xamarin.Forms
 open Xamarin.Essentials
-open Models
-open Helpers
-open Style
 
 module DetailPage =
     // Declarations

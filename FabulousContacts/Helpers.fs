@@ -1,11 +1,11 @@
 ﻿namespace FabulousContacts
 
 open System.IO
-open Xamarin.Forms
 open Plugin.Media
 open Plugin.Media.Abstractions
 open Plugin.Permissions
 open Plugin.Permissions.Abstractions
+open Xamarin.Forms
 
 module Helpers =
     let displayAlert (title, message, cancel) =
@@ -29,6 +29,7 @@ module Helpers =
             let! status =
                 CrossPermissions.Current.RequestPermissionsAsync([| permission |])
                 |> Async.AwaitTask
+
             return status.[permission] = PermissionStatus.Granted
                 || status.[permission] = PermissionStatus.Unknown
         with _ ->

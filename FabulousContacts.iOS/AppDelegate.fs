@@ -1,12 +1,12 @@
 namespace FabulousContacts.iOS
 
 open System
-open UIKit
+open System.IO
 open Foundation
+open UIKit
+open Xamarin
 open Xamarin.Forms
 open Xamarin.Forms.Platform.iOS
-open System.IO
-open Xamarin
 open Plugin.Media
 
 [<Register ("AppDelegate")>]

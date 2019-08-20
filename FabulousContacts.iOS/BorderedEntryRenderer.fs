@@ -1,9 +1,7 @@
 ﻿namespace FabulousContacts.iOS
 
 open System
-open Xamarin.Forms
 open Xamarin.Forms.Platform.iOS
-open System.ComponentModel
 
 type BorderedEntryRenderer() =
     inherit EntryRenderer()
@@ -12,7 +10,7 @@ type BorderedEntryRenderer() =
         with get() =
             this.Element :?> FabulousContacts.Controls.BorderedEntry
 
-    override this.OnElementChanged(e: ElementChangedEventArgs<Entry>) =
+    override this.OnElementChanged(e) =
         base.OnElementChanged(e)
 
         if (e.NewElement <> null) then
@@ -22,13 +20,11 @@ type BorderedEntryRenderer() =
         else
             ()
 
-    override this.OnElementPropertyChanged(sender: obj, e: PropertyChangedEventArgs) =
+    override this.OnElementPropertyChanged(_, e) =
         if e.PropertyName = "BorderColor" then
             this.Control.Layer.BorderColor <- this.BorderedEntry.BorderColor.ToCGColor()
             this.Control.Layer.BorderWidth <- nfloat 1.
             this.Control.Layer.CornerRadius <- nfloat 5.
-        else
-            ()
 
 module Dummy_BorderedEntryRenderer =
     [<assembly: Xamarin.Forms.ExportRenderer(typeof<FabulousContacts.Controls.BorderedEntry>, typeof<BorderedEntryRenderer>)>]
