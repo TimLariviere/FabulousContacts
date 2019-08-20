@@ -10,6 +10,7 @@ open Helpers
 open Style
 
 module DetailPage =
+    // Declarations
     type Msg =
         | EditTapped
         | CallTapped
@@ -24,55 +25,48 @@ module DetailPage =
     type Model =
         { Contact: Contact }
 
+    // Functions
     let hasSetField = not << String.IsNullOrWhiteSpace
 
-    let notSupportedMsg = sprintf "%s is not supported on this device"
-
-    let errorMsg = "An error has occurred"
-
-    let ok = "OK"
-
-    let dialNumber phoneNumber = async {
-        let msg = "Can't dial number"
+    let tryDialNumber phoneNumber = async {
         try
             PhoneDialer.Open(phoneNumber)
         with
         | :? FeatureNotSupportedException ->
-            do! displayAlert(msg, notSupportedMsg "Phone Dialer", ok)
+            do! displayAlert(Strings.DetailPage_DialNumberFailed, Strings.DetailPage_CapabilityNotSupported "Phone Dialer", Strings.Common_OK)
         | _ ->
-            do! displayAlert(msg, errorMsg, ok)
+            do! displayAlert(Strings.DetailPage_DialNumberFailed, Strings.Common_Error, Strings.Common_OK)
 
         return None
     }
 
-    let composeSms (phoneNumber: string) = async {
-        let msg = "Can't send SMS"
+    let tryComposeSms (phoneNumber: string) = async {
         try
             let message = SmsMessage("", phoneNumber)
             do! Sms.ComposeAsync(message) |> Async.AwaitTask
         with
         | :? FeatureNotSupportedException ->
-            do! displayAlert(msg, notSupportedMsg "SMS", ok)
+            do! displayAlert(Strings.DetailPage_ComposeSmsFailed, Strings.DetailPage_CapabilityNotSupported "SMS", Strings.Common_OK)
         | _ ->
-            do! displayAlert(msg, errorMsg, ok)
+            do! displayAlert(Strings.DetailPage_ComposeSmsFailed, Strings.Common_Error, Strings.Common_OK)
 
         return None
     }
 
-    let composeEmail emailAddress = async {
-        let msg = "Can't send email"
+    let tryComposeEmail emailAddress = async {
         try
             let message = EmailMessage("", "", [| emailAddress |])
             do! Email.ComposeAsync(message) |> Async.AwaitTask
         with
         | :? FeatureNotSupportedException ->
-            do! displayAlert(msg, notSupportedMsg "Email", ok)
+            do! displayAlert(Strings.DetailPage_ComposeEmailFailed, Strings.DetailPage_CapabilityNotSupported "Email", Strings.Common_OK)
         | _ ->
-            do! displayAlert(msg, errorMsg, ok)
+            do! displayAlert(Strings.DetailPage_ComposeEmailFailed, Strings.Common_Error, Strings.Common_OK)
 
         return None
     }
 
+    // Lifecycle
     let init (contact: Contact) =
         { Contact = contact }, Cmd.none
 
@@ -81,93 +75,91 @@ module DetailPage =
         | EditTapped ->
             model, Cmd.none, ExternalMsg.EditContact model.Contact
         | CallTapped ->
-            let dialMsg = dialNumber model.Contact.Phone
-            model, Cmd.ofAsyncMsgOption dialMsg, ExternalMsg.NoOp
+            let dialMsg = Cmd.ofAsyncMsgOption (tryDialNumber model.Contact.Phone)
+            model, dialMsg, ExternalMsg.NoOp
         | SmsTapped ->
-            let smsMsg = composeSms model.Contact.Phone
-            model, Cmd.ofAsyncMsgOption smsMsg, ExternalMsg.NoOp
+            let smsMsg = Cmd.ofAsyncMsgOption (tryComposeSms model.Contact.Phone)
+            model, smsMsg, ExternalMsg.NoOp
         | EmailTapped ->
-            let emailMsg = composeEmail model.Contact.Email
-            model, Cmd.ofAsyncMsgOption emailMsg, ExternalMsg.NoOp
+            let emailMsg = Cmd.ofAsyncMsgOption (tryComposeEmail model.Contact.Email)
+            model, emailMsg, ExternalMsg.NoOp
         | ContactUpdated contact ->
             { model with Contact = contact }, Cmd.none, ExternalMsg.NoOp
 
-    let mkToolBarItems dispatch = [
-        View.ToolbarItem(order = ToolbarItemOrder.Primary,
-                         text = "Edit",
-                         command= fun () -> dispatch EditTapped)
-    ]
-
-    let mkStackLayoutChildren model dispatch =
-        let bottomChildren =
-            View.StackLayout(padding = Thickness(20., 10., 20., 20.),
-                             spacing = 10.,
+    let header contact callContact sendSmsToContact sendEmailToContact =
+        let contactPicture = contact.Picture |> getValueOrDefault "addphoto.png"
+            
+        View.StackLayout(backgroundColor = Color.FromHex("#448cb8"),
+                         padding = Thickness(20., 10., 20., 10.),
+                         spacing = 10.,
+                         children = [
+            View.Label(text = contact.FirstName + " " + contact.LastName,
+                       fontSize = 20,
+                       fontAttributes = FontAttributes.Bold,
+                       textColor = accentTextColor,
+                       horizontalOptions = LayoutOptions.Center)
+            View.Grid(widthRequest = 125.,
+                      heightRequest = 125.,
+                      backgroundColor = Color.White,
+                      horizontalOptions = LayoutOptions.Center,
+                      children = [
+                View.Image(source = contactPicture,
+                           aspect = Aspect.AspectFill)
+                View.Image(source = "star.png",
+                           isVisible = contact.IsFavorite,
+                           heightRequest = 35.,
+                           widthRequest = 35.,
+                           horizontalOptions = LayoutOptions.Start,
+                           verticalOptions = LayoutOptions.Start)
+            ])
+            View.StackLayout(horizontalOptions = LayoutOptions.Center,
+                             orientation = StackOrientation.Horizontal,
+                             margin = Thickness(0., 10., 0., 10.),
+                             spacing = 20.,
                              children = [
-                                mkDetailFieldTitle "Email"
-                                mkOptionalLabel model.Contact.Email
-                                mkDetailFieldTitle "Phone"
-                                mkOptionalLabel model.Contact.Phone
-                                mkDetailFieldTitle "Address"
-                                mkOptionalLabel model.Contact.Address
-                            ])
-        let headerChildren =
-            let headerLabel =
-                View.Label(text = model.Contact.FirstName + " " + model.Contact.LastName,
-                           fontSize = 20,
-                           fontAttributes = FontAttributes.Bold,
-                           textColor = accentTextColor,
-                           horizontalOptions = LayoutOptions.Center)
-            let contactPicture =
-                model.Contact.Picture
-                |> Option.ofObj
-                |> Option.map box
-                |> Option.defaultValue (box "addphoto.png")
-            let gridView =
-                View.Grid(
-                    widthRequest = 125.,
-                    heightRequest = 125.,
-                    backgroundColor = Color.White,
-                    horizontalOptions = LayoutOptions.Center,
-                    children = [
-                        View.Image(source = contactPicture,
-                                   aspect = Aspect.AspectFill)
-                        View.Image(source = "star.png",
-                                   isVisible = model.Contact.IsFavorite,
-                                   heightRequest = 35.,
-                                   widthRequest = 35.,
-                                   horizontalOptions = LayoutOptions.Start,
-                                   verticalOptions = LayoutOptions.Start)
-                    ])
-            let detailView =
-                View.StackLayout(horizontalOptions = LayoutOptions.Center,
-                                 orientation = StackOrientation.Horizontal,
-                                 margin = Thickness(0., 10., 0., 10.),
-                                 spacing = 20.,
-                                 children = [
-                                    if hasSetField model.Contact.Phone then
-                                        yield mkDetailActionButton "call.png" (fun() -> dispatch CallTapped)
-                                        yield mkDetailActionButton "sms.png" (fun() -> dispatch SmsTapped)
-                                    if hasSetField model.Contact.Email then
-                                        yield mkDetailActionButton "email.png" (fun() -> dispatch EmailTapped)
-                                ])
-            View.StackLayout(backgroundColor = Color.FromHex("#448cb8"),
-                             padding = Thickness(20., 10., 20., 10.),
-                             spacing = 10.,
-                             children = [
-                                headerLabel
-                                gridView
-                                detailView
-                             ])
-        [ headerChildren; bottomChildren ]
+                if hasSetField contact.Phone then
+                    yield detailActionButton "call.png" callContact
+                    yield detailActionButton "sms.png" sendSmsToContact
+                if hasSetField contact.Email then
+                    yield detailActionButton "email.png" sendEmailToContact
+            ])
+        ])
+            
+    let body contact =
+        View.StackLayout(padding = Thickness(20., 10., 20., 20.),
+                         spacing = 10.,
+                         children = [
+            detailFieldTitle "Email"
+            optionalLabel contact.Email
+            detailFieldTitle "Phone"
+            optionalLabel contact.Phone
+            detailFieldTitle "Address"
+            optionalLabel contact.Address
+        ])
 
     let view model dispatch =
-        View.ContentPage(
-            toolbarItems = mkToolBarItems dispatch,
-            content = View.ScrollView(
-                content = View.StackLayout(
-                    spacing = 0.,
-                    children = mkStackLayoutChildren model dispatch
+        dependsOn model.Contact (fun model contact ->
+            // Actions
+            let editContact = fun () -> dispatch EditTapped
+            let callContact = fun () -> dispatch CallTapped
+            let sendSmsToContact = fun () -> dispatch SmsTapped
+            let sendEmailToContact = fun () -> dispatch EmailTapped
+            
+            // View
+            View.ContentPage(
+                toolbarItems = [
+                    View.ToolbarItem(order = ToolbarItemOrder.Primary,
+                                     text = Strings.DetailPage_Toolbar_EditContact,
+                                     command = editContact)
+                ],
+                content = View.ScrollView(
+                    content = View.StackLayout(
+                        spacing = 0.,
+                        children = [
+                            header contact callContact sendSmsToContact sendEmailToContact
+                            body contact
+                        ]
+                    )
                 )
             )
-        )    
-
+        )

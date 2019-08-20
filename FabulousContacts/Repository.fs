@@ -5,7 +5,7 @@ open Models
 
 module Repository =
     type ContactObject() =
-        [<PrimaryKey>][<AutoIncrement>]
+        [<PrimaryKey; AutoIncrement>]
         member val Id = 0 with get, set
         member val FirstName = "" with get, set
         member val LastName = "" with get, set
@@ -24,7 +24,7 @@ module Repository =
         obj.Phone <- item.Phone
         obj.Address <- item.Address
         obj.IsFavorite <- item.IsFavorite
-        obj.Picture <- item.Picture
+        obj.Picture <- item.Picture |> Option.toObj
         obj
 
     let convertToModel (obj: ContactObject) : Contact =
@@ -35,7 +35,7 @@ module Repository =
           Phone = obj.Phone
           Address = obj.Address
           IsFavorite = obj.IsFavorite
-          Picture = obj.Picture }
+          Picture = obj.Picture |> Option.ofObj }
 
     let connect dbPath = async {
         let db = SQLiteAsyncConnection dbPath

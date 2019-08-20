@@ -11,7 +11,7 @@ module Models =
           Phone: string
           Address: string
           IsFavorite: bool
-          Picture: byte array }
+          Picture: byte array option }
 
     type ContactPin =
         { Position: Position

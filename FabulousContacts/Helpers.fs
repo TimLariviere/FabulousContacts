@@ -1,24 +1,22 @@
 ﻿namespace FabulousContacts
 
-open System
 open System.IO
 open Xamarin.Forms
 open Plugin.Media
 open Plugin.Media.Abstractions
 open Plugin.Permissions
 open Plugin.Permissions.Abstractions
-open FSharp.Linq.RuntimeHelpers
 
 module Helpers =
-    let displayAlert(title, message, cancel) =
+    let displayAlert (title, message, cancel) =
         Application.Current.MainPage.DisplayAlert(title, message, cancel)
         |> Async.AwaitTask
 
-    let displayAlertWithConfirm(title, message, accept, cancel) =
+    let displayAlertWithConfirm (title, message, accept, cancel) =
         Application.Current.MainPage.DisplayAlert(title, message, accept, cancel)
         |> Async.AwaitTask
 
-    let displayActionSheet(title, cancel, destruction, buttons) =
+    let displayActionSheet (title, cancel, destruction, buttons) =
         let title = Option.toObj title
         let cancel = Option.toObj cancel
         let destruction = Option.toObj destruction
@@ -26,7 +24,7 @@ module Helpers =
         Application.Current.MainPage.DisplayActionSheet(title, cancel, destruction, buttons)
         |> Async.AwaitTask
 
-    let requestPermission permission = async {
+    let requestPermissionAsync permission = async {
         try
             let! status =
                 CrossPermissions.Current.RequestPermissionsAsync([| permission |])
@@ -42,35 +40,35 @@ module Helpers =
             let! status =
                 CrossPermissions.Current.CheckPermissionStatusAsync(permission)
                 |> Async.AwaitTask
-            let request () =
-                requestPermission permission
-                |> Async.RunSynchronously
-            return status = PermissionStatus.Granted
-                || request()
+                
+            if status = PermissionStatus.Granted then
+                return true
+            else
+                return! requestPermissionAsync permission
         with _ ->
             return false
     }
 
-    let takePictureAsync() = async {
+    let takePictureAsync () = async {
         let options = StoreCameraMediaOptions()
-        return! CrossMedia.Current.TakePhotoAsync(options) |> Async.AwaitTask
+        let! picture = CrossMedia.Current.TakePhotoAsync(options) |> Async.AwaitTask
+        return picture |> Option.ofObj
     }
 
-    let pickPictureAsync() = async {
+    let pickPictureAsync () = async {
         let options = PickMediaOptions()
-        return! CrossMedia.Current.PickPhotoAsync(options) |> Async.AwaitTask
+        let! picture = CrossMedia.Current.PickPhotoAsync(options) |> Async.AwaitTask
+        return picture |> Option.ofObj
     }
 
-    let streamToArray (file: MediaFile) = async {
-        let stream = file.GetStream()
+    let readBytesAsync (file: MediaFile) =  async {
+        use stream = file.GetStream()
         use memoryStream = new MemoryStream()
         do! stream.CopyToAsync(memoryStream) |> Async.AwaitTask
         return memoryStream.ToArray()
     }
-
-    let readBytesAsync (file: MediaFile) =  async {
-        return
-            file
-            |> Option.ofObj
-            |> Option.map (streamToArray >> Async.RunSynchronously)
-    }
+    
+    let getValueOrDefault defaultValue value =
+        match value with
+        | None -> box defaultValue
+        | Some bytes -> box bytes

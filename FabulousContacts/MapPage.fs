@@ -2,12 +2,12 @@
 
 open Helpers
 open Models
-open Style
 open Fabulous
 open Fabulous.XamarinForms
 open Xamarin.Essentials
 open Xamarin.Forms.Maps
 open System
+open Style
 
 module MapPage =
     // Declarations
@@ -22,7 +22,7 @@ module MapPage =
           UserPosition: (double * double) option }
 
     // Functions
-    let getUserPositionAsync() = async {
+    let tryGetUserPositionAsync () = async {
         try
             let! location =
                 Geolocation.GetLastKnownLocationAsync() |> Async.AwaitTask
@@ -65,14 +65,23 @@ module MapPage =
 
             return Some (PinsLoaded pins)
         with exn ->
-            do! displayAlert("Can't load map", exn.Message, "OK")
+            do! displayAlert(Strings.MapPage_MapLoadFailed, exn.Message, Strings.Common_OK)
             return None
     }
+    
+    let paris = Position(48.8566, 2.3522)
+    let getUserPositionOrDefault (userPosition: (double * double) option) =
+        userPosition
+        |> Option.map Position
+        |> Option.defaultValue paris
 
     // Lifecycle
-    let init () =
+    let initModel =
         { Pins = None
-          UserPosition = None }, Cmd.none
+          UserPosition = None }
+    
+    let init () =
+        initModel, Cmd.none
 
     let update msg model =
         match msg with
@@ -80,44 +89,40 @@ module MapPage =
             let msg = loadPinsAsync contacts
             model, Cmd.ofAsyncMsgOption msg
         | RetrieveUserPosition ->
-            let msg = getUserPositionAsync()
+            let msg = tryGetUserPositionAsync ()
             model, Cmd.ofAsyncMsgOption msg
         | PinsLoaded pins ->
             { model with Pins = Some pins }, Cmd.none
         | UserPositionRetrieved location ->
             { model with UserPosition = Some location }, Cmd.none
-
-    let paris = Position(48.8566, 2.3522)
-    let center (userPosition: (double * double) option) =
-        userPosition
-        |> Option.map Position
-        |> Option.defaultValue paris
-
-    let mkContent pins userPosition =
-        let mkPin pin =
-            View.Pin(position = pin.Position,
-                     label = pin.Label,
-                     pinType = pin.PinType,
-                     address = pin.Address)
-        match pins with
-        | None ->
-            mkCentralLabel "Loading map..."
-        | Some pins ->
+        
+    let view model dispatch =
+        let map userPositionOpt pins =
             View.Map(hasZoomEnabled = true,
                      hasScrollEnabled = true,
-                     requestedRegion = MapSpan.FromCenterAndRadius(center userPosition, Distance.FromKilometers(25.)),
+                     requestedRegion = MapSpan.FromCenterAndRadius(getUserPositionOrDefault userPositionOpt, Distance.FromKilometers(25.)),
                      pins = [
                         for pin in pins do
-                            yield mkPin pin
+                            yield View.Pin(position = pin.Position,
+                                           label = pin.Label,
+                                           pinType = pin.PinType,
+                                           address = pin.Address)
                      ]
             )
-
-    let view model dispatch =
-        dependsOn (model.UserPosition, model.Pins) (fun model (userPosition, pins) ->
-            View.ContentPage(
-                title = "Map",
-                icon = "maptab.png",
-                appearing = (fun() -> dispatch RetrieveUserPosition),
-                content = mkContent pins userPosition
+        
+        dependsOn (model.UserPosition, model.Pins) (fun model (userPositionOpt, pins) ->
+            // Actions
+            let retrieveUserPosition = fun () -> dispatch RetrieveUserPosition
+            
+            // View
+            View.ContentPage(title = Strings.MapPage_Title,
+                             icon = "maptab.png",
+                             appearing = retrieveUserPosition,
+                             content =
+                match pins with
+                | None ->
+                    centralLabel Strings.MapPage_Loading
+                | Some pins ->
+                    map userPositionOpt pins
             )
         )

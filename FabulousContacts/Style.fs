@@ -1,37 +1,37 @@
 ﻿namespace FabulousContacts
 
 open Fabulous
+open FabulousContacts.Helpers
 open Fabulous.XamarinForms
 open Xamarin.Forms
 open FabulousContacts.Controls
 
 module Style =
     let accentTextColor = Color.White
-
     let accentColor = Color.FromHex("#3080b1")
 
-    let mkCentralLabel text =
+    let centralLabel text =
         View.Label(text = text,
                    horizontalOptions = LayoutOptions.Center,
                    verticalOptions = LayoutOptions.CenterAndExpand)
 
-    let mkFormLabel text =
+    let formLabel text =
         View.Label(text = text,
                    margin = Thickness(0., 20., 0., 5.))
 
-    let mkFormEntry placeholder text keyboard isValid textChanged =
+    let formEntry placeholder text keyboard isValid textChanged =
         View.BorderedEntry(placeholder = placeholder,
                            text = text,
                            keyboard = keyboard,
                            textChanged = debounce 250 (fun e -> e.NewTextValue |> textChanged),
                            borderColor = if isValid then Color.Default else Color.Red)
 
-    let mkFormEditor text textChanged =
+    let formEditor text textChanged =
         View.Editor(text = text,
                     textChanged = debounce 250 (fun e -> e.NewTextValue |> textChanged),
                     heightRequest = 100.)
 
-    let mkDestroyButton text command isVisible =
+    let destroyButton text command isVisible =
         View.Button(text = text,
                     command = command,
                     isVisible = isVisible,
@@ -40,12 +40,12 @@ module Style =
                     margin = Thickness(0., 20., 0., 0.),
                     verticalOptions = LayoutOptions.EndAndExpand)
 
-    let mkToolbarButton text command =
+    let toolbarButton text command =
         View.ToolbarItem(order = ToolbarItemOrder.Primary,
                          text = text,
                          command = command)
 
-    let mkGroupView name =
+    let groupView name =
         View.StackLayout(
             backgroundColor = accentColor,
             children = [
@@ -56,12 +56,8 @@ module Style =
                            margin = Thickness(20., 5.))
             ])
 
-    let mkCellView picture name address isFavorite =
-        let source =
-            picture
-            |> Option.ofObj
-            |> Option.map box
-            |> Option.defaultValue (box "addphoto.png")
+    let cellView picture name address isFavorite =
+        let source = picture |> getValueOrDefault "addphoto.png"
 
         View.StackLayout(
             orientation = StackOrientation.Horizontal,
@@ -77,15 +73,15 @@ module Style =
                                  horizontalOptions = LayoutOptions.FillAndExpand,
                                  margin = Thickness(0., 5., 0., 5.),
                                  children = [
-                                    View.Label(text = name,
-                                               fontSize = 18.,
-                                               verticalOptions = LayoutOptions.FillAndExpand,
-                                               verticalTextAlignment = TextAlignment.Center)
-                                    View.Label(text = address,
-                                               fontSize = 12.,
-                                               textColor = Color.Gray,
-                                               lineBreakMode = LineBreakMode.TailTruncation)
-                                ])
+                    View.Label(text = name,
+                               fontSize = 18.,
+                               verticalOptions = LayoutOptions.FillAndExpand,
+                               verticalTextAlignment = TextAlignment.Center)
+                    View.Label(text = address,
+                               fontSize = 12.,
+                               textColor = Color.Gray,
+                               lineBreakMode = LineBreakMode.TailTruncation)
+                ])
                 View.Image(source = "star.png",
                            isVisible = isFavorite,
                            verticalOptions = LayoutOptions.Center,
@@ -95,26 +91,52 @@ module Style =
             ]
         )
 
-    let mkCachedCellView picture name address isFavorite =
+    let cachedCellView picture name address isFavorite =
         dependsOn (picture, name, address, isFavorite) (fun _ (p, n, a, i) ->
-            mkCellView p n a i)
+            cellView p n a i)
 
-    let mkDetailActionButton image command =
+    let detailActionButton image command =
         View.Button(image = image,
                     command = command,
                     backgroundColor = accentColor,
                     heightRequest = 35.,
                     horizontalOptions = LayoutOptions.FillAndExpand)
 
-    let mkDetailFieldTitle text =
+    let detailFieldTitle text =
         View.Label(text = text,
                    fontAttributes = FontAttributes.Bold,
                    margin = Thickness(0., 10., 0., 0.))
 
-    let mkOptionalLabel text =
+    let optionalLabel text =
         match text with
         | "" ->
-            View.Label(text = "Not specified",
+            View.Label(text = Strings.Common_NotSpecified,
                        fontAttributes = FontAttributes.Italic)
         | _ ->
-            View.Label(text=text)
+            View.Label(text = text)
+            
+    let favoriteField isFavorite markAsFavorite =
+        View.StackLayout(orientation = StackOrientation.Horizontal,
+                         margin = Thickness(0., 20., 0., 0.),
+                         children = [
+            View.Label(text = Strings.EditPage_MarkAsFavoriteField_Label,
+                       verticalOptions = LayoutOptions.Center)
+            View.Switch(isToggled = isFavorite,
+                        toggled = markAsFavorite,
+                        horizontalOptions = LayoutOptions.EndAndExpand,
+                        verticalOptions = LayoutOptions.Center)
+        ])
+      
+    let profilePictureButton picture updatePicture =
+        match picture with
+        | None ->
+            View.Button(image = "addphoto.png",
+                        backgroundColor = Color.White,
+                        command = updatePicture)
+                .GridRowSpan(2)
+        | Some picture ->
+            View.Image(source = picture,
+                       aspect = Aspect.AspectFill,
+                       gestureRecognizers = [
+                View.TapGestureRecognizer(command = updatePicture)
+            ]).GridRowSpan(2)

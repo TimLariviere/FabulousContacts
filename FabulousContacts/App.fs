@@ -195,9 +195,10 @@ type App (dbPath) as app =
     let init = App.init dbPath
     let update = App.update dbPath
     let view = App.view
+    
     let runner = 
         Program.mkProgram init update view
-        //|> Program.withConsoleTrace
+        |> Program.withConsoleTrace
         |> XamarinFormsProgram.run app
 
 

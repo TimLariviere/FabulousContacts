@@ -8,10 +8,7 @@ type BorderedEntry() =
     inherit Entry()
 
     static let borderColorProperty =
-        BindableProperty.Create("BorderColor",
-                                typeof<Color>,
-                                typeof<BorderedEntry>,
-                                Color.Default)
+        BindableProperty.Create("BorderColor", typeof<Color>, typeof<BorderedEntry>, Color.Default)
 
     member this.BorderColor
         with get () =
@@ -20,7 +17,7 @@ type BorderedEntry() =
             this.SetValue(borderColorProperty, value)
 
 [<AutoOpen>]
-module DynamicViewsBorderedEntry =
+module FabulousBorderedEntry =
     let BorderedEntryBorderColorAttributeKey =
         AttributeKey<_> "BorderedEntry_BorderColor"
 
@@ -34,15 +31,10 @@ module DynamicViewsBorderedEntry =
                                         ?textChanged = textChanged,
                                         ?keyboard = keyboard)
 
-            borderColor
-            |> Option.map (fun v -> attribs.Add(BorderedEntryBorderColorAttributeKey, v))
-            |> Option.defaultValue ()
+            match borderColor with None -> () | Some v -> attribs.Add(BorderedEntryBorderColorAttributeKey, v)
 
             let update (prevOpt: ViewElement voption) (source: ViewElement) (target: BorderedEntry) =
                 ViewBuilders.UpdateEntry(prevOpt, source, target)
-                source.UpdatePrimitive(prevOpt,
-                                       target,
-                                       BorderedEntryBorderColorAttributeKey,
-                                       (fun target v -> target.BorderColor <- v))
+                source.UpdatePrimitive(prevOpt, target, BorderedEntryBorderColorAttributeKey, (fun target v -> target.BorderColor <- v))
 
             ViewElement.Create(BorderedEntry, update, attribs)

@@ -2,8 +2,10 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Strings.fs" />
     <Compile Include="Controls\BorderedEntry.fs" />
     <Compile Include="Controls\UnderlinedLabel.fs" />
     <Compile Include="Helpers.fs" />
@@ -25,7 +27,6 @@
     <PackageReference Include="Xam.Plugin.Media" Version="4.0.1.5" />
     <PackageReference Include="Plugin.Permissions" Version="3.0.0.12" />
     <PackageReference Include="Fabulous.XamarinForms.Maps" Version="0.40.3" />
-    <PackageReference Include="FSharp.Core" Version="4.6.2" />
     <PackageReference Include="Fabulous.XamarinForms.LiveUpdate" Version="0.40.3" />
   </ItemGroup>
 </Project>

@@ -46,12 +46,13 @@ module ContactsListPage =
         |> (fun (_, items) -> items.[iIndex])
 
     // Lifecycle
+    let initModel =
+        { Contacts = []
+          FilterText = ""
+          FilteredContacts = [] }
+    
     let init () =
-        let m =
-            { Contacts = []
-              FilterText = ""
-              FilteredContacts = [] }
-        m, Cmd.none
+        initModel, Cmd.none
 
     let update msg model =
         match msg with
@@ -70,50 +71,51 @@ module ContactsListPage =
         | ContactSelected contact ->
             model, Cmd.none, ExternalMsg.NavigateToDetail contact
 
-
-    let mkToolBarItems dispatch = [
-        View.ToolbarItem(text = "About",
-                         command = fun () -> dispatch AboutTapped)
-        View.ToolbarItem(text = "+",
-                         command = fun () -> dispatch AddNewContactTapped)
-    ]
-
-    let mkStackLayoutChildren filterText contacts dispatch =
-        let groupedContacts = groupContacts contacts
-        let textChanged =
-            debounce 250 (fun (e: TextChangedEventArgs) -> e.NewTextValue |> UpdateFilterText |> dispatch)
-        let searchBar =
-            View.SearchBar(text = filterText,
-                           textChanged = textChanged,
-                           backgroundColor = accentColor,
-                           cancelButtonColor = accentTextColor)
-        let findContact = findContactIn groupedContacts >> ContactSelected >> dispatch
-        let mkCachedCell c a = mkCachedCellView c.Picture (sprintf "%s %s" c.FirstName c.LastName) a c.IsFavorite
-        let mkGroupedItems = [
-            for (groupName, items) in groupedContacts do
-                yield groupName, mkGroupView groupName, [
-                    for contact in items do
-                        let address = contact.Address.Replace("\n", " ")
-                        yield mkCachedCell contact address
-                    ]
-            ]
-        let groupedView =
-            View.ListViewGrouped(verticalOptions = LayoutOptions.FillAndExpand,
-                                 rowHeight = 60,
-                                 selectionMode = ListViewSelectionMode.None,
-                                 showJumpList = (contacts.Length > 10),
-                                 itemTapped = findContact,
-                                 items = mkGroupedItems)
-        [ searchBar; groupedView]
-
     let view title model dispatch =
+        let cachedCell contact address =
+            cachedCellView contact.Picture (sprintf "%s %s" contact.FirstName contact.LastName) address contact.IsFavorite
+        
         dependsOn (title, model.FilterText, model.FilteredContacts) (fun model (mTitle, mFilterText, mContacts) ->
+            let groupedContacts = groupContacts mContacts
+            
+            // Actions
+            let goToAbout = fun () -> dispatch AboutTapped
+            let addNewContact = fun () -> dispatch AddNewContactTapped
+            let selectContact = findContactIn groupedContacts >> ContactSelected >> dispatch
+            let updateFilter = debounce 250 (fun (e: TextChangedEventArgs) -> e.NewTextValue |> UpdateFilterText |> dispatch)
+            
+            // View
             View.ContentPage(
                 title = mTitle,
-                toolbarItems = mkToolBarItems dispatch,
+                toolbarItems = [
+                    View.ToolbarItem(text = Strings.Common_About,
+                                     command = goToAbout)
+                    View.ToolbarItem(text = "+",
+                                     command = addNewContact)
+                ],
                 content = View.StackLayout(
                     spacing = 0.,
-                    children = mkStackLayoutChildren mFilterText mContacts dispatch
+                    children = [
+                        View.SearchBar(text = mFilterText,
+                                       textChanged = updateFilter,
+                                       backgroundColor = accentColor,
+                                       cancelButtonColor = accentTextColor)
+                        
+                        View.ListViewGrouped(verticalOptions = LayoutOptions.FillAndExpand,
+                                             rowHeight = 60,
+                                             selectionMode = ListViewSelectionMode.None,
+                                             showJumpList = (mContacts.Length > 10),
+                                             itemTapped = selectContact,
+                                             items = [
+                            for (groupName, items) in groupedContacts do
+                                yield groupName, groupView groupName, [
+                                    for contact in items do
+                                        let address = contact.Address.Replace("\n", " ")
+                                        yield cachedCell contact address
+                                    ]
+                            ]
+                        )
+                    ]
                 )
             )
         )

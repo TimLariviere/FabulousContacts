@@ -8,7 +8,7 @@ type UnderlinedLabel() =
     inherit Label()
 
 [<AutoOpen>]
-module DynamicViewsUnderlinedLabel =
+module FabulousUnderlinedLabel =
     type Fabulous.XamarinForms.View with
         static member UnderlinedLabel(?text, ?gestureRecognizers, ?verticalOptions) =
             let attribs =

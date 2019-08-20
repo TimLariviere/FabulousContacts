@@ -12,7 +12,7 @@ open Repository
 open Style
 
 module EditPage =
-    /// Declarations
+    // Declarations
     type Msg = 
         // Fields update
         | UpdateFirstName of string
@@ -51,7 +51,7 @@ module EditPage =
           IsFirstNameValid: bool
           IsLastNameValid: bool }
 
-    /// Functions
+    // Functions
     let saveAsync dbPath contact = async {
         match contact.Id with
         | 0 ->
@@ -64,9 +64,8 @@ module EditPage =
 
     let deleteAsync dbPath (contact: Contact) = async {
         let! shouldDelete = 
-            let deleteMsg = sprintf "Delete %s %s" contact.FirstName contact.LastName
-            let confirmationMsg = "This action is definitive. Are you sure?"
-            displayAlertWithConfirm(deleteMsg, confirmationMsg, "Yes", "No")
+            let title = Strings.EditPage_DeleteContact contact.FirstName contact.LastName
+            displayAlertWithConfirm(title, Strings.EditPage_DeleteContactConfirmation, Strings.Common_Yes, Strings.Common_No)
 
         if shouldDelete then
             do! deleteContact dbPath contact
@@ -78,53 +77,55 @@ module EditPage =
     let doAsync action permission = async {
         let! permissionGranted = askPermissionAsync permission
         if permissionGranted then
-            let! picture = action()
-            return! readBytesAsync picture
+            let! pictureOpt = action()
+            match pictureOpt with
+            | None ->
+                return None
+            | Some picture ->
+                let! bytes = readBytesAsync picture
+                return Some bytes
         else
             return None
     }
 
-    let updatePictureAsync previousValue = async {
-        let cancel = "Cancel"
-        let remove = "Remove"
-        let takePicture = "Take a picture"
-        let chooseFromGallery = "Choose from the gallery"
-
+    let updatePictureAsync (previousValue: _ option) = async {
         let canTakePicture = CrossMedia.Current.IsCameraAvailable && CrossMedia.Current.IsTakePhotoSupported
         let canPickPicture = CrossMedia.Current.IsPickPhotoSupported
+        
+        let hasPreviousPicture = previousValue.IsSome
 
         let! action =
             displayActionSheet(None,
-                               Some cancel,
-                               previousValue |> Option.map (fun _ -> remove),
+                               Some Strings.Common_Cancel,
+                               (if hasPreviousPicture then Some Strings.EditPage_PictureContextMenu_Remove else None),
                                Some [|
-                                   if canTakePicture then yield takePicture
-                                   if canPickPicture then yield chooseFromGallery
+                                   if canTakePicture then yield Strings.EditPage_PictureContextMenu_TakePicture
+                                   if canPickPicture then yield Strings.EditPage_PictureContextMenu_ChooseFromGallery
                                |])
-
-        let convertToMsg = SetPicture >> Some
+            
+        let setPicture value = Some (SetPicture value)
 
         match action with
-        | s when s = remove ->
-            return convertToMsg None
-        | s when s = takePicture ->
+        | s when s = Strings.EditPage_PictureContextMenu_Remove ->
+            return setPicture None
+        | s when s = Strings.EditPage_PictureContextMenu_TakePicture ->
             let! bytes = doAsync takePictureAsync Permission.Camera
-            return convertToMsg bytes
-        | s when s = chooseFromGallery ->
+            return setPicture bytes
+        | s when s = Strings.EditPage_PictureContextMenu_ChooseFromGallery ->
             let! bytes = doAsync pickPictureAsync Permission.Photos
-            return convertToMsg bytes
+            return setPicture bytes
         | _ ->
             return None
     }
 
-    let sayContactNotValid() =
-        displayAlert("Invalid contact", "Please fill all mandatory fields", "OK")
+    let sayContactNotValid () =
+        displayAlert(Strings.EditPage_InvalidContactTitle, Strings.EditPage_InvalidContactDescription, Strings.Common_OK)
 
-    /// Validations
+    // Validations
     let validateFirstName = not << String.IsNullOrWhiteSpace
     let validateLastName = not << String.IsNullOrWhiteSpace
 
-    /// Lifecycle
+    // Lifecycle
     let init (contact: Contact option) =
         let model =
             match contact with
@@ -136,7 +137,7 @@ module EditPage =
                   Phone = c.Phone
                   Address = c.Address
                   IsFavorite = c.IsFavorite
-                  Picture = if c.Picture <> null then Some c.Picture else None
+                  Picture = c.Picture
                   IsFirstNameValid = true
                   IsLastNameValid = true }
             | None ->
@@ -155,11 +156,10 @@ module EditPage =
 
     let saveCmd model dbPath =
         if not model.IsFirstNameValid || not model.IsLastNameValid then
-            do sayContactNotValid() |> ignore
+            do sayContactNotValid () |> ignore
             Cmd.none
         else
             let id = (match model.Contact with None -> 0 | Some c -> c.Id)
-            let bytes = (match model.Picture with None -> null | Some arr -> arr)
             let newContact =
                 { Id = id
                   FirstName = model.FirstName
@@ -168,7 +168,7 @@ module EditPage =
                   Phone = model.Phone
                   Address = model.Address
                   IsFavorite = model.IsFavorite
-                  Picture = bytes }
+                  Picture = model.Picture }
             let msg = saveAsync dbPath newContact
             Cmd.ofAsyncMsg msg
 
@@ -205,86 +205,65 @@ module EditPage =
             model, Cmd.none, ExternalMsg.GoBackAfterContactUpdated contact
         | ContactDeleted contact ->
             model, Cmd.none, ExternalMsg.GoBackAfterContactDeleted contact
-
-    let mkTitle contact (fullName: string) =
-        match contact, (fullName.Trim()) with
-        | None, "" -> "New Contact"
-        | _, "" -> "Add a name"
-        | _, _ -> fullName
-
-    let mkToolBarItems dispatch = [
-        mkToolbarButton "Save" (fun() -> dispatch SaveContact)
-    ]
-
-    let mkStackLayoutChildren mModel dispatch =
-        let isDeleteButtonVisible =
+        
+    let view model dispatch =
+        let getPageTitle contact (fullName: string) =
+            match contact, (fullName.Trim()) with
+            | None, "" -> Strings.EditPage_Title_NewContact
+            | _, "" -> Strings.EditPage_Title_EditContactWithNoName
+            | _, _ -> fullName
+        
+        dependsOn model (fun model mModel ->
+            let isDeleteButtonVisible =
                 match mModel.Contact with
                 | None -> false
                 | Some x when x.Id = 0 -> false
                 | Some _ -> true
-        let mkButtonOrPicture =
-            match mModel.Picture with
-            | None ->
-                View.Button(image = "addphoto.png",
-                            backgroundColor = Color.White,
-                            command = fun () -> dispatch UpdatePicture)
-                            .GridRowSpan(2)
-            | Some picture ->
-                View.Image(source = picture,
-                           aspect = Aspect.AspectFill,
-                           gestureRecognizers = [
-                               View.TapGestureRecognizer(
-                                   command = fun() -> dispatch UpdatePicture)
-                           ])
-                           .GridRowSpan(2)
-        let firstNameTxtView =
-            let txtView =
-                mkFormEntry "First name*" mModel.FirstName Keyboard.Text mModel.IsFirstNameValid (UpdateFirstName >> dispatch)
-            txtView.VerticalOptions(LayoutOptions.Center).GridColumn(1)
-        let lastNameTxtView =
-            let textView =
-                mkFormEntry "Last name*" mModel.LastName Keyboard.Text mModel.IsLastNameValid (UpdateLastName >> dispatch)
-            textView.VerticalOptions(LayoutOptions.Center).GridColumn(1).GridRow(1)
-        let gridView =
-            View.Grid(coldefs = [ 100.; GridLength.Star ],
-                      rowdefs = [ 50.; 50. ],
-                      columnSpacing = 10.,
-                      rowSpacing = 0.,
-                      children = [
-                          mkButtonOrPicture
-                          firstNameTxtView
-                          lastNameTxtView
-                      ])
-        let favoriteView =
-            View.StackLayout(orientation = StackOrientation.Horizontal,
-                             margin = Thickness(0., 20., 0., 0.),
-                             children = [
-                                 View.Label(text = "Mark as Favorite",
-                                            verticalOptions = LayoutOptions.Center)
-                                 View.Switch(isToggled = mModel.IsFavorite,
-                                             toggled = (fun e -> e.Value |> UpdateIsFavorite |> dispatch),
-                                             horizontalOptions = LayoutOptions.EndAndExpand,
-                                             verticalOptions = LayoutOptions.Center)
-                             ])
-        [ gridView
-          favoriteView
-          mkFormLabel "Email"
-          mkFormEntry "Email" mModel.Email Keyboard.Email true (UpdateEmail >> dispatch)
-          mkFormLabel "Phone"
-          mkFormEntry "Phone" mModel.Phone Keyboard.Telephone true (UpdatePhone >> dispatch)
-          mkFormLabel "Address"
-          mkFormEditor mModel.Address (UpdateAddress >> dispatch)
-          mkDestroyButton "Delete" (fun () -> mModel.Contact.Value |> DeleteContact |> dispatch) isDeleteButtonVisible ]
-
-    let view model dispatch =
-        dependsOn model (fun _ mModel ->
+            
+            // Actions
+            let saveContact = fun () -> dispatch SaveContact
+            let markAsFavorite = fun (e: ToggledEventArgs) -> e.Value |> UpdateIsFavorite |> dispatch
+            let updatePicture = fun () -> dispatch UpdatePicture
+            let updateFirstName = UpdateFirstName >> dispatch
+            let updateLastName = UpdateLastName >> dispatch
+            let updateEmail = UpdateEmail >> dispatch
+            let updatePhone = UpdatePhone >> dispatch
+            let updateAddress = UpdateAddress >> dispatch
+            let deleteContact = fun () -> mModel.Contact.Value |> DeleteContact |> dispatch
+            
+            // View
             View.ContentPage(
-                title = mkTitle mModel.Contact (sprintf "%s %s" mModel.FirstName mModel.LastName),
-                toolbarItems = mkToolBarItems dispatch,
+                title = getPageTitle mModel.Contact (sprintf "%s %s" mModel.FirstName mModel.LastName),
+                toolbarItems = [
+                    toolbarButton Strings.EditPage_Toolbar_SaveContact saveContact
+                ],
                 content = View.ScrollView(
                     content = View.StackLayout(
                         padding = Thickness(20.),
-                        children = mkStackLayoutChildren mModel dispatch
+                        children = [
+                            View.Grid(coldefs = [ 100.; GridLength.Star ],
+                                      rowdefs = [ 50.; 50. ],
+                                      columnSpacing = 10.,
+                                      rowSpacing = 0.,
+                                      children = [
+                                          profilePictureButton mModel.Picture updatePicture
+                                          (formEntry Strings.EditPage_FirstNameField_Label mModel.FirstName Keyboard.Text mModel.IsFirstNameValid updateFirstName)
+                                              .VerticalOptions(LayoutOptions.Center)
+                                              .GridColumn(1)
+                                          (formEntry Strings.EditPage_LastNameField_Label mModel.LastName Keyboard.Text mModel.IsLastNameValid updateLastName)
+                                              .VerticalOptions(LayoutOptions.Center)
+                                              .GridColumn(1)
+                                              .GridRow(1)
+                                      ])
+                            favoriteField mModel.IsFavorite markAsFavorite
+                            formLabel Strings.EditPage_EmailField_Label
+                            formEntry Strings.EditPage_EmailField_Placeholder mModel.Email Keyboard.Email true updateEmail
+                            formLabel Strings.EditPage_PhoneField_Label
+                            formEntry Strings.EditPage_PhoneField_Placeholder mModel.Phone Keyboard.Telephone true updatePhone
+                            formLabel Strings.EditPage_AddressField_Label
+                            formEditor mModel.Address updateAddress
+                            destroyButton Strings.EditPage_DeleteButtonText deleteContact isDeleteButtonVisible
+                        ]
                     )
                 )
             )

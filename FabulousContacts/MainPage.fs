@@ -55,39 +55,38 @@ module MainPage =
             Cmd.map TabMapMsg msgMap
         ]
         m, batchCmd
-
-    let updateContactsList msg mapMsgFunc model =
-        let m, cmd, externalMsg = ContactsListPage.update msg model
-        let cmd2, externalMsg2 =
-            match externalMsg with
-            | ContactsListPage.ExternalMsg.NoOp ->
-                Cmd.none, ExternalMsg.NoOp
-            | ContactsListPage.ExternalMsg.NavigateToAbout ->
-                Cmd.none, ExternalMsg.NavigateToAbout
-            | ContactsListPage.ExternalMsg.NavigateToNewContact ->
-                Cmd.none, ExternalMsg.NavigateToNewContact
-            | ContactsListPage.ExternalMsg.NavigateToDetail contact ->
-                Cmd.none, (ExternalMsg.NavigateToDetail contact)
-
-        m, Cmd.batch [ Cmd.map mapMsgFunc cmd; cmd2 ], externalMsg2
-
-    let updateContacts model contacts =
-        let allMsg =
-            ContactsListPage.Msg.ContactsLoaded contacts
-        let favMsg =
-            ContactsListPage.Msg.ContactsLoaded
-                (contacts |> List.filter (fun c -> c.IsFavorite))
-        let mapMsg =
-            MapPage.Msg.LoadPins contacts
-        let batchCmd = Cmd.batch [
-            Cmd.ofMsg (TabAllContactsMsg allMsg)
-            Cmd.ofMsg (TabFavContactsMsg favMsg)
-            Cmd.ofMsg (TabMapMsg mapMsg)
-        ]
-        let m = { model with Contacts = Some contacts }
-        m, batchCmd, ExternalMsg.NoOp
-
+        
     let update msg model =
+        let updateContactsList msg mapMsgFunc model =
+            let m, cmd, externalMsg = ContactsListPage.update msg model
+            let cmd2, externalMsg2 =
+                match externalMsg with
+                | ContactsListPage.ExternalMsg.NoOp ->
+                    Cmd.none, ExternalMsg.NoOp
+                | ContactsListPage.ExternalMsg.NavigateToAbout ->
+                    Cmd.none, ExternalMsg.NavigateToAbout
+                | ContactsListPage.ExternalMsg.NavigateToNewContact ->
+                    Cmd.none, ExternalMsg.NavigateToNewContact
+                | ContactsListPage.ExternalMsg.NavigateToDetail contact ->
+                    Cmd.none, (ExternalMsg.NavigateToDetail contact)
+
+            m, Cmd.batch [ Cmd.map mapMsgFunc cmd; cmd2 ], externalMsg2
+        
+        let updateContacts model contacts =
+            let allMsg =
+                ContactsListPage.Msg.ContactsLoaded contacts
+            let favMsg =
+                ContactsListPage.Msg.ContactsLoaded (contacts |> List.filter (fun c -> c.IsFavorite))
+            let mapMsg =
+                MapPage.Msg.LoadPins contacts
+            let batchCmd = Cmd.batch [
+                Cmd.ofMsg (TabAllContactsMsg allMsg)
+                Cmd.ofMsg (TabFavContactsMsg favMsg)
+                Cmd.ofMsg (TabMapMsg mapMsg)
+            ]
+            let m = { model with Contacts = Some contacts }
+            m, batchCmd, ExternalMsg.NoOp
+        
         match msg with
         | TabAllContactsMsg msg ->
             let m, cmd, externalMsg =
@@ -120,41 +119,53 @@ module MainPage =
         | NoContactAddNewContactTapped ->
             model, Cmd.none, ExternalMsg.NavigateToNewContact
 
-    let mkLoadingView title =
+    let loadingView title =
         dependsOn () (fun model () ->
             View.ContentPage(
                 title = title,
                 content = View.StackLayout(
-                    children = [ mkCentralLabel "Loading..." ]
+                    children = [ centralLabel Strings.MainPage_Loading ]
                 )
             )
         )
 
-    let mkEmptyToolBarItems dispatch = [
-        View.ToolbarItem(text="About", command=(fun () -> dispatch NoContactAboutTapped))
-        View.ToolbarItem(text="+", command=(fun () -> dispatch NoContactAddNewContactTapped))
-    ]
-
-    let mkEmptyView title dispatch =
+    let emptyView title dispatch =
         dependsOn () (fun model () ->
+            // Actions
+            let goToAbout = fun () -> dispatch NoContactAboutTapped
+            let addNewContact = fun () -> dispatch NoContactAddNewContactTapped
+            
+            // View
             View.ContentPage(
                 title = title,
-                toolbarItems = mkEmptyToolBarItems dispatch,
-                content=View.StackLayout(
-                    children=[ mkCentralLabel "No contact" ]
+                toolbarItems = [
+                    View.ToolbarItem(text = Strings.Common_About,
+                                     command = goToAbout)
+                    View.ToolbarItem(text = "+",
+                                     command = addNewContact)
+                ],
+                content = View.StackLayout(
+                    children = [ centralLabel Strings.MainPage_NoContact ]
                 )
             )
         )
     
-    let mkRegularView title model dispatch =
+    let regularView title model dispatch =
+        // Actions
+        let goToAllTab = TabAllContactsMsg >> dispatch
+        let goToFavoritesTab = TabFavContactsMsg >> dispatch
+        let goToMapTab = TabMapMsg >> dispatch
+        
+        // View
         let tabAllContacts =
-            let v = ContactsListPage.view "All" model.TabAllContactsModel (TabAllContactsMsg >> dispatch)
+            let v = ContactsListPage.view Strings.MainPage_TabAllTitle model.TabAllContactsModel goToAllTab
             v.Icon("alltab.png")
         let tabFavContacts =
-            let v = ContactsListPage.view "Favorites" model.TabFavContactsModel (TabFavContactsMsg >> dispatch)
+            let v = ContactsListPage.view Strings.MainPage_TabFavoritesTitle model.TabFavContactsModel goToFavoritesTab
             v.Icon("favoritetab.png")
-        let tabMap = MapPage.view model.TabMapModel (TabMapMsg >> dispatch)
-        dependsOn (tabAllContacts, tabFavContacts, tabMap) (fun _ (contacts, favorites, map) ->
+        let tabMap = MapPage.view model.TabMapModel goToMapTab
+        
+        dependsOn (tabAllContacts, tabFavContacts, tabMap) (fun model (contacts, favorites, map) ->
             View.TabbedPage(
                 created = (fun target -> target.On<Xamarin.Forms.PlatformConfiguration.Android>().SetToolbarPlacement(ToolbarPlacement.Bottom) |> ignore),
                 title = title,
@@ -166,8 +177,8 @@ module MainPage =
         let title = "FabulousContacts"
         match model.Contacts with
         | None ->
-            mkLoadingView title
+            loadingView title
         | Some [] ->
-            mkEmptyView title dispatch
+            emptyView title dispatch
         | Some _ ->
-            mkRegularView title model dispatch
+            regularView title model dispatch
