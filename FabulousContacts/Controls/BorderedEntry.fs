@@ -22,7 +22,7 @@ module FabulousBorderedEntry =
         AttributeKey<_> "BorderedEntry_BorderColor"
 
     type Fabulous.XamarinForms.View with
-        static member BorderedEntry(?borderColor: Color, ?placeholder, ?text, ?textChanged, ?keyboard) =
+        static member inline BorderedEntry(?borderColor: Color, ?placeholder, ?text, ?textChanged, ?keyboard) =
             let attribCount = match borderColor with None -> 0 | Some _ -> 1
             let attribs =
                 ViewBuilders.BuildEntry(attribCount,

@@ -10,7 +10,7 @@ type UnderlinedLabel() =
 [<AutoOpen>]
 module FabulousUnderlinedLabel =
     type Fabulous.XamarinForms.View with
-        static member UnderlinedLabel(?text, ?gestureRecognizers, ?verticalOptions) =
+        static member inline UnderlinedLabel(?text, ?gestureRecognizers, ?verticalOptions) =
             let attribs =
                 ViewBuilders.BuildLabel(0,
                                         ?text = text,
