@@ -159,11 +159,13 @@ module MainPage =
         
         // View
         let tabAllContacts =
-            let v = ContactsListPage.view Strings.MainPage_TabAllTitle model.TabAllContactsModel goToAllTab
-            v.Icon("alltab.png")
+            (ContactsListPage.view Strings.MainPage_TabAllTitle model.TabAllContactsModel goToAllTab)
+                .Icon("alltab.png")
+                
         let tabFavContacts =
-            let v = ContactsListPage.view Strings.MainPage_TabFavoritesTitle model.TabFavContactsModel goToFavoritesTab
-            v.Icon("favoritetab.png")
+            (ContactsListPage.view Strings.MainPage_TabFavoritesTitle model.TabFavContactsModel goToFavoritesTab)
+                .Icon("favoritetab.png")
+            
         let tabMap = MapPage.view model.TabMapModel goToMapTab
         
         dependsOn (tabAllContacts, tabFavContacts, tabMap) (fun model (contacts, favorites, map) ->

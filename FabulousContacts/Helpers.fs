@@ -1,6 +1,7 @@
 ﻿namespace FabulousContacts
 
 open System.IO
+open Fabulous
 open Plugin.Media
 open Plugin.Media.Abstractions
 open Plugin.Permissions
@@ -69,7 +70,14 @@ module Helpers =
         return memoryStream.ToArray()
     }
     
-    let getValueOrDefault defaultValue value =
+    let getImageValueOrDefault defaultValue value =
         match value with
         | None -> box defaultValue
         | Some bytes -> box bytes
+        
+module Cmd =
+    let performAsync asyncUnit = 
+        Cmd.ofAsyncMsgOption (async {
+            do! asyncUnit
+            return None
+        })

@@ -52,17 +52,7 @@ module EditPage =
           IsLastNameValid: bool }
 
     // Functions
-    let saveAsync dbPath contact = async {
-        match contact.Id with
-        | 0 ->
-            let! insertedContact = insertContact dbPath contact
-            return ContactAdded insertedContact
-        | _ ->
-            let! updatedContact = updateContact dbPath contact
-            return ContactUpdated updatedContact
-    }
-
-    let deleteAsync dbPath (contact: Contact) = async {
+    let tryDeleteAsync dbPath (contact: Contact) = async {
         let! shouldDelete = 
             let title = Strings.EditPage_DeleteContact contact.FirstName contact.LastName
             displayAlertWithConfirm(title, Strings.EditPage_DeleteContactConfirmation, Strings.Common_Yes, Strings.Common_No)
@@ -88,7 +78,7 @@ module EditPage =
             return None
     }
 
-    let updatePictureAsync (previousValue: _ option) = async {
+    let tryUpdatePictureAsync (previousValue: _ option) = async {
         let canTakePicture = CrossMedia.Current.IsCameraAvailable && CrossMedia.Current.IsTakePhotoSupported
         let canPickPicture = CrossMedia.Current.IsPickPhotoSupported
         
@@ -118,8 +108,37 @@ module EditPage =
             return None
     }
 
-    let sayContactNotValid () =
+    let sayContactNotValidAsync () =
         displayAlert(Strings.EditPage_InvalidContactTitle, Strings.EditPage_InvalidContactDescription, Strings.Common_OK)
+
+    let createOrUpdateAsync dbPath contact = async {
+        match contact.Id with
+        | 0 ->
+            let! insertedContact = insertContact dbPath contact
+            return ContactAdded insertedContact
+        | _ ->
+            let! updatedContact = updateContact dbPath contact
+            return ContactUpdated updatedContact
+    }
+    
+    let trySaveAsync model dbPath = async {
+        if not model.IsFirstNameValid || not model.IsLastNameValid then
+            do! sayContactNotValidAsync ()
+            return None
+        else
+            let id = (match model.Contact with None -> 0 | Some c -> c.Id)
+            let newContact =
+                { Id = id
+                  FirstName = model.FirstName
+                  LastName = model.LastName
+                  Email = model.Email
+                  Phone = model.Phone
+                  Address = model.Address
+                  IsFavorite = model.IsFavorite
+                  Picture = model.Picture }
+            let! msg = createOrUpdateAsync dbPath newContact
+            return Some msg
+    }
 
     // Validations
     let validateFirstName = not << String.IsNullOrWhiteSpace
@@ -154,24 +173,6 @@ module EditPage =
 
         model, Cmd.none
 
-    let saveCmd model dbPath =
-        if not model.IsFirstNameValid || not model.IsLastNameValid then
-            do sayContactNotValid () |> ignore
-            Cmd.none
-        else
-            let id = (match model.Contact with None -> 0 | Some c -> c.Id)
-            let newContact =
-                { Id = id
-                  FirstName = model.FirstName
-                  LastName = model.LastName
-                  Email = model.Email
-                  Phone = model.Phone
-                  Address = model.Address
-                  IsFavorite = model.IsFavorite
-                  Picture = model.Picture }
-            let msg = saveAsync dbPath newContact
-            Cmd.ofAsyncMsg msg
-
     let update dbPath msg (model: Model) =
         match msg with
         | UpdateFirstName v ->
@@ -189,16 +190,16 @@ module EditPage =
         | UpdateIsFavorite isFavorite ->
             { model with IsFavorite = isFavorite }, Cmd.none, ExternalMsg.NoOp
         | UpdatePicture ->
-            let msg = updatePictureAsync model.Picture
-            model, Cmd.ofAsyncMsgOption msg, ExternalMsg.NoOp
+            let cmd = Cmd.ofAsyncMsgOption (tryUpdatePictureAsync model.Picture)
+            model, cmd, ExternalMsg.NoOp
         | SetPicture picture ->
             { model with Picture = picture}, Cmd.none, ExternalMsg.NoOp
         | SaveContact ->
-            let cmd = saveCmd model dbPath
+            let cmd = Cmd.ofAsyncMsgOption (trySaveAsync model dbPath)
             model, cmd, ExternalMsg.NoOp
         | DeleteContact contact ->
-            let msg = deleteAsync dbPath contact
-            model, Cmd.ofAsyncMsgOption msg, ExternalMsg.NoOp
+            let cmd = Cmd.ofAsyncMsgOption (tryDeleteAsync dbPath contact)
+            model, cmd, ExternalMsg.NoOp
         | ContactAdded contact -> 
             model, Cmd.none, ExternalMsg.GoBackAfterContactAdded contact
         | ContactUpdated contact -> 

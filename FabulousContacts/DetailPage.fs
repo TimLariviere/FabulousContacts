@@ -29,7 +29,7 @@ module DetailPage =
     // Functions
     let hasSetField = not << String.IsNullOrWhiteSpace
 
-    let tryDialNumber phoneNumber = async {
+    let tryDialNumberAsync phoneNumber = async {
         try
             PhoneDialer.Open(phoneNumber)
         with
@@ -37,11 +37,9 @@ module DetailPage =
             do! displayAlert(Strings.DetailPage_DialNumberFailed, Strings.DetailPage_CapabilityNotSupported "Phone Dialer", Strings.Common_OK)
         | _ ->
             do! displayAlert(Strings.DetailPage_DialNumberFailed, Strings.Common_Error, Strings.Common_OK)
-
-        return None
     }
 
-    let tryComposeSms (phoneNumber: string) = async {
+    let tryComposeSmsAsync (phoneNumber: string) = async {
         try
             let message = SmsMessage("", phoneNumber)
             do! Sms.ComposeAsync(message) |> Async.AwaitTask
@@ -50,11 +48,9 @@ module DetailPage =
             do! displayAlert(Strings.DetailPage_ComposeSmsFailed, Strings.DetailPage_CapabilityNotSupported "SMS", Strings.Common_OK)
         | _ ->
             do! displayAlert(Strings.DetailPage_ComposeSmsFailed, Strings.Common_Error, Strings.Common_OK)
-
-        return None
     }
 
-    let tryComposeEmail emailAddress = async {
+    let tryComposeEmailAsync emailAddress = async {
         try
             let message = EmailMessage("", "", [| emailAddress |])
             do! Email.ComposeAsync(message) |> Async.AwaitTask
@@ -63,8 +59,6 @@ module DetailPage =
             do! displayAlert(Strings.DetailPage_ComposeEmailFailed, Strings.DetailPage_CapabilityNotSupported "Email", Strings.Common_OK)
         | _ ->
             do! displayAlert(Strings.DetailPage_ComposeEmailFailed, Strings.Common_Error, Strings.Common_OK)
-
-        return None
     }
 
     // Lifecycle
@@ -76,19 +70,19 @@ module DetailPage =
         | EditTapped ->
             model, Cmd.none, ExternalMsg.EditContact model.Contact
         | CallTapped ->
-            let dialMsg = Cmd.ofAsyncMsgOption (tryDialNumber model.Contact.Phone)
-            model, dialMsg, ExternalMsg.NoOp
+            let dialCmd = Cmd.performAsync (tryDialNumberAsync model.Contact.Phone)
+            model, dialCmd, ExternalMsg.NoOp
         | SmsTapped ->
-            let smsMsg = Cmd.ofAsyncMsgOption (tryComposeSms model.Contact.Phone)
-            model, smsMsg, ExternalMsg.NoOp
+            let smsCmd = Cmd.performAsync (tryComposeSmsAsync model.Contact.Phone)
+            model, smsCmd, ExternalMsg.NoOp
         | EmailTapped ->
-            let emailMsg = Cmd.ofAsyncMsgOption (tryComposeEmail model.Contact.Email)
-            model, emailMsg, ExternalMsg.NoOp
+            let emailCmd = Cmd.performAsync (tryComposeEmailAsync model.Contact.Email)
+            model, emailCmd, ExternalMsg.NoOp
         | ContactUpdated contact ->
             { model with Contact = contact }, Cmd.none, ExternalMsg.NoOp
 
     let header contact callContact sendSmsToContact sendEmailToContact =
-        let contactPicture = contact.Picture |> getValueOrDefault "addphoto.png"
+        let contactPicture = contact.Picture |> getImageValueOrDefault "addphoto.png"
             
         View.StackLayout(backgroundColor = Color.FromHex("#448cb8"),
                          padding = Thickness(20., 10., 20., 10.),

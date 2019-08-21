@@ -149,17 +149,13 @@ module App =
         let aboutPage = allPages.AboutPage
         let detailPage = allPages.DetailPage
         let editPage = allPages.EditPage
+        
         match aboutPage, detailPage, editPage with
-        | None, None, None ->
-            [ mainPage ]
-        | Some about, None, None ->
-            [ mainPage; about ]
-        | _, Some detail, None ->
-            [ mainPage; detail ]
-        | _, Some detail, Some edit ->
-            [ mainPage; detail; edit ]
-        | _, None, Some edit ->
-            [ mainPage; edit ]
+        | None, None, None          -> [ mainPage ]
+        | Some about, None, None    -> [ mainPage; about ]
+        | _, Some detail, None      -> [ mainPage; detail ]
+        | _, Some detail, Some edit -> [ mainPage; detail; edit ]
+        | _, None, Some edit        -> [ mainPage; edit ]
 
     let view (model: Model) dispatch =
         let mainPage = MainPage.view model.MainPageModel (MainPageMsg >> dispatch)
