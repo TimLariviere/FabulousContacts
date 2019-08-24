@@ -69,7 +69,7 @@ module Helpers =
         do! stream.CopyToAsync(memoryStream) |> Async.AwaitTask
         return memoryStream.ToArray()
     }
-    
+
     let getImageValueOrDefault defaultValue value =
         match value with
         | None -> box defaultValue

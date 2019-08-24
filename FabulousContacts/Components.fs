@@ -55,7 +55,7 @@ module Components =
             ])
 
     let cellView picture name address isFavorite =
-        let source = picture |> getValueOrDefault "addphoto.png"
+        let source = picture |> getImageValueOrDefault "addphoto.png"
 
         View.StackLayout(
             orientation = StackOrientation.Horizontal,
