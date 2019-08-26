@@ -7,22 +7,29 @@ open Xamarin.Forms
 type BorderedEntry() =
     inherit Entry()
 
-    static let BorderColorProperty = BindableProperty.Create("BorderColor", typeof<Color>, typeof<BorderedEntry>, Color.Default)
+    static let borderColorProperty =
+        BindableProperty.Create("BorderColor", typeof<Color>, typeof<BorderedEntry>, Color.Default)
 
     member this.BorderColor
-        with get () = this.GetValue(BorderColorProperty) :?> Color
-        and set (value) = this.SetValue(BorderColorProperty, value)
+        with get () =
+            this.GetValue(borderColorProperty) :?> Color
+        and set (value) =
+            this.SetValue(borderColorProperty, value)
 
 [<AutoOpen>]
-module DynamicViewsBorderedEntry =
-    let BorderedEntryBorderColorAttributeKey = AttributeKey<_> "BorderedEntry_BorderColor"    
+module FabulousBorderedEntry =
+    let BorderedEntryBorderColorAttributeKey =
+        AttributeKey<_> "BorderedEntry_BorderColor"
 
     type Fabulous.XamarinForms.View with
-        static member BorderedEntry(?borderColor: Color,
-                                    ?placeholder, ?text, ?textChanged, ?keyboard) =
+        static member inline BorderedEntry(?borderColor: Color, ?placeholder, ?text, ?textChanged, ?keyboard) =
             let attribCount = match borderColor with None -> 0 | Some _ -> 1
             let attribs =
-                ViewBuilders.BuildEntry(attribCount, ?placeholder=placeholder, ?text=text, ?textChanged=textChanged, ?keyboard=keyboard)
+                ViewBuilders.BuildEntry(attribCount,
+                                        ?placeholder = placeholder,
+                                        ?text = text,
+                                        ?textChanged = textChanged,
+                                        ?keyboard = keyboard)
 
             match borderColor with None -> () | Some v -> attribs.Add(BorderedEntryBorderColorAttributeKey, v)
 

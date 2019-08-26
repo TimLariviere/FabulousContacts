@@ -1,7 +1,5 @@
 namespace FabulousContacts
 
-open Xamarin.Forms.Maps
-
 module Models =
     type Contact =
         { Id: int
@@ -11,10 +9,4 @@ module Models =
           Phone: string
           Address: string
           IsFavorite: bool
-          Picture: byte array }
-
-    type ContactPin =
-        { Position: Position
-          Label: string
-          PinType: PinType
-          Address: string }
+          Picture: byte array option }

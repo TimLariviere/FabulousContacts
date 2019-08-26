@@ -1,9 +1,7 @@
 ﻿namespace FabulousContacts.Droid
 
-open System
 open Xamarin.Forms
 open Xamarin.Forms.Platform.Android
-open System.ComponentModel
 
 type UnderlinedLabelRenderer(context) =
     inherit LabelRenderer(context)
@@ -13,8 +11,6 @@ type UnderlinedLabelRenderer(context) =
 
         if (e.NewElement <> null) then
             this.Control.PaintFlags <- this.Control.PaintFlags + Android.Graphics.PaintFlags.UnderlineText
-        else
-            ()
 
 module Dummy_UnderlinedLabelRenderer =
     [<assembly: Xamarin.Forms.ExportRenderer(typeof<FabulousContacts.Controls.UnderlinedLabel>, typeof<UnderlinedLabelRenderer>)>]

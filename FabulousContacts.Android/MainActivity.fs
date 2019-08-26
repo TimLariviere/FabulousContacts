@@ -1,16 +1,13 @@
 ﻿namespace FabulousContacts.Droid
 
+open System.IO
 open Android.App
-open Android.Content
 open Android.Content.PM
 open Android.Runtime
-open Android.Views
-open Android.Widget
 open Android.OS
-open Xamarin.Forms.Platform.Android
-open System.IO
 open Plugin.CurrentActivity
 open Plugin.Media
+open Xamarin.Forms.Platform.Android
 
 [<Activity (Label = "FabulousContacts", Icon = "@drawable/icon", Theme = "@style/FabulousContactsTheme.Splash", MainLauncher = true, ConfigurationChanges = (ConfigChanges.ScreenSize ||| ConfigChanges.Orientation))>]
 type MainActivity() =
@@ -24,6 +21,7 @@ type MainActivity() =
         base.SetTheme(Resources.Style.FabulousContactsTheme)
         FormsAppCompatActivity.TabLayoutResource <- Resources.Layout.Tabbar
         FormsAppCompatActivity.ToolbarResource <- Resources.Layout.Toolbar
+        
         base.OnCreate (bundle)
 
         CrossCurrentActivity.Current.Init(this, bundle)

@@ -1,72 +1,83 @@
-namespace FabulousContacts
+﻿namespace FabulousContacts
 
+open System.IO
+open Fabulous
 open Plugin.Media
 open Plugin.Media.Abstractions
 open Plugin.Permissions
 open Plugin.Permissions.Abstractions
 open Xamarin.Forms
-open System
-open System.IO
 
 module Helpers =
-    let displayAlert(title, message, cancel) =
-        Application.Current.MainPage.DisplayAlert(title, message, cancel) |> Async.AwaitTask
+    let displayAlert (title, message, cancel) =
+        Application.Current.MainPage.DisplayAlert(title, message, cancel)
+        |> Async.AwaitTask
 
-    let displayAlertWithConfirm(title, message, accept, cancel) =
-        Application.Current.MainPage.DisplayAlert(title, message, accept, cancel) |> Async.AwaitTask
+    let displayAlertWithConfirm (title, message, accept, cancel) =
+        Application.Current.MainPage.DisplayAlert(title, message, accept, cancel)
+        |> Async.AwaitTask
 
-    let displayActionSheet(title, cancel, destruction, buttons) =
-        let title =
-            match title with
-            | None -> null
-            | Some label -> label
+    let displayActionSheet (title, cancel, destruction, buttons) =
+        let title = Option.toObj title
+        let cancel = Option.toObj cancel
+        let destruction = Option.toObj destruction
+        let buttons = Option.toObj buttons
+        Application.Current.MainPage.DisplayActionSheet(title, cancel, destruction, buttons)
+        |> Async.AwaitTask
 
-        let cancel =
-            match cancel with
-            | None -> null
-            | Some label -> label
-
-        let destruction =
-            match destruction with
-            | None -> null
-            | Some label -> label
-
-        let buttons =
-            match buttons with
-            | None -> null
-            | Some buttons -> buttons
-
-        Application.Current.MainPage.DisplayActionSheet(title, cancel, destruction, buttons) |> Async.AwaitTask
-
-    let askPermissionAsync permission = async {
+    let requestPermissionAsync permission = async {
         try
-            let! status = CrossPermissions.Current.CheckPermissionStatusAsync(permission) |> Async.AwaitTask
-            if status = PermissionStatus.Granted then
-                return true
-            else
-                let! status = CrossPermissions.Current.RequestPermissionsAsync([| permission |]) |> Async.AwaitTask
-                return status.[permission] = PermissionStatus.Granted
-                       || status.[permission] = PermissionStatus.Unknown
-        with exn ->
+            let! status =
+                CrossPermissions.Current.RequestPermissionsAsync([| permission |])
+                |> Async.AwaitTask
+
+            return status.[permission] = PermissionStatus.Granted
+                || status.[permission] = PermissionStatus.Unknown
+        with _ ->
             return false
     }
 
-    let takePictureAsync() = async {
+    let askPermissionAsync permission = async {
+        try
+            let! status =
+                CrossPermissions.Current.CheckPermissionStatusAsync(permission)
+                |> Async.AwaitTask
+                
+            if status = PermissionStatus.Granted then
+                return true
+            else
+                return! requestPermissionAsync permission
+        with _ ->
+            return false
+    }
+
+    let takePictureAsync () = async {
         let options = StoreCameraMediaOptions()
-        return! CrossMedia.Current.TakePhotoAsync(options) |> Async.AwaitTask
+        let! picture = CrossMedia.Current.TakePhotoAsync(options) |> Async.AwaitTask
+        return picture |> Option.ofObj
     }
 
-    let pickPictureAsync() = async {
+    let pickPictureAsync () = async {
         let options = PickMediaOptions()
-        return! CrossMedia.Current.PickPhotoAsync(options) |> Async.AwaitTask
+        let! picture = CrossMedia.Current.PickPhotoAsync(options) |> Async.AwaitTask
+        return picture |> Option.ofObj
     }
 
-    let readBytesAsync (file: Plugin.Media.Abstractions.MediaFile) = async {
-        match file with
-        | null -> return None
-        | _ ->
-            use stream = file.GetStream()
-            use memoryStream = new MemoryStream()
-            do! stream.CopyToAsync(memoryStream) |> Async.AwaitTask
-            return Some (memoryStream.ToArray())
+    let readBytesAsync (file: MediaFile) =  async {
+        use stream = file.GetStream()
+        use memoryStream = new MemoryStream()
+        do! stream.CopyToAsync(memoryStream) |> Async.AwaitTask
+        return memoryStream.ToArray()
     }
+
+    let getImageValueOrDefault defaultValue value =
+        match value with
+        | None -> box defaultValue
+        | Some bytes -> box bytes
+        
+module Cmd =
+    let performAsync asyncUnit = 
+        Cmd.ofAsyncMsgOption (async {
+            do! asyncUnit
+            return None
+        })
