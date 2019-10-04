@@ -160,7 +160,7 @@ module AboutPage =
             // View
             View.ContentPage(
                 View.ScrollView(
-                    View.StackLayout(padding = Thickness (20., 10., 20., 20.),
+                    View.StackLayout(padding = Thickness(20., 10., 20., 20.),
                                      children = [
                         logo
                         aboutFabulousContacts openBrowserOnTap
