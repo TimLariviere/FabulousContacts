@@ -83,7 +83,7 @@ module ContactsListPage =
             let goToAbout = fun () -> dispatch AboutTapped
             let addNewContact = fun () -> dispatch AddNewContactTapped
             let selectContact = findContactIn groupedContacts >> ContactSelected >> dispatch
-            let updateFilter = debounce 250 (fun (e: TextChangedEventArgs) -> e.NewTextValue |> UpdateFilterText |> dispatch)
+            let updateFilter = (fun (e: TextChangedEventArgs) -> e.NewTextValue |> UpdateFilterText |> dispatch)
             
             // View
             View.ContentPage(

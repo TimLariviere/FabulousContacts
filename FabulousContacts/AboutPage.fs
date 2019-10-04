@@ -23,13 +23,13 @@ module AboutPage =
     let authorSlackHandle = "@Timothé Larivière"
     
     let logo =
-        View.StackLayout(heightRequest = 100.,
-                         widthRequest = 100.,
+        View.StackLayout(height = 100.,
+                         width = 100.,
                          horizontalOptions = LayoutOptions.Center,
                          backgroundColor = accentColor,
-                         padding = 15.,
+                         padding = Thickness 15.,
                          children = [
-            View.Image(source="icon.png")
+            View.Image(Path "icon.png")
         ])
         
     let aboutFabulousContacts openBrowserOnTap =
@@ -57,18 +57,18 @@ module AboutPage =
             
             View.StackLayout(gestureRecognizers = [ openBrowserOnTap fsharpOrgUrl ],
                              children = [
-                View.Image(source = "fsharp.png",
-                           heightRequest = 50.,
-                           widthRequest = 50.)
+                View.Image(source = Path "fsharp.png",
+                           height = 50.,
+                           width = 50.)
                 View.Label(text = Strings.AboutPage_AboutFSharp_FSharp,
                            horizontalTextAlignment = TextAlignment.Center)
             ])
             
             View.StackLayout(gestureRecognizers = [ openBrowserOnTap fabulousXamarinFormsUrl ],
                              children = [
-                View.Image(source = "xamarin.png",
-                           heightRequest = 50.,
-                           widthRequest = 50.)
+                View.Image(source = Path "xamarin.png",
+                           height = 50.,
+                           width = 50.)
                 View.Label(text = Strings.AboutPage_AboutFSharp_FabulousXamarinForms,
                            horizontalTextAlignment = TextAlignment.Center)
             ])
@@ -99,24 +99,24 @@ module AboutPage =
                              spacing = 15.,
                              gestureRecognizers = [ openBrowserOnTap authorBlogUrl ],
                              children = [
-                View.Image(source = "blog.png",
-                           heightRequest = 35.,
-                           widthRequest = 35.)
+                View.Image(source = Path "blog.png",
+                           height = 35.,
+                           width = 35.)
                 
                 View.UnderlinedLabel(text = authorBlogUrl,
                                      verticalOptions = LayoutOptions.Center)
             ])
             
             View.Label(text = Strings.AboutPage_AboutAuthor_ReachOut,
-                       margin = Thickness(0., 10., 0., 0.))
+                       margin = Thickness (0., 10., 0., 0.))
             
             View.StackLayout(orientation = StackOrientation.Horizontal,
                              spacing = 15.,
                              gestureRecognizers = [ openBrowserOnTap authorGitHubUrl ],
                              children = [
-                View.Image(source = "github.png",
-                           heightRequest = 35.,
-                           widthRequest = 35.)
+                View.Image(source = Path "github.png",
+                           height = 35.,
+                           width = 35.)
                 
                 View.UnderlinedLabel(text = authorGitHubHandle,
                                      verticalOptions = LayoutOptions.Center)
@@ -129,9 +129,9 @@ module AboutPage =
                              children = [
                 View.StackLayout(gestureRecognizers = [ openBrowserOnTap authorTwitterUrl ],
                                  children = [
-                    View.Image(source = "twitter.png",
-                               heightRequest = 50.,
-                               widthRequest = 50.)
+                    View.Image(source = Path "twitter.png",
+                               height = 50.,
+                               width = 50.)
                     
                     View.Label(text = authorTwitterHandle,
                                horizontalTextAlignment = TextAlignment.Center)
@@ -139,9 +139,9 @@ module AboutPage =
                 
                 View.StackLayout(gestureRecognizers = [ openBrowserOnTap authorSlackUrl ],
                                  children = [
-                    View.Image(source = "slack.png",
-                               heightRequest = 50.,
-                               widthRequest = 50.)
+                    View.Image(source = Path "slack.png",
+                               height = 50.,
+                               width = 50.)
                     
                     View.Label(text = authorSlackHandle,
                                horizontalTextAlignment = TextAlignment.Center)
@@ -160,7 +160,7 @@ module AboutPage =
             // View
             View.ContentPage(
                 View.ScrollView(
-                    View.StackLayout(padding = Thickness(20., 10., 20., 20.),
+                    View.StackLayout(padding = Thickness (20., 10., 20., 20.),
                                      children = [
                         logo
                         aboutFabulousContacts openBrowserOnTap

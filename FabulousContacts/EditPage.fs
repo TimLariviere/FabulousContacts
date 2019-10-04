@@ -242,17 +242,17 @@ module EditPage =
                     content = View.StackLayout(
                         padding = Thickness(20.),
                         children = [
-                            View.Grid(coldefs = [ 100.; GridLength.Star ],
-                                      rowdefs = [ 50.; 50. ],
+                            View.Grid(coldefs = [ Absolute 100.; Star ],
+                                      rowdefs = [ Absolute 50.; Absolute 50. ],
                                       columnSpacing = 10.,
                                       rowSpacing = 0.,
                                       children = [
                                           profilePictureButton mModel.Picture updatePicture
                                           (formEntry Strings.EditPage_FirstNameField_Label mModel.FirstName Keyboard.Text mModel.IsFirstNameValid updateFirstName)
-                                              .VerticalOptions(LayoutOptions.Center)
+                                              .ViewVerticalOptions(LayoutOptions.Center)
                                               .GridColumn(1)
                                           (formEntry Strings.EditPage_LastNameField_Label mModel.LastName Keyboard.Text mModel.IsLastNameValid updateLastName)
-                                              .VerticalOptions(LayoutOptions.Center)
+                                              .ViewVerticalOptions(LayoutOptions.Center)
                                               .GridColumn(1)
                                               .GridRow(1)
                                       ])

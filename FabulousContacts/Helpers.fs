@@ -2,6 +2,7 @@
 
 open System.IO
 open Fabulous
+open Fabulous.XamarinForms
 open Plugin.Media
 open Plugin.Media.Abstractions
 open Plugin.Permissions
@@ -72,8 +73,8 @@ module Helpers =
 
     let getImageValueOrDefault defaultValue value =
         match value with
-        | None -> box defaultValue
-        | Some bytes -> box bytes
+        | None -> Path defaultValue
+        | Some bytes -> Bytes bytes
         
 module Cmd =
     let performAsync asyncUnit = 
