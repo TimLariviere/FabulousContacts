@@ -53,13 +53,13 @@ module Helpers =
     }
 
     let takePictureAsync () = async {
-        let options = StoreCameraMediaOptions()
+        let options = StoreCameraMediaOptions(PhotoSize = PhotoSize.Small)
         let! picture = CrossMedia.Current.TakePhotoAsync(options) |> Async.AwaitTask
         return picture |> Option.ofObj
     }
 
     let pickPictureAsync () = async {
-        let options = PickMediaOptions()
+        let options = PickMediaOptions(PhotoSize = PhotoSize.Small)
         let! picture = CrossMedia.Current.PickPhotoAsync(options) |> Async.AwaitTask
         return picture |> Option.ofObj
     }

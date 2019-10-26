@@ -44,49 +44,53 @@ module Components =
                          command = command)
 
     let groupView name =
-        View.StackLayout(
-            backgroundColor = accentColor,
-            children = [
-                View.Label(text = name,
-                           textColor = accentTextColor,
-                           verticalOptions = LayoutOptions.FillAndExpand,
-                           verticalTextAlignment = TextAlignment.Center,
-                           margin = Thickness(20., 5.))
-            ])
-
+        View.ViewCell(
+            View.StackLayout(
+                backgroundColor = accentColor,
+                children = [
+                    View.Label(text = name,
+                               textColor = accentTextColor,
+                               verticalOptions = LayoutOptions.FillAndExpand,
+                               verticalTextAlignment = TextAlignment.Center,
+                               margin = Thickness(20., 5.))
+                ]
+            )
+        )
     let cellView picture name address isFavorite =
         let source = picture |> getImageValueOrDefault "addphoto.png"
 
-        View.StackLayout(
-            orientation = StackOrientation.Horizontal,
-            padding = Thickness 5.,
-            spacing = 10.,
-            children = [
-                View.Image(source = source,
-                           aspect = Aspect.AspectFill,
-                           margin = Thickness(15., 0., 0., 0.),
-                           height = 50.,
-                           width = 50.)
-                View.StackLayout(spacing = 5.,
-                                 horizontalOptions = LayoutOptions.FillAndExpand,
-                                 margin = Thickness(0., 5., 0., 5.),
-                                 children = [
-                    View.Label(text = name,
-                               fontSize = FontSize 18.,
-                               verticalOptions = LayoutOptions.FillAndExpand,
-                               verticalTextAlignment = TextAlignment.Center)
-                    View.Label(text = address,
-                               fontSize = FontSize 12.,
-                               textColor = Color.Gray,
-                               lineBreakMode = LineBreakMode.TailTruncation)
-                ])
-                View.Image(source = Path "star.png",
-                           isVisible = isFavorite,
-                           verticalOptions = LayoutOptions.Center,
-                           margin = Thickness(0., 0., 15., 0.),
-                           height = 25.,
-                           width = 25.)
-            ]
+        View.ViewCell(
+            View.StackLayout(
+                orientation = StackOrientation.Horizontal,
+                padding = Thickness 5.,
+                spacing = 10.,
+                children = [
+                    View.Image(source = source,
+                               aspect = Aspect.AspectFill,
+                               margin = Thickness(15., 0., 0., 0.),
+                               height = 50.,
+                               width = 50.)
+                    View.StackLayout(spacing = 5.,
+                                     horizontalOptions = LayoutOptions.FillAndExpand,
+                                     margin = Thickness(0., 5., 0., 5.),
+                                     children = [
+                        View.Label(text = name,
+                                   fontSize = FontSize 18.,
+                                   verticalOptions = LayoutOptions.FillAndExpand,
+                                   verticalTextAlignment = TextAlignment.Center)
+                        View.Label(text = address,
+                                   fontSize = FontSize 12.,
+                                   textColor = Color.Gray,
+                                   lineBreakMode = LineBreakMode.TailTruncation)
+                    ])
+                    View.Image(source = Path "star.png",
+                               isVisible = isFavorite,
+                               verticalOptions = LayoutOptions.Center,
+                               margin = Thickness(0., 0., 15., 0.),
+                               height = 25.,
+                               width = 25.)
+                ]
+            )
         )
 
     let cachedCellView picture name address isFavorite =
@@ -131,10 +135,10 @@ module Components =
             View.Button(image = Path "addphoto.png",
                         backgroundColor = Color.White,
                         command = updatePicture)
-                .GridRowSpan(2)
+                .RowSpan(2)
         | Some picture ->
             View.Image(source = Bytes picture,
                        aspect = Aspect.AspectFill,
                        gestureRecognizers = [
                 View.TapGestureRecognizer(command = updatePicture)
-            ]).GridRowSpan(2)
+            ]).RowSpan(2)
