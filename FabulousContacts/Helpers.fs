@@ -2,6 +2,7 @@
 
 open System.IO
 open Fabulous
+open Fabulous.XamarinForms
 open Plugin.Media
 open Plugin.Media.Abstractions
 open Plugin.Permissions
@@ -52,13 +53,13 @@ module Helpers =
     }
 
     let takePictureAsync () = async {
-        let options = StoreCameraMediaOptions()
+        let options = StoreCameraMediaOptions(PhotoSize = PhotoSize.Small)
         let! picture = CrossMedia.Current.TakePhotoAsync(options) |> Async.AwaitTask
         return picture |> Option.ofObj
     }
 
     let pickPictureAsync () = async {
-        let options = PickMediaOptions()
+        let options = PickMediaOptions(PhotoSize = PhotoSize.Small)
         let! picture = CrossMedia.Current.PickPhotoAsync(options) |> Async.AwaitTask
         return picture |> Option.ofObj
     }
@@ -72,8 +73,8 @@ module Helpers =
 
     let getImageValueOrDefault defaultValue value =
         match value with
-        | None -> box defaultValue
-        | Some bytes -> box bytes
+        | None -> Path defaultValue
+        | Some bytes -> Bytes bytes
         
 module Cmd =
     let performAsync asyncUnit = 

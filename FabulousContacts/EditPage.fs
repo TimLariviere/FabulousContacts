@@ -1,4 +1,4 @@
-﻿namespace FabulousContacts
+namespace FabulousContacts
 
 open System
 open Fabulous
@@ -242,19 +242,19 @@ module EditPage =
                     content = View.StackLayout(
                         padding = Thickness(20.),
                         children = [
-                            View.Grid(coldefs = [ 100.; GridLength.Star ],
-                                      rowdefs = [ 50.; 50. ],
+                            View.Grid(coldefs = [ Absolute 100.; Star ],
+                                      rowdefs = [ Absolute 50.; Absolute 50. ],
                                       columnSpacing = 10.,
                                       rowSpacing = 0.,
                                       children = [
                                           profilePictureButton mModel.Picture updatePicture
                                           (formEntry Strings.EditPage_FirstNameField_Label mModel.FirstName Keyboard.Text mModel.IsFirstNameValid updateFirstName)
                                               .VerticalOptions(LayoutOptions.Center)
-                                              .GridColumn(1)
+                                              .Column(1)
                                           (formEntry Strings.EditPage_LastNameField_Label mModel.LastName Keyboard.Text mModel.IsLastNameValid updateLastName)
                                               .VerticalOptions(LayoutOptions.Center)
-                                              .GridColumn(1)
-                                              .GridRow(1)
+                                              .Column(1)
+                                              .Row(1)
                                       ])
                             favoriteField mModel.IsFavorite markAsFavorite
                             formLabel Strings.EditPage_EmailField_Label

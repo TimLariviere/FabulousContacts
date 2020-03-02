@@ -38,7 +38,7 @@ module Repository =
           Picture = obj.Picture |> Option.ofObj }
 
     let connect dbPath = async {
-        let db = SQLiteAsyncConnection dbPath
+        let db = SQLiteAsyncConnection(SQLiteConnectionString dbPath)
         do! db.CreateTableAsync<ContactObject>() |> Async.AwaitTask |> Async.Ignore
         return db
     }

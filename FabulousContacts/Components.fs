@@ -1,4 +1,4 @@
-﻿namespace FabulousContacts
+namespace FabulousContacts
 
 open Fabulous
 open Fabulous.XamarinForms
@@ -21,13 +21,13 @@ module Components =
         View.BorderedEntry(placeholder = placeholder,
                            text = text,
                            keyboard = keyboard,
-                           textChanged = debounce 250 (fun e -> e.NewTextValue |> textChanged),
+                           textChanged = (fun e -> e.NewTextValue |> textChanged),
                            borderColor = if isValid then Color.Default else Color.Red)
 
     let formEditor text textChanged =
         View.Editor(text = text,
-                    textChanged = debounce 250 (fun e -> e.NewTextValue |> textChanged),
-                    heightRequest = 100.)
+                    textChanged = (fun e -> e.NewTextValue |> textChanged),
+                    height = 100.)
 
     let destroyButton text command isVisible =
         View.Button(text = text,
@@ -44,60 +44,64 @@ module Components =
                          command = command)
 
     let groupView name =
-        View.StackLayout(
-            backgroundColor = accentColor,
-            children = [
-                View.Label(text = name,
-                           textColor = accentTextColor,
-                           verticalOptions = LayoutOptions.FillAndExpand,
-                           verticalTextAlignment = TextAlignment.Center,
-                           margin = Thickness(20., 5.))
-            ])
-
+        View.ViewCell(
+            View.StackLayout(
+                backgroundColor = accentColor,
+                children = [
+                    View.Label(text = name,
+                               textColor = accentTextColor,
+                               verticalOptions = LayoutOptions.FillAndExpand,
+                               verticalTextAlignment = TextAlignment.Center,
+                               margin = Thickness(20., 5.))
+                ]
+            )
+        )
     let cellView picture name address isFavorite =
         let source = picture |> getImageValueOrDefault "addphoto.png"
 
-        View.StackLayout(
-            orientation = StackOrientation.Horizontal,
-            padding = 5.,
-            spacing = 10.,
-            children = [
-                View.Image(source = source,
-                           aspect = Aspect.AspectFill,
-                           margin = Thickness(15., 0., 0., 0.),
-                           heightRequest = 50.,
-                           widthRequest = 50.)
-                View.StackLayout(spacing = 5.,
-                                 horizontalOptions = LayoutOptions.FillAndExpand,
-                                 margin = Thickness(0., 5., 0., 5.),
-                                 children = [
-                    View.Label(text = name,
-                               fontSize = 18.,
-                               verticalOptions = LayoutOptions.FillAndExpand,
-                               verticalTextAlignment = TextAlignment.Center)
-                    View.Label(text = address,
-                               fontSize = 12.,
-                               textColor = Color.Gray,
-                               lineBreakMode = LineBreakMode.TailTruncation)
-                ])
-                View.Image(source = "star.png",
-                           isVisible = isFavorite,
-                           verticalOptions = LayoutOptions.Center,
-                           margin = Thickness(0., 0., 15., 0.),
-                           heightRequest = 25.,
-                           widthRequest = 25.)
-            ]
+        View.ViewCell(
+            View.StackLayout(
+                orientation = StackOrientation.Horizontal,
+                padding = Thickness 5.,
+                spacing = 10.,
+                children = [
+                    View.Image(source = source,
+                               aspect = Aspect.AspectFill,
+                               margin = Thickness(15., 0., 0., 0.),
+                               height = 50.,
+                               width = 50.)
+                    View.StackLayout(spacing = 5.,
+                                     horizontalOptions = LayoutOptions.FillAndExpand,
+                                     margin = Thickness(0., 5., 0., 5.),
+                                     children = [
+                        View.Label(text = name,
+                                   fontSize = FontSize 18.,
+                                   verticalOptions = LayoutOptions.FillAndExpand,
+                                   verticalTextAlignment = TextAlignment.Center)
+                        View.Label(text = address,
+                                   fontSize = FontSize 12.,
+                                   textColor = Color.Gray,
+                                   lineBreakMode = LineBreakMode.TailTruncation)
+                    ])
+                    View.Image(source = Path "star.png",
+                               isVisible = isFavorite,
+                               verticalOptions = LayoutOptions.Center,
+                               margin = Thickness(0., 0., 15., 0.),
+                               height = 25.,
+                               width = 25.)
+                ]
+            )
         )
 
     let cachedCellView picture name address isFavorite =
         dependsOn (picture, name, address, isFavorite) (fun _ (p, n, a, i) ->
             cellView p n a i)
 
-    let detailActionButton image command =
-        View.Button(image = image,
+    let detailActionButton imagePath command =
+        View.Button(image = Path imagePath,
                     command = command,
                     backgroundColor = accentColor,
-                    heightRequest = 35.,
+                    height = 35.,
                     horizontalOptions = LayoutOptions.FillAndExpand)
 
     let detailFieldTitle text =
@@ -128,13 +132,13 @@ module Components =
     let profilePictureButton picture updatePicture =
         match picture with
         | None ->
-            View.Button(image = "addphoto.png",
+            View.Button(image = Path "addphoto.png",
                         backgroundColor = Color.White,
                         command = updatePicture)
-                .GridRowSpan(2)
+                .RowSpan(2)
         | Some picture ->
-            View.Image(source = picture,
+            View.Image(source = Bytes picture,
                        aspect = Aspect.AspectFill,
                        gestureRecognizers = [
                 View.TapGestureRecognizer(command = updatePicture)
-            ]).GridRowSpan(2)
+            ]).RowSpan(2)

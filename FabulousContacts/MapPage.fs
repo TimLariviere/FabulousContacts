@@ -122,7 +122,7 @@ module MapPage =
             
             // View
             View.ContentPage(title = Strings.MapPage_Title,
-                             icon = "maptab.png",
+                             icon = Path "maptab.png",
                              appearing = retrieveUserPosition,
                              content =
                 match pins with
