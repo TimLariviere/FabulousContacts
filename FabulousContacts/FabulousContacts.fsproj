@@ -8,8 +8,8 @@
     <Compile Include="Controls\BorderedEntry.fs" />
     <Compile Include="Controls\UnderlinedLabel.fs" />
     <Compile Include="Strings.fs" />
-    <Compile Include="Helpers.fs" />
     <Compile Include="Style.fs" />
+    <Compile Include="Helpers.fs" />
     <Compile Include="Components.fs" />
     <Compile Include="Models.fs" />
     <Compile Include="Repository.fs" />
@@ -22,12 +22,12 @@
     <Compile Include="App.fs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="sqlite-net-pcl" Version="1.5.231" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.2.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="sqlite-net-pcl" Version="1.6.292" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.5.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Xam.Plugin.Media" Version="4.0.1.5" />
     <PackageReference Include="Plugin.Permissions" Version="3.0.0.12" />
-    <PackageReference Include="Fabulous.XamarinForms.Maps" Version="0.50.0-alpha.7" />
-    <PackageReference Include="Fabulous.XamarinForms.LiveUpdate" Version="0.50.0-alpha.7" />
+    <PackageReference Include="Fabulous.XamarinForms.Maps" Version="0.52.0" />
+    <PackageReference Include="Fabulous.XamarinForms.LiveUpdate" Version="0.52.0" />
   </ItemGroup>
 </Project>
