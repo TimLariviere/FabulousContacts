@@ -3,6 +3,7 @@
 open Fabulous
 open Fabulous.XamarinForms
 open FabulousContacts.Models
+open FabulousContacts.Resources
 open Xamarin.Forms
 
 module App =

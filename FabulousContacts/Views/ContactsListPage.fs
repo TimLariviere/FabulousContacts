@@ -4,7 +4,7 @@ open Fabulous
 open Fabulous.XamarinForms
 open FabulousContacts.Components
 open FabulousContacts.Models
-open FabulousContacts.Style
+open FabulousContacts.Resources
 open Xamarin.Forms
 
 module ContactsListPage =
@@ -99,8 +99,8 @@ module ContactsListPage =
                     children = [
                         View.SearchBar(text = mFilterText,
                                        textChanged = updateFilter,
-                                       backgroundColor = accentColor,
-                                       cancelButtonColor = accentTextColor)
+                                       backgroundColor = Style.accentColor,
+                                       cancelButtonColor = Style.accentTextColor)
                         
                         View.ListViewGrouped(verticalOptions = LayoutOptions.FillAndExpand,
                                              rowHeight = 60,

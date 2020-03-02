@@ -4,7 +4,7 @@ open System
 open Fabulous
 open Fabulous.XamarinForms
 open FabulousContacts.Controls
-open FabulousContacts.Style
+open FabulousContacts.Resources
 open Xamarin.Forms
 open Xamarin.Essentials
 
@@ -26,7 +26,7 @@ module AboutPage =
         View.StackLayout(height = 100.,
                          width = 100.,
                          horizontalOptions = LayoutOptions.Center,
-                         backgroundColor = accentColor,
+                         backgroundColor = Style.accentColor,
                          padding = Thickness 15.,
                          children = [
             View.Image(Path "icon.png")

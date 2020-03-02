@@ -1,9 +1,9 @@
-﻿namespace FabulousContacts
+﻿namespace FabulousContacts.Database
 
 open FabulousContacts.Models
 open SQLite
 
-module Repository =
+module Database =
     type ContactObject() =
         [<PrimaryKey; AutoIncrement>]
         member val Id = 0 with get, set

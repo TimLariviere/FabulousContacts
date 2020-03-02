@@ -6,7 +6,7 @@ open Fabulous.XamarinForms
 open FabulousContacts.Components
 open FabulousContacts.Helpers
 open FabulousContacts.Models
-open FabulousContacts.Style
+open FabulousContacts.Resources
 open Xamarin.Forms
 open Xamarin.Essentials
 
@@ -91,7 +91,7 @@ module DetailPage =
             View.Label(text = contact.FirstName + " " + contact.LastName,
                        fontSize = FontSize 20.,
                        fontAttributes = FontAttributes.Bold,
-                       textColor = accentTextColor,
+                       textColor = Style.accentTextColor,
                        horizontalOptions = LayoutOptions.Center)
             View.Grid(width = 125.,
                       height = 125.,

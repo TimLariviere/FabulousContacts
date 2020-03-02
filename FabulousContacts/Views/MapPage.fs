@@ -6,6 +6,7 @@ open Fabulous.XamarinForms
 open FabulousContacts.Components
 open FabulousContacts.Helpers
 open FabulousContacts.Models
+open FabulousContacts.Resources
 open Xamarin.Essentials
 open Xamarin.Forms.Maps
 

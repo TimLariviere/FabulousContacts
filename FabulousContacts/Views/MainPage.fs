@@ -4,7 +4,8 @@ open Fabulous
 open Fabulous.XamarinForms
 open FabulousContacts.Components
 open FabulousContacts.Models
-open FabulousContacts.Repository
+open FabulousContacts.Resources
+open FabulousContacts.Database
 open Xamarin.Forms.PlatformConfiguration
 open Xamarin.Forms.PlatformConfiguration.AndroidSpecific
 
@@ -35,7 +36,7 @@ module MainPage =
 
     // Functions
     let loadAsync dbPath = async {
-        let! contacts = loadAllContacts dbPath
+        let! contacts = Database.loadAllContacts dbPath
         return ContactsLoaded contacts
     }
 

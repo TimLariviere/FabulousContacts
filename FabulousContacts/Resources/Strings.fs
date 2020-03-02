@@ -1,4 +1,4 @@
-namespace FabulousContacts
+namespace FabulousContacts.Resources
 
 [<RequireQualifiedAccess>]
 module Strings =

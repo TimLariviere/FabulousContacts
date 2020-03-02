@@ -4,7 +4,7 @@ open Fabulous
 open Fabulous.XamarinForms
 open FabulousContacts.Controls
 open FabulousContacts.Helpers
-open FabulousContacts.Style
+open FabulousContacts.Resources
 open Xamarin.Forms
 
 module Components =
@@ -46,10 +46,10 @@ module Components =
     let groupView name =
         View.ViewCell(
             View.StackLayout(
-                backgroundColor = accentColor,
+                backgroundColor = Style.accentColor,
                 children = [
                     View.Label(text = name,
-                               textColor = accentTextColor,
+                               textColor = Style.accentTextColor,
                                verticalOptions = LayoutOptions.FillAndExpand,
                                verticalTextAlignment = TextAlignment.Center,
                                margin = Thickness(20., 5.))
@@ -100,7 +100,7 @@ module Components =
     let detailActionButton imagePath command =
         View.Button(image = Path imagePath,
                     command = command,
-                    backgroundColor = accentColor,
+                    backgroundColor = Style.accentColor,
                     height = 35.,
                     horizontalOptions = LayoutOptions.FillAndExpand)
 

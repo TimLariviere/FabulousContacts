@@ -6,7 +6,8 @@ open Fabulous.XamarinForms
 open FabulousContacts.Components
 open FabulousContacts.Helpers
 open FabulousContacts.Models
-open FabulousContacts.Repository
+open FabulousContacts.Resources
+open FabulousContacts.Database
 open Plugin.Permissions.Abstractions
 open Plugin.Media
 open Xamarin.Forms
@@ -58,7 +59,7 @@ module EditPage =
             displayAlertWithConfirm(title, Strings.EditPage_DeleteContactConfirmation, Strings.Common_Yes, Strings.Common_No)
 
         if shouldDelete then
-            do! deleteContact dbPath contact
+            do! Database.deleteContact dbPath contact
             return Some (ContactDeleted contact)
         else
             return None
@@ -114,10 +115,10 @@ module EditPage =
     let createOrUpdateAsync dbPath contact = async {
         match contact.Id with
         | 0 ->
-            let! insertedContact = insertContact dbPath contact
+            let! insertedContact = Database.insertContact dbPath contact
             return ContactAdded insertedContact
         | _ ->
-            let! updatedContact = updateContact dbPath contact
+            let! updatedContact = Database.updateContact dbPath contact
             return ContactUpdated updatedContact
     }
     

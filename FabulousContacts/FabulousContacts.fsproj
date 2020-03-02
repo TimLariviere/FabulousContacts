@@ -7,18 +7,18 @@
   <ItemGroup>
     <Compile Include="Controls\BorderedEntry.fs" />
     <Compile Include="Controls\UnderlinedLabel.fs" />
-    <Compile Include="Strings.fs" />
-    <Compile Include="Style.fs" />
+    <Compile Include="Resources\Strings.fs" />
+    <Compile Include="Resources\Style.fs" />
     <Compile Include="Helpers.fs" />
-    <Compile Include="Components.fs" />
-    <Compile Include="Models.fs" />
-    <Compile Include="Repository.fs" />
-    <Compile Include="ContactsListPage.fs" />
-    <Compile Include="MapPage.fs" />
-    <Compile Include="MainPage.fs" />
-    <Compile Include="DetailPage.fs" />
-    <Compile Include="EditPage.fs" />
-    <Compile Include="AboutPage.fs" />
+    <Compile Include="Models\Contact.fs" />
+    <Compile Include="Database\Database.fs" />
+    <Compile Include="Views\Components.fs" />
+    <Compile Include="Views\ContactsListPage.fs" />
+    <Compile Include="Views\MapPage.fs" />
+    <Compile Include="Views\MainPage.fs" />
+    <Compile Include="Views\DetailPage.fs" />
+    <Compile Include="Views\EditPage.fs" />
+    <Compile Include="Views\AboutPage.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
   <ItemGroup>
