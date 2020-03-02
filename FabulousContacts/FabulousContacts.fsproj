@@ -15,7 +15,7 @@
     <Compile Include="Views\Components.fs" />
     <Compile Include="Views\ContactsListPage.fs" />
     <Compile Include="Views\MapPage.fs" />
-    <Compile Include="Views\MainPage.fs" />
+    <None Include="Views\MainPage.fs" />
     <Compile Include="Views\DetailPage.fs" />
     <Compile Include="Views\EditPage.fs" />
     <Compile Include="Views\AboutPage.fs" />

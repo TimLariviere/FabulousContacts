@@ -88,7 +88,7 @@ module MapPage =
           UserPosition = None }
     
     let init () =
-        initModel, Cmd.none
+        initModel
 
     let update msg model =
         match msg with

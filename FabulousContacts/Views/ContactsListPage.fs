@@ -10,7 +10,6 @@ open Xamarin.Forms
 module ContactsListPage =
     // Declarations
     type Msg =
-        | AboutTapped
         | AddNewContactTapped
         | UpdateFilterText of string
         | ContactsLoaded of Contact list
@@ -18,7 +17,6 @@ module ContactsListPage =
 
     type ExternalMsg =
         | NoOp
-        | NavigateToAbout
         | NavigateToNewContact
         | NavigateToDetail of Contact
 
@@ -53,12 +51,10 @@ module ContactsListPage =
           FilteredContacts = [] }
     
     let init () =
-        initModel, Cmd.none
+        initModel
 
     let update msg model =
         match msg with
-        | AboutTapped ->
-            model, Cmd.none, ExternalMsg.NavigateToAbout
         | AddNewContactTapped ->
             model, Cmd.none, ExternalMsg.NavigateToNewContact
         | UpdateFilterText filterText ->
@@ -80,7 +76,6 @@ module ContactsListPage =
             let groupedContacts = groupContacts mContacts
             
             // Actions
-            let goToAbout = fun () -> dispatch AboutTapped
             let addNewContact = fun () -> dispatch AddNewContactTapped
             let selectContact = findContactIn groupedContacts >> ContactSelected >> dispatch
             let updateFilter = (fun (e: TextChangedEventArgs) -> e.NewTextValue |> UpdateFilterText |> dispatch)
@@ -89,8 +84,6 @@ module ContactsListPage =
             View.ContentPage(
                 title = mTitle,
                 toolbarItems = [
-                    View.ToolbarItem(text = Strings.Common_About,
-                                     command = goToAbout)
                     View.ToolbarItem(text = "+",
                                      command = addNewContact)
                 ],
