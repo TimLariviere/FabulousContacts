@@ -83,7 +83,7 @@ module Components =
                                    textColor = Color.Gray,
                                    lineBreakMode = LineBreakMode.TailTruncation)
                     ])
-                    View.Image(source = Path "star.png",
+                    View.Image(source = ImagePath "star.png",
                                isVisible = isFavorite,
                                verticalOptions = LayoutOptions.Center,
                                margin = Thickness(0., 0., 15., 0.),
@@ -98,7 +98,7 @@ module Components =
             cellView p n a i)
 
     let detailActionButton imagePath command =
-        View.Button(image = Path imagePath,
+        View.Button(image = ImagePath imagePath,
                     command = command,
                     backgroundColor = accentColor,
                     height = 35.,
@@ -132,12 +132,12 @@ module Components =
     let profilePictureButton picture updatePicture =
         match picture with
         | None ->
-            View.Button(image = Path "addphoto.png",
+            View.Button(image = ImagePath "addphoto.png",
                         backgroundColor = Color.White,
                         command = updatePicture)
                 .RowSpan(2)
         | Some picture ->
-            View.Image(source = Bytes picture,
+            View.Image(source = ImageBytes picture,
                        aspect = Aspect.AspectFill,
                        gestureRecognizers = [
                 View.TapGestureRecognizer(command = updatePicture)

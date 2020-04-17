@@ -3,6 +3,7 @@
 open System
 open Fabulous
 open Fabulous.XamarinForms
+open Fabulous.XamarinForms.Maps
 open FabulousContacts.Components
 open FabulousContacts.Helpers
 open FabulousContacts.Models
@@ -122,7 +123,7 @@ module MapPage =
             
             // View
             View.ContentPage(title = Strings.MapPage_Title,
-                             icon = Path "maptab.png",
+                             icon = ImagePath "maptab.png",
                              appearing = retrieveUserPosition,
                              content =
                 match pins with

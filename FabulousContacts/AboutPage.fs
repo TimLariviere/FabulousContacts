@@ -29,7 +29,7 @@ module AboutPage =
                          backgroundColor = accentColor,
                          padding = Thickness 15.,
                          children = [
-            View.Image(Path "icon.png")
+            View.Image(ImagePath "icon.png")
         ])
         
     let aboutFabulousContacts openBrowserOnTap =
@@ -57,7 +57,7 @@ module AboutPage =
             
             View.StackLayout(gestureRecognizers = [ openBrowserOnTap fsharpOrgUrl ],
                              children = [
-                View.Image(source = Path "fsharp.png",
+                View.Image(source = ImagePath "fsharp.png",
                            height = 50.,
                            width = 50.)
                 View.Label(text = Strings.AboutPage_AboutFSharp_FSharp,
@@ -66,7 +66,7 @@ module AboutPage =
             
             View.StackLayout(gestureRecognizers = [ openBrowserOnTap fabulousXamarinFormsUrl ],
                              children = [
-                View.Image(source = Path "xamarin.png",
+                View.Image(source = ImagePath "xamarin.png",
                            height = 50.,
                            width = 50.)
                 View.Label(text = Strings.AboutPage_AboutFSharp_FabulousXamarinForms,
@@ -99,7 +99,7 @@ module AboutPage =
                              spacing = 15.,
                              gestureRecognizers = [ openBrowserOnTap authorBlogUrl ],
                              children = [
-                View.Image(source = Path "blog.png",
+                View.Image(source = ImagePath "blog.png",
                            height = 35.,
                            width = 35.)
                 
@@ -114,7 +114,7 @@ module AboutPage =
                              spacing = 15.,
                              gestureRecognizers = [ openBrowserOnTap authorGitHubUrl ],
                              children = [
-                View.Image(source = Path "github.png",
+                View.Image(source = ImagePath "github.png",
                            height = 35.,
                            width = 35.)
                 
@@ -129,7 +129,7 @@ module AboutPage =
                              children = [
                 View.StackLayout(gestureRecognizers = [ openBrowserOnTap authorTwitterUrl ],
                                  children = [
-                    View.Image(source = Path "twitter.png",
+                    View.Image(source = ImagePath "twitter.png",
                                height = 50.,
                                width = 50.)
                     
@@ -139,7 +139,7 @@ module AboutPage =
                 
                 View.StackLayout(gestureRecognizers = [ openBrowserOnTap authorSlackUrl ],
                                  children = [
-                    View.Image(source = Path "slack.png",
+                    View.Image(source = ImagePath "slack.png",
                                height = 50.,
                                width = 50.)
                     

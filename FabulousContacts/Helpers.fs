@@ -73,8 +73,8 @@ module Helpers =
 
     let getImageValueOrDefault defaultValue value =
         match value with
-        | None -> Path defaultValue
-        | Some bytes -> Bytes bytes
+        | None -> ImagePath defaultValue
+        | Some bytes -> ImageBytes bytes
         
 module Cmd =
     let performAsync asyncUnit = 

@@ -160,11 +160,11 @@ module MainPage =
         // View
         let tabAllContacts =
             (ContactsListPage.view Strings.MainPage_TabAllTitle model.TabAllContactsModel goToAllTab)
-                .IconImageSource(Path "alltab.png")
+                .IconImageSource(ImagePath "alltab.png")
                 
         let tabFavContacts =
             (ContactsListPage.view Strings.MainPage_TabFavoritesTitle model.TabFavContactsModel goToFavoritesTab)
-                .IconImageSource(Path "favoritetab.png")
+                .IconImageSource(ImagePath "favoritetab.png")
             
         let tabMap = MapPage.view model.TabMapModel goToMapTab
         
