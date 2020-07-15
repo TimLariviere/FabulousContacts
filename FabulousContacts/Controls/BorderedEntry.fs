@@ -33,8 +33,8 @@ module FabulousBorderedEntry =
 
             match borderColor with None -> () | Some v -> attribs.Add(BorderedEntryBorderColorAttributeKey, v)
 
-            let update (prevOpt: ViewElement voption) (source: ViewElement) (target: BorderedEntry) =
-                ViewBuilders.UpdateEntry(prevOpt, source, target)
+            let update registry (prevOpt: ViewElement voption) (source: ViewElement) (target: BorderedEntry) =
+                ViewBuilders.UpdateEntry(registry, prevOpt, source, target)
                 source.UpdatePrimitive(prevOpt, target, BorderedEntryBorderColorAttributeKey, (fun target v -> target.BorderColor <- v))
 
             ViewElement.Create(BorderedEntry, update, attribs)

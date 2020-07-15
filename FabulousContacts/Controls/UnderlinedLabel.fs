@@ -17,7 +17,7 @@ module FabulousUnderlinedLabel =
                                         ?gestureRecognizers = gestureRecognizers,
                                         ?verticalOptions = verticalOptions)
 
-            let update (prevOpt: ViewElement voption) (source: ViewElement) (target: UnderlinedLabel) =
-                ViewBuilders.UpdateLabel(prevOpt, source, target)
+            let update registry (prevOpt: ViewElement voption) (source: ViewElement) (target: UnderlinedLabel) =
+                ViewBuilders.UpdateLabel(registry, prevOpt, source, target)
 
             ViewElement.Create(UnderlinedLabel, update, attribs)
