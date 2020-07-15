@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Xamarin.Forms.4.6.0.967\build\Xamarin.Forms.props" Condition="Exists('..\packages\Xamarin.Forms.4.6.0.967\build\Xamarin.Forms.props')" />
+  <Import Project="..\packages\Xamarin.Forms.4.6.0.1141\build\Xamarin.Forms.props" Condition="Exists('..\packages\Xamarin.Forms.4.6.0.1141\build\Xamarin.Forms.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -96,23 +96,23 @@
   <Import Project="..\.nuget\NuGet.targets" />
   <ItemGroup>
     <Reference Include="Fabulous, Version=0.55.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Fabulous.0.55.0-preview5\lib\netstandard2.0\Fabulous.dll</HintPath>
+      <HintPath>..\packages\Fabulous.0.55.0-preview6\lib\netstandard2.0\Fabulous.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Fabulous.LiveUpdate, Version=0.55.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Fabulous.LiveUpdate.0.55.0-preview5\lib\netstandard2.0\Fabulous.LiveUpdate.dll</HintPath>
+      <HintPath>..\packages\Fabulous.LiveUpdate.0.55.0-preview6\lib\netstandard2.0\Fabulous.LiveUpdate.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Fabulous.XamarinForms, Version=0.55.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Fabulous.XamarinForms.0.55.0-preview5\lib\netstandard2.0\Fabulous.XamarinForms.dll</HintPath>
+      <HintPath>..\packages\Fabulous.XamarinForms.0.55.0-preview6\lib\netstandard2.0\Fabulous.XamarinForms.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Fabulous.XamarinForms.LiveUpdate, Version=0.55.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Fabulous.XamarinForms.LiveUpdate.0.55.0-preview5\lib\netstandard2.0\Fabulous.XamarinForms.LiveUpdate.dll</HintPath>
+      <HintPath>..\packages\Fabulous.XamarinForms.LiveUpdate.0.55.0-preview6\lib\netstandard2.0\Fabulous.XamarinForms.LiveUpdate.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Fabulous.XamarinForms.Maps, Version=0.55.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Fabulous.XamarinForms.Maps.0.55.0-preview5\lib\netstandard2.0\Fabulous.XamarinForms.Maps.dll</HintPath>
+      <HintPath>..\packages\Fabulous.XamarinForms.Maps.0.55.0-preview6\lib\netstandard2.0\Fabulous.XamarinForms.Maps.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FSharp.Core, Version=4.7.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
@@ -162,23 +162,23 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Xamarin.Forms.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Xamarin.Forms.4.6.0.967\lib\Xamarin.iOS10\Xamarin.Forms.Core.dll</HintPath>
+      <HintPath>..\packages\Xamarin.Forms.4.6.0.1141\lib\Xamarin.iOS10\Xamarin.Forms.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Xamarin.Forms.Maps, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Xamarin.Forms.Maps.4.6.0.967\lib\Xamarin.iOS10\Xamarin.Forms.Maps.dll</HintPath>
+      <HintPath>..\packages\Xamarin.Forms.Maps.4.6.0.1141\lib\Xamarin.iOS10\Xamarin.Forms.Maps.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Xamarin.Forms.Maps.iOS, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Xamarin.Forms.Maps.4.6.0.967\lib\Xamarin.iOS10\Xamarin.Forms.Maps.iOS.dll</HintPath>
+      <HintPath>..\packages\Xamarin.Forms.Maps.4.6.0.1141\lib\Xamarin.iOS10\Xamarin.Forms.Maps.iOS.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Xamarin.Forms.Platform, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Xamarin.Forms.4.6.0.967\lib\Xamarin.iOS10\Xamarin.Forms.Platform.dll</HintPath>
+      <HintPath>..\packages\Xamarin.Forms.4.6.0.1141\lib\Xamarin.iOS10\Xamarin.Forms.Platform.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Xamarin.Forms.Xaml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Xamarin.Forms.4.6.0.967\lib\Xamarin.iOS10\Xamarin.Forms.Xaml.dll</HintPath>
+      <HintPath>..\packages\Xamarin.Forms.4.6.0.1141\lib\Xamarin.iOS10\Xamarin.Forms.Xaml.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Xamarin.iOS" />
@@ -274,8 +274,8 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Xamarin.Forms.4.6.0.967\build\Xamarin.Forms.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Forms.4.6.0.967\build\Xamarin.Forms.props'))" />
-    <Error Condition="!Exists('..\packages\Xamarin.Forms.4.6.0.967\build\Xamarin.Forms.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Forms.4.6.0.967\build\Xamarin.Forms.targets'))" />
+    <Error Condition="!Exists('..\packages\Xamarin.Forms.4.6.0.1141\build\Xamarin.Forms.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Forms.4.6.0.1141\build\Xamarin.Forms.props'))" />
+    <Error Condition="!Exists('..\packages\Xamarin.Forms.4.6.0.1141\build\Xamarin.Forms.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Forms.4.6.0.1141\build\Xamarin.Forms.targets'))" />
   </Target>
-  <Import Project="..\packages\Xamarin.Forms.4.6.0.967\build\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.4.6.0.967\build\Xamarin.Forms.targets')" />
+  <Import Project="..\packages\Xamarin.Forms.4.6.0.1141\build\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.4.6.0.1141\build\Xamarin.Forms.targets')" />
 </Project>
