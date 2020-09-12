@@ -59,16 +59,20 @@ module ContactsListPage =
         match msg with
         | AboutTapped ->
             model, Cmd.none, ExternalMsg.NavigateToAbout
+
         | AddNewContactTapped ->
             model, Cmd.none, ExternalMsg.NavigateToNewContact
+
         | UpdateFilterText filterText ->
             let filteredContacts = filterContacts filterText model.Contacts
             let m = { model with FilterText = filterText; FilteredContacts = filteredContacts }
             m, Cmd.none, ExternalMsg.NoOp
+
         | ContactsLoaded contacts ->
             let filteredContacts = filterContacts model.FilterText contacts
             let m = { model with Contacts = contacts; FilteredContacts = filteredContacts }
             m, Cmd.none, ExternalMsg.NoOp
+
         | ContactSelected contact ->
             model, Cmd.none, ExternalMsg.NavigateToDetail contact
 
@@ -89,31 +93,39 @@ module ContactsListPage =
             View.ContentPage(
                 title = mTitle,
                 toolbarItems = [
-                    View.ToolbarItem(text = Strings.Common_About,
-                                     command = goToAbout)
-                    View.ToolbarItem(text = "+",
-                                     command = addNewContact)
+                    View.ToolbarItem(
+                        text = Strings.Common_About,
+                        command = goToAbout
+                    )
+
+                    View.ToolbarItem(
+                        text = "+",
+                        command = addNewContact
+                    )
                 ],
                 content = View.StackLayout(
                     spacing = 0.,
                     children = [
-                        View.SearchBar(text = mFilterText,
-                                       textChanged = updateFilter,
-                                       backgroundColor = accentColor,
-                                       cancelButtonColor = accentTextColor)
+                        View.SearchBar(
+                            text = mFilterText,
+                            textChanged = updateFilter,
+                            backgroundColor = accentColor,
+                            cancelButtonColor = accentTextColor
+                        )
                         
-                        View.ListViewGrouped(verticalOptions = LayoutOptions.FillAndExpand,
-                                             rowHeight = 60,
-                                             selectionMode = ListViewSelectionMode.None,
-                                             showJumpList = (mContacts.Length > 10),
-                                             itemTapped = selectContact,
-                                             items = [
-                            for (groupName, items) in groupedContacts do
-                                yield groupName, groupView groupName, [
-                                    for contact in items do
-                                        let address = contact.Address.Replace("\n", " ")
-                                        yield cachedCell contact address
-                                    ]
+                        View.ListViewGrouped(
+                            verticalOptions = LayoutOptions.FillAndExpand,
+                            rowHeight = 60,
+                            selectionMode = ListViewSelectionMode.None,
+                            showJumpList = (mContacts.Length > 10),
+                            itemTapped = selectContact,
+                            items = [
+                                for (groupName, items) in groupedContacts do
+                                    yield groupName, groupView groupName, [
+                                        for contact in items do
+                                            let address = contact.Address.Replace("\n", " ")
+                                            yield cachedCell contact address
+                                        ]
                             ]
                         )
                     ]

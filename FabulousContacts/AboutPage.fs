@@ -23,131 +23,190 @@ module AboutPage =
     let authorSlackHandle = "@Timothé Larivière"
     
     let logo =
-        View.StackLayout(height = 100.,
-                         width = 100.,
-                         horizontalOptions = LayoutOptions.Center,
-                         backgroundColor = accentColor,
-                         padding = Thickness 15.,
-                         children = [
-            View.Image(ImagePath "icon.png")
-        ])
+        View.StackLayout(
+            height = 100.,
+            width = 100.,
+            horizontalOptions = LayoutOptions.Center,
+            backgroundColor = accentColor,
+            padding = Thickness 15.,
+            children = [
+                View.Image(Image.fromPath "icon.png")
+            ]
+        )
         
     let aboutFabulousContacts openBrowserOnTap =
         View.StackLayout([
-            View.Label(text = Strings.AboutPage_AboutFabulousContacts_NameAndVersion,
-                       fontAttributes = FontAttributes.Bold,
-                       horizontalOptions = LayoutOptions.Center)
+            View.Label(
+                text = Strings.AboutPage_AboutFabulousContacts_NameAndVersion,
+                fontAttributes = FontAttributes.Bold,
+                horizontalOptions = LayoutOptions.Center
+            )
             
-            View.Label(text = Strings.AboutPage_AboutFabulousContacts_DescriptionTitle,
-                       fontAttributes = FontAttributes.Bold,
-                       margin = Thickness(0., 20., 0., 0.))
+            View.Label(
+                text = Strings.AboutPage_AboutFabulousContacts_DescriptionTitle,
+                fontAttributes = FontAttributes.Bold,
+                margin = Thickness(0., 20., 0., 0.)
+            )
             
-            View.Label(text = Strings.AboutPage_AboutFabulousContacts_Description)
+            View.Label(Strings.AboutPage_AboutFabulousContacts_Description)
             
-            View.UnderlinedLabel(text = fabulousContactsRepositoryUrl,
-                                 gestureRecognizers = [ openBrowserOnTap fabulousContactsRepositoryUrl ])
+            View.UnderlinedLabel(
+                text = fabulousContactsRepositoryUrl,
+                gestureRecognizers = [ openBrowserOnTap fabulousContactsRepositoryUrl ]
+            )
         ])
         
     let aboutFSharp openBrowserOnTap =
-        View.StackLayout(horizontalOptions = LayoutOptions.Center,
-                         orientation = StackOrientation.Horizontal,
-                         spacing = 30.,
-                         children = [
-            View.Label(text = Strings.AboutPage_AboutFSharp_MadeWith)
+        View.StackLayout(
+            horizontalOptions = LayoutOptions.Center,
+            orientation = StackOrientation.Horizontal,
+            spacing = 30.,
+            children = [
+                View.Label(Strings.AboutPage_AboutFSharp_MadeWith)
             
-            View.StackLayout(gestureRecognizers = [ openBrowserOnTap fsharpOrgUrl ],
-                             children = [
-                View.Image(source = ImagePath "fsharp.png",
-                           height = 50.,
-                           width = 50.)
-                View.Label(text = Strings.AboutPage_AboutFSharp_FSharp,
-                           horizontalTextAlignment = TextAlignment.Center)
-            ])
+                View.StackLayout(
+                    gestureRecognizers = [ openBrowserOnTap fsharpOrgUrl ],
+                    children = [
+                        View.Image(
+                            source = Image.fromPath "fsharp.png",
+                            height = 50.,
+                            width = 50.
+                        )
+                        View.Label(
+                            text = Strings.AboutPage_AboutFSharp_FSharp,
+                            horizontalTextAlignment = TextAlignment.Center
+                        )
+                    ]
+                )
             
-            View.StackLayout(gestureRecognizers = [ openBrowserOnTap fabulousXamarinFormsUrl ],
-                             children = [
-                View.Image(source = ImagePath "xamarin.png",
-                           height = 50.,
-                           width = 50.)
-                View.Label(text = Strings.AboutPage_AboutFSharp_FabulousXamarinForms,
-                           horizontalTextAlignment = TextAlignment.Center)
-            ])
-        ])
+                View.StackLayout(
+                    gestureRecognizers = [ openBrowserOnTap fabulousXamarinFormsUrl ],
+                    children = [
+                        View.Image(
+                            source = Image.fromPath "xamarin.png",
+                            height = 50.,
+                            width = 50.
+                        )
+                        View.Label(
+                            text = Strings.AboutPage_AboutFSharp_FabulousXamarinForms,
+                            horizontalTextAlignment = TextAlignment.Center
+                        )
+                    ]
+                )
+            ]
+        )
         
     let credits openBrowserOnTap =
         View.StackLayout([
-            View.Label(text = Strings.AboutPage_Credits_Title,
-                       fontAttributes = FontAttributes.Bold,
-                       margin = Thickness(0., 20., 0., 0.))
+            View.Label(
+                text = Strings.AboutPage_Credits_Title,
+                fontAttributes = FontAttributes.Bold,
+                margin = Thickness(0., 20., 0., 0.)
+            )
             
-            View.UnderlinedLabel(text = Strings.AboutPage_Credits_Freepik,
-                                 gestureRecognizers = [ openBrowserOnTap freepikUrl ])
+            View.UnderlinedLabel(
+                text = Strings.AboutPage_Credits_Freepik,
+                gestureRecognizers = [ openBrowserOnTap freepikUrl ]
+            )
             
-            View.UnderlinedLabel(text = Strings.AboutPage_Credits_XamarinEssentials,
-                                 gestureRecognizers = [ openBrowserOnTap xamarinEssentialsUrl ])
+            View.UnderlinedLabel(
+                text = Strings.AboutPage_Credits_XamarinEssentials,
+                gestureRecognizers = [ openBrowserOnTap xamarinEssentialsUrl ]
+            )
         ])
         
     let aboutAuthor openBrowserOnTap =
         View.StackLayout([
-            View.Label(text = Strings.AboutPage_AboutAuthor_Title,
-                       fontAttributes = FontAttributes.Bold,
-                       margin = Thickness(0., 20., 0., 0.))
+            View.Label(
+                text = Strings.AboutPage_AboutAuthor_Title,
+                fontAttributes = FontAttributes.Bold,
+                margin = Thickness(0., 20., 0., 0.)
+            )
             
-            View.Label(text = Strings.AboutPage_AboutAuthor_AuthorName)
+            View.Label(Strings.AboutPage_AboutAuthor_AuthorName)
             
-            View.StackLayout(orientation = StackOrientation.Horizontal,
-                             spacing = 15.,
-                             gestureRecognizers = [ openBrowserOnTap authorBlogUrl ],
-                             children = [
-                View.Image(source = ImagePath "blog.png",
-                           height = 35.,
-                           width = 35.)
+            View.StackLayout(
+                orientation = StackOrientation.Horizontal,
+                spacing = 15.,
+                gestureRecognizers = [ openBrowserOnTap authorBlogUrl ],
+                children = [
+                    View.Image(
+                        source = Image.fromPath "blog.png",
+                        height = 35.,
+                        width = 35.
+                    )
                 
-                View.UnderlinedLabel(text = authorBlogUrl,
-                                     verticalOptions = LayoutOptions.Center)
-            ])
+                    View.UnderlinedLabel(
+                        text = authorBlogUrl,
+                        verticalOptions = LayoutOptions.Center
+                    )
+                ]
+            )
             
-            View.Label(text = Strings.AboutPage_AboutAuthor_ReachOut,
-                       margin = Thickness (0., 10., 0., 0.))
+            View.Label(
+                text = Strings.AboutPage_AboutAuthor_ReachOut,
+                margin = Thickness (0., 10., 0., 0.)
+            )
             
-            View.StackLayout(orientation = StackOrientation.Horizontal,
-                             spacing = 15.,
-                             gestureRecognizers = [ openBrowserOnTap authorGitHubUrl ],
-                             children = [
-                View.Image(source = ImagePath "github.png",
-                           height = 35.,
-                           width = 35.)
+            View.StackLayout(
+                orientation = StackOrientation.Horizontal,
+                spacing = 15.,
+                gestureRecognizers = [ openBrowserOnTap authorGitHubUrl ],
+                children = [
+                    View.Image( 
+                        source = Image.fromPath "github.png",
+                        height = 35.,
+                        width = 35.
+                    )
                 
-                View.UnderlinedLabel(text = authorGitHubHandle,
-                                     verticalOptions = LayoutOptions.Center)
-            ])
+                    View.UnderlinedLabel(
+                        text = authorGitHubHandle,
+                        verticalOptions = LayoutOptions.Center
+                    )
+                ]
+            )
             
-            View.StackLayout(horizontalOptions = LayoutOptions.Center,
-                             orientation = StackOrientation.Horizontal,
-                             margin = Thickness(0., 10., 0., 0.),
-                             spacing = 15.,
-                             children = [
-                View.StackLayout(gestureRecognizers = [ openBrowserOnTap authorTwitterUrl ],
-                                 children = [
-                    View.Image(source = ImagePath "twitter.png",
-                               height = 50.,
-                               width = 50.)
+            View.StackLayout(
+                horizontalOptions = LayoutOptions.Center,
+                orientation = StackOrientation.Horizontal,
+                margin = Thickness(0., 10., 0., 0.),
+                spacing = 15.,
+                children = [
+                    View.StackLayout(
+                        gestureRecognizers = [ openBrowserOnTap authorTwitterUrl ],
+                        children = [
+                            View.Image(
+                                source = Image.fromPath "twitter.png",
+                                height = 50.,
+                                width = 50.
+                            )
                     
-                    View.Label(text = authorTwitterHandle,
-                               horizontalTextAlignment = TextAlignment.Center)
-                ])
+                            View.Label(
+                                text = authorTwitterHandle,
+                                horizontalTextAlignment = TextAlignment.Center
+                            )
+                        ]
+                    )
                 
-                View.StackLayout(gestureRecognizers = [ openBrowserOnTap authorSlackUrl ],
-                                 children = [
-                    View.Image(source = ImagePath "slack.png",
-                               height = 50.,
-                               width = 50.)
+                    View.StackLayout(
+                        gestureRecognizers = [ openBrowserOnTap authorSlackUrl ],
+                        children = [
+                            View.Image(
+                                source = Image.fromPath "slack.png",
+                                height = 50.,
+                                width = 50.
+                            )
                     
-                    View.Label(text = authorSlackHandle,
-                               horizontalTextAlignment = TextAlignment.Center)
-                ])
-            ])
-        ])
+                            View.Label(
+                                text = authorSlackHandle,
+                                horizontalTextAlignment = TextAlignment.Center
+                            )
+                        ]
+                    )
+                ]
+            )
+        ]
+    )
         
     let view () =
         dependsOn () (fun _ () ->
@@ -160,14 +219,16 @@ module AboutPage =
             // View
             View.ContentPage(
                 View.ScrollView(
-                    View.StackLayout(padding = Thickness(20., 10., 20., 20.),
-                                     children = [
-                        logo
-                        aboutFabulousContacts openBrowserOnTap
-                        aboutFSharp openBrowserOnTap
-                        credits openBrowserOnTap
-                        aboutAuthor openBrowserOnTap
-                    ])
+                    View.StackLayout(
+                        padding = Thickness(20., 10., 20., 20.),
+                        children = [
+                            logo
+                            aboutFabulousContacts openBrowserOnTap
+                            aboutFSharp openBrowserOnTap
+                            credits openBrowserOnTap
+                            aboutAuthor openBrowserOnTap
+                        ]
+                    )
                 )
             )
         )

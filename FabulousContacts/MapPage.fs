@@ -95,26 +95,32 @@ module MapPage =
         | LoadPins contacts ->
             let msg = loadPinsAsync contacts
             model, Cmd.ofAsyncMsgOption msg
+
         | RetrieveUserPosition ->
             let msg = tryGetUserPositionAsync ()
             model, Cmd.ofAsyncMsgOption msg
+
         | PinsLoaded pins ->
             { model with Pins = Some pins }, Cmd.none
+
         | UserPositionRetrieved location ->
             { model with UserPosition = Some location }, Cmd.none
         
     let view model dispatch =
         let map userPositionOpt pins =
-            View.Map(hasZoomEnabled = true,
-                     hasScrollEnabled = true,
-                     requestedRegion = MapSpan.FromCenterAndRadius(getUserPositionOrDefault userPositionOpt, Distance.FromKilometers(25.)),
-                     pins = [
-                        for pin in pins do
-                            yield View.Pin(position = pin.Position,
-                                           label = pin.Label,
-                                           pinType = pin.PinType,
-                                           address = pin.Address)
-                     ]
+            View.Map(
+                hasZoomEnabled = true,
+                hasScrollEnabled = true,
+                requestedRegion = MapSpan.FromCenterAndRadius(getUserPositionOrDefault userPositionOpt, Distance.FromKilometers(25.)),
+                pins = [
+                    for pin in pins do
+                        yield View.Pin(
+                           position = pin.Position,
+                           label = pin.Label,
+                           pinType = pin.PinType,
+                           address = pin.Address
+                        )
+                ]
             )
         
         dependsOn (model.UserPosition, model.Pins) (fun model (userPositionOpt, pins) ->
@@ -123,7 +129,7 @@ module MapPage =
             
             // View
             View.ContentPage(title = Strings.MapPage_Title,
-                             icon = ImagePath "maptab.png",
+                             icon = Image.fromPath "maptab.png",
                              appearing = retrieveUserPosition,
                              content =
                 match pins with

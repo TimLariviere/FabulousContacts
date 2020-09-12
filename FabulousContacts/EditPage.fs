@@ -178,32 +178,44 @@ module EditPage =
         | UpdateFirstName v ->
             let m = { model with FirstName = v; IsFirstNameValid = (validateFirstName v) }
             m, Cmd.none, ExternalMsg.NoOp
+
         | UpdateLastName v ->
             let m = { model with LastName = v; IsLastNameValid = (validateLastName v) }
             m, Cmd.none, ExternalMsg.NoOp
+
         | UpdateEmail email ->
             { model with Email = email }, Cmd.none, ExternalMsg.NoOp
+
         | UpdatePhone phone ->
             { model with Phone = phone }, Cmd.none, ExternalMsg.NoOp
+
         | UpdateAddress address ->
             { model with Address = address }, Cmd.none, ExternalMsg.NoOp
+
         | UpdateIsFavorite isFavorite ->
             { model with IsFavorite = isFavorite }, Cmd.none, ExternalMsg.NoOp
+
         | UpdatePicture ->
             let cmd = Cmd.ofAsyncMsgOption (tryUpdatePictureAsync model.Picture)
             model, cmd, ExternalMsg.NoOp
+
         | SetPicture picture ->
             { model with Picture = picture}, Cmd.none, ExternalMsg.NoOp
+
         | SaveContact ->
             let cmd = Cmd.ofAsyncMsgOption (trySaveAsync model dbPath)
             model, cmd, ExternalMsg.NoOp
+
         | DeleteContact contact ->
             let cmd = Cmd.ofAsyncMsgOption (tryDeleteAsync dbPath contact)
             model, cmd, ExternalMsg.NoOp
+
         | ContactAdded contact -> 
             model, Cmd.none, ExternalMsg.GoBackAfterContactAdded contact
+
         | ContactUpdated contact -> 
             model, Cmd.none, ExternalMsg.GoBackAfterContactUpdated contact
+
         | ContactDeleted contact ->
             model, Cmd.none, ExternalMsg.GoBackAfterContactDeleted contact
         
@@ -242,20 +254,24 @@ module EditPage =
                     content = View.StackLayout(
                         padding = Thickness(20.),
                         children = [
-                            View.Grid(coldefs = [ Absolute 100.; Star ],
-                                      rowdefs = [ Absolute 50.; Absolute 50. ],
-                                      columnSpacing = 10.,
-                                      rowSpacing = 0.,
-                                      children = [
-                                          profilePictureButton mModel.Picture updatePicture
-                                          (formEntry Strings.EditPage_FirstNameField_Label mModel.FirstName Keyboard.Text mModel.IsFirstNameValid updateFirstName)
-                                              .VerticalOptions(LayoutOptions.Center)
-                                              .Column(1)
-                                          (formEntry Strings.EditPage_LastNameField_Label mModel.LastName Keyboard.Text mModel.IsLastNameValid updateLastName)
-                                              .VerticalOptions(LayoutOptions.Center)
-                                              .Column(1)
-                                              .Row(1)
-                                      ])
+                            View.Grid(
+                                coldefs = [ Absolute 100.; Star ],
+                                rowdefs = [ Absolute 50.; Absolute 50. ],
+                                columnSpacing = 10.,
+                                rowSpacing = 0.,
+                                children = [
+                                    profilePictureButton mModel.Picture updatePicture
+
+                                    (formEntry Strings.EditPage_FirstNameField_Label mModel.FirstName Keyboard.Text mModel.IsFirstNameValid updateFirstName)
+                                        .VerticalOptions(LayoutOptions.Center)
+                                        .Column(1)
+
+                                    (formEntry Strings.EditPage_LastNameField_Label mModel.LastName Keyboard.Text mModel.IsLastNameValid updateLastName)
+                                        .VerticalOptions(LayoutOptions.Center)
+                                        .Column(1)
+                                        .Row(1)
+                                ]
+                            )
                             favoriteField mModel.IsFavorite markAsFavorite
                             formLabel Strings.EditPage_EmailField_Label
                             formEntry Strings.EditPage_EmailField_Placeholder mModel.Email Keyboard.Email true updateEmail

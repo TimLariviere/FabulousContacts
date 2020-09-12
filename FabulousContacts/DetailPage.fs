@@ -84,53 +84,70 @@ module DetailPage =
     let header contact callContact sendSmsToContact sendEmailToContact =
         let contactPicture = contact.Picture |> getImageValueOrDefault "addphoto.png"
             
-        View.StackLayout(backgroundColor = Color.FromHex("#448cb8"),
-                         padding = Thickness(20., 10., 20., 10.),
-                         spacing = 10.,
-                         children = [
-            View.Label(text = contact.FirstName + " " + contact.LastName,
-                       fontSize = FontSize 20.,
-                       fontAttributes = FontAttributes.Bold,
-                       textColor = accentTextColor,
-                       horizontalOptions = LayoutOptions.Center)
-            View.Grid(width = 125.,
-                      height = 125.,
-                      backgroundColor = Color.White,
-                      horizontalOptions = LayoutOptions.Center,
-                      children = [
-                View.Image(source = contactPicture,
-                           aspect = Aspect.AspectFill)
-                View.Image(source = ImagePath "star.png",
-                           isVisible = contact.IsFavorite,
-                           height = 35.,
-                           width = 35.,
-                           horizontalOptions = LayoutOptions.Start,
-                           verticalOptions = LayoutOptions.Start)
-            ])
-            View.StackLayout(horizontalOptions = LayoutOptions.Center,
-                             orientation = StackOrientation.Horizontal,
-                             margin = Thickness(0., 10., 0., 10.),
-                             spacing = 20.,
-                             children = [
-                if hasSetField contact.Phone then
-                    yield detailActionButton "call.png" callContact
-                    yield detailActionButton "sms.png" sendSmsToContact
-                if hasSetField contact.Email then
-                    yield detailActionButton "email.png" sendEmailToContact
-            ])
-        ])
+        View.StackLayout(
+            backgroundColor = Color.FromHex("#448cb8"),
+            padding = Thickness(20., 10., 20., 10.),
+            spacing = 10.,
+            children = [
+                View.Label(
+                    text = contact.FirstName + " " + contact.LastName,
+                    fontSize = FontSize.fromValue 20.,
+                    fontAttributes = FontAttributes.Bold,
+                    textColor = accentTextColor,
+                    horizontalOptions = LayoutOptions.Center
+                )
+
+                View.Grid(
+                    width = 125.,
+                    height = 125.,
+                    backgroundColor = Color.White,
+                    horizontalOptions = LayoutOptions.Center,
+                    children = [
+                        View.Image(
+                            source = contactPicture,
+                            aspect = Aspect.AspectFill
+                        )
+                        
+                        View.Image(
+                            source = Image.fromPath "star.png",
+                            isVisible = contact.IsFavorite,
+                            height = 35.,
+                            width = 35.,
+                            horizontalOptions = LayoutOptions.Start,
+                            verticalOptions = LayoutOptions.Start
+                        )
+                    ]
+                )
+
+                View.StackLayout(
+                    horizontalOptions = LayoutOptions.Center,
+                    orientation = StackOrientation.Horizontal,
+                    margin = Thickness(0., 10., 0., 10.),
+                    spacing = 20.,
+                    children = [
+                        if hasSetField contact.Phone then
+                            yield detailActionButton "call.png" callContact
+                            yield detailActionButton "sms.png" sendSmsToContact
+                        if hasSetField contact.Email then
+                            yield detailActionButton "email.png" sendEmailToContact
+                    ]
+                )
+            ]
+        )
             
     let body contact =
-        View.StackLayout(padding = Thickness(20., 10., 20., 20.),
-                         spacing = 10.,
-                         children = [
-            detailFieldTitle "Email"
-            optionalLabel contact.Email
-            detailFieldTitle "Phone"
-            optionalLabel contact.Phone
-            detailFieldTitle "Address"
-            optionalLabel contact.Address
-        ])
+        View.StackLayout(
+            padding = Thickness(20., 10., 20., 20.),
+            spacing = 10.,
+            children = [
+                detailFieldTitle "Email"
+                optionalLabel contact.Email
+                detailFieldTitle "Phone"
+                optionalLabel contact.Phone
+                detailFieldTitle "Address"
+                optionalLabel contact.Address
+            ]
+        )
 
     let view model dispatch =
         dependsOn model.Contact (fun model contact ->
@@ -143,9 +160,11 @@ module DetailPage =
             // View
             View.ContentPage(
                 toolbarItems = [
-                    View.ToolbarItem(order = ToolbarItemOrder.Primary,
-                                     text = Strings.DetailPage_Toolbar_EditContact,
-                                     command = editContact)
+                    View.ToolbarItem(
+                        order = ToolbarItemOrder.Primary,
+                        text = Strings.DetailPage_Toolbar_EditContact,
+                        command = editContact
+                    )
                 ],
                 content = View.ScrollView(
                     content = View.StackLayout(

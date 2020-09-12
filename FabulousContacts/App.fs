@@ -48,46 +48,32 @@ module App =
 
     let handleMainExternalMsg externalMsg =
         match externalMsg with
-        | MainPage.ExternalMsg.NoOp ->
-            Cmd.none
-        | MainPage.ExternalMsg.NavigateToAbout ->
-            Cmd.ofMsg GoToAbout
-        | MainPage.ExternalMsg.NavigateToNewContact ->
-            Cmd.ofMsg (GoToEdit None)
-        | MainPage.ExternalMsg.NavigateToDetail contact ->
-            Cmd.ofMsg (GoToDetail contact)
+        | MainPage.ExternalMsg.NoOp                     -> Cmd.none
+        | MainPage.ExternalMsg.NavigateToAbout          -> Cmd.ofMsg GoToAbout
+        | MainPage.ExternalMsg.NavigateToNewContact     -> Cmd.ofMsg (GoToEdit None)
+        | MainPage.ExternalMsg.NavigateToDetail contact -> Cmd.ofMsg (GoToDetail contact)
 
     let handleDetailPageExternalMsg externalMsg =
         match externalMsg with
-        | DetailPage.ExternalMsg.NoOp ->
-            Cmd.none
-        | DetailPage.ExternalMsg.EditContact contact ->
-            Cmd.ofMsg (GoToEdit (Some contact))
+        | DetailPage.ExternalMsg.NoOp                   -> Cmd.none
+        | DetailPage.ExternalMsg.EditContact contact    -> Cmd.ofMsg (GoToEdit (Some contact))
 
     let handleEditPageExternalMsg externalMsg =
         match externalMsg with
-        | EditPage.ExternalMsg.NoOp ->
-            Cmd.none
-        | EditPage.ExternalMsg.GoBackAfterContactAdded contact ->
-            Cmd.ofMsg (UpdateWhenContactAdded contact)
-        | EditPage.ExternalMsg.GoBackAfterContactUpdated contact ->
-            Cmd.ofMsg (UpdateWhenContactUpdated contact)
-        | EditPage.ExternalMsg.GoBackAfterContactDeleted contact ->
-            Cmd.ofMsg (UpdateWhenContactDeleted contact)
+        | EditPage.ExternalMsg.NoOp                              -> Cmd.none
+        | EditPage.ExternalMsg.GoBackAfterContactAdded contact   -> Cmd.ofMsg (UpdateWhenContactAdded contact)
+        | EditPage.ExternalMsg.GoBackAfterContactUpdated contact -> Cmd.ofMsg (UpdateWhenContactUpdated contact)
+        | EditPage.ExternalMsg.GoBackAfterContactDeleted contact -> Cmd.ofMsg (UpdateWhenContactDeleted contact)
 
     let navigationMapper (model : Model) =
         let aboutModel = model.AboutPageModel
         let detailModel = model.DetailPageModel
         let editModel = model.EditPageModel
         match aboutModel, detailModel, editModel with
-        | None, None, None ->
-            model
-        | Some _, None, None ->
-            { model with AboutPageModel = None }
-        | _, Some _, None ->
-            { model with DetailPageModel = None }
-        | _, _, Some _ ->
-            { model with EditPageModel = None }
+        | None, None, None -> model
+        | Some _, None, None -> { model with AboutPageModel = None }
+        | _, Some _, None -> { model with DetailPageModel = None }
+        | _, _, Some _ -> { model with EditPageModel = None }
 
     let update dbPath msg model =
         match msg with
@@ -96,16 +82,19 @@ module App =
             let cmd2 = handleMainExternalMsg externalMsg
             let batchCmd = Cmd.batch [ (Cmd.map MainPageMsg cmd); cmd2 ]
             { model with MainPageModel = m }, batchCmd
+
         | DetailPageMsg msg ->
             let m, cmd, externalMsg = DetailPage.update msg model.DetailPageModel.Value
             let cmd2 = handleDetailPageExternalMsg externalMsg
             let batchCmd = Cmd.batch [ (Cmd.map DetailPageMsg cmd); cmd2 ]
             { model with DetailPageModel = Some m }, batchCmd
+
         | EditPageMsg msg ->
             let m, cmd, externalMsg = EditPage.update dbPath msg model.EditPageModel.Value
             let cmd2 = handleEditPageExternalMsg externalMsg
             let batchCmd = Cmd.batch [ (Cmd.map EditPageMsg cmd); cmd2 ]
             { model with EditPageModel = Some m }, batchCmd
+
         | NavigationPopped ->
             match model.WorkaroundNavPageBug with
             | true ->
@@ -117,17 +106,22 @@ module App =
                 newModel, model.WorkaroundNavPageBugPendingCmd
             | false ->
                 navigationMapper model, Cmd.none
+
         | GoToAbout ->
             { model with AboutPageModel = Some true }, Cmd.none
+
         | GoToDetail contact ->
             let m, cmd = DetailPage.init contact
             { model with DetailPageModel = Some m }, (Cmd.map DetailPageMsg cmd)
+
         | GoToEdit contact ->
             let m, cmd = EditPage.init contact
             { model with EditPageModel = Some m }, (Cmd.map EditPageMsg cmd)
+
         | UpdateWhenContactAdded contact ->
             let mainMsg = Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactAdded contact))
             { model with EditPageModel = None }, mainMsg
+
         | UpdateWhenContactUpdated contact ->
             let pendingCmds =
                 Cmd.batch
@@ -139,6 +133,7 @@ module App =
                     WorkaroundNavPageBug = true
                     WorkaroundNavPageBugPendingCmd = pendingCmds }
             m, Cmd.none
+
         | UpdateWhenContactDeleted contact ->
             let mainMsg = Cmd.ofMsg (MainPageMsg (MainPage.Msg.ContactDeleted contact))
             let m = { model with DetailPageModel = None; EditPageModel = None }
@@ -196,34 +191,3 @@ type App (dbPath) as app =
         Program.mkProgram init update view
         |> Program.withConsoleTrace
         |> XamarinFormsProgram.run app
-
-
-#if APPSAVE
-    let modelId = "model"
-    override __.OnSleep() = 
-
-        let json = Newtonsoft.Json.JsonConvert.SerializeObject(runner.CurrentModel)
-        Console.WriteLine("OnSleep: saving model into app.Properties, json = {0}", json)
-
-        app.Properties.[modelId] <- json
-
-    override __.OnResume() = 
-        Console.WriteLine "OnResume: checking for model in app.Properties"
-        try 
-            match app.Properties.TryGetValue modelId with
-            | true, (:? string as json) -> 
-
-                Console.WriteLine("OnResume: restoring model from app.Properties, json = {0}", json)
-                let model = Newtonsoft.Json.JsonConvert.DeserializeObject<App.Model>(json)
-
-                Console.WriteLine("OnResume: restoring model from app.Properties, model = {0}", (sprintf "%0A" model))
-                runner.SetCurrentModel (model, Cmd.none)
-
-            | _ -> ()
-        with ex -> 
-            Console.WriteLine ("Error while restoring model found in app.Properties. " + ex.ToString())
-
-    override this.OnStart() = 
-        Console.WriteLine "OnStart: using same logic as OnResume()"
-        this.OnResume()
-#endif

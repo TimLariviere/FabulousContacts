@@ -93,30 +93,38 @@ module MainPage =
             let m, cmd, externalMsg =
                 updateContactsList msg TabAllContactsMsg model.TabAllContactsModel
             { model with TabAllContactsModel = m }, cmd, externalMsg
+
         | TabFavContactsMsg msg ->
             let m, cmd, externalMsg =
                 updateContactsList msg TabFavContactsMsg model.TabFavContactsModel
             { model with TabFavContactsModel = m }, cmd, externalMsg
+
         | TabMapMsg msg ->
             let m, cmd = MapPage.update msg model.TabMapModel
             { model with TabMapModel = m }, (Cmd.map TabMapMsg cmd), ExternalMsg.NoOp
+
         | ContactsLoaded contacts ->
             updateContacts model contacts
+
         | ContactAdded contact ->
             let newContacts = contact :: model.Contacts.Value
             updateContacts model newContacts
+
         | ContactUpdated contact ->
             let newContacts =
                 model.Contacts.Value
                 |> List.map (fun c -> if c.Id = contact.Id then contact else c)
             updateContacts model newContacts
+
         | ContactDeleted contact ->
             let newContacts =
                 model.Contacts.Value
                 |> List.filter (fun c -> c <> contact)
             updateContacts model newContacts
+
         | NoContactAboutTapped ->
             model, Cmd.none, ExternalMsg.NavigateToAbout
+
         | NoContactAddNewContactTapped ->
             model, Cmd.none, ExternalMsg.NavigateToNewContact
 
@@ -125,7 +133,9 @@ module MainPage =
             View.ContentPage(
                 title = title,
                 content = View.StackLayout(
-                    children = [ centralLabel Strings.MainPage_Loading ]
+                    children = [
+                        centralLabel Strings.MainPage_Loading
+                    ]
                 )
             )
         )
@@ -140,13 +150,20 @@ module MainPage =
             View.ContentPage(
                 title = title,
                 toolbarItems = [
-                    View.ToolbarItem(text = Strings.Common_About,
-                                     command = goToAbout)
-                    View.ToolbarItem(text = "+",
-                                     command = addNewContact)
+                    View.ToolbarItem(
+                        text = Strings.Common_About,
+                        command = goToAbout
+                    )
+
+                    View.ToolbarItem(
+                        text = "+",
+                        command = addNewContact
+                    )
                 ],
                 content = View.StackLayout(
-                    children = [ centralLabel Strings.MainPage_NoContact ]
+                    children = [
+                        centralLabel Strings.MainPage_NoContact
+                    ]
                 )
             )
         )
@@ -160,11 +177,11 @@ module MainPage =
         // View
         let tabAllContacts =
             (ContactsListPage.view Strings.MainPage_TabAllTitle model.TabAllContactsModel goToAllTab)
-                .IconImageSource(ImagePath "alltab.png")
+                .IconImageSource(Image.fromPath "alltab.png")
                 
         let tabFavContacts =
             (ContactsListPage.view Strings.MainPage_TabFavoritesTitle model.TabFavContactsModel goToFavoritesTab)
-                .IconImageSource(ImagePath "favoritetab.png")
+                .IconImageSource(Image.fromPath "favoritetab.png")
             
         let tabMap = MapPage.view model.TabMapModel goToMapTab
         
@@ -172,7 +189,11 @@ module MainPage =
             View.TabbedPage(
                 created = (fun target -> target.On<Android>().SetToolbarPlacement(ToolbarPlacement.Bottom) |> ignore),
                 title = title,
-                children = [ contacts; favorites; map ]
+                children = [
+                    contacts
+                    favorites
+                    map
+                ]
             )
         )
 
