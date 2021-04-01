@@ -1,14 +1,14 @@
 ﻿namespace FabulousContacts
 
 open System
+open Xamarin.Essentials
+open Xamarin.Forms.Maps
 open Fabulous
 open Fabulous.XamarinForms
 open Fabulous.XamarinForms.Maps
 open FabulousContacts.Components
 open FabulousContacts.Helpers
 open FabulousContacts.Models
-open Xamarin.Essentials
-open Xamarin.Forms.Maps
 
 module MapPage =
     // Declarations

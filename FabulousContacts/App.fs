@@ -1,9 +1,9 @@
 ﻿namespace FabulousContacts
 
+open Xamarin.Forms
 open Fabulous
 open Fabulous.XamarinForms
 open FabulousContacts.Models
-open Xamarin.Forms
 
 module App =
     type Msg =

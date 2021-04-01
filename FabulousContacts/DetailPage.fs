@@ -1,14 +1,14 @@
 ﻿namespace FabulousContacts
 
 open System
+open Xamarin.Forms
+open Xamarin.Essentials
 open Fabulous
 open Fabulous.XamarinForms
 open FabulousContacts.Components
 open FabulousContacts.Helpers
 open FabulousContacts.Models
 open FabulousContacts.Style
-open Xamarin.Forms
-open Xamarin.Essentials
 
 module DetailPage =
     // Declarations

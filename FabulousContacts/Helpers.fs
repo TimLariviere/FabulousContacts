@@ -15,7 +15,7 @@ module Helpers =
         |> Async.AwaitTask
 
     let displayAlertWithConfirm (title, message, accept, cancel) =
-        Application.Current.MainPage.DisplayAlert(title, message, accept, cancel)
+        Application.Current.MainPage.DisplayAlert(title = title, message = message, accept = accept, cancel = cancel)
         |> Async.AwaitTask
 
     let displayActionSheet (title, cancel, destruction, buttons) =
@@ -26,28 +26,28 @@ module Helpers =
         Application.Current.MainPage.DisplayActionSheet(title, cancel, destruction, buttons)
         |> Async.AwaitTask
 
-    let requestPermissionAsync permission = async {
+    let requestPermissionAsync<'a when 'a: (new : unit -> 'a) and 'a :> BasePermission> () = async {
         try
             let! status =
-                CrossPermissions.Current.RequestPermissionsAsync([| permission |])
+                CrossPermissions.Current.RequestPermissionAsync<'a>()
                 |> Async.AwaitTask
 
-            return status.[permission] = PermissionStatus.Granted
-                || status.[permission] = PermissionStatus.Unknown
+            return status = PermissionStatus.Granted
+                || status = PermissionStatus.Unknown
         with _ ->
             return false
     }
 
-    let askPermissionAsync permission = async {
+    let askPermissionAsync<'a when 'a: (new : unit -> 'a) and 'a :> BasePermission> () = async {
         try
             let! status =
-                CrossPermissions.Current.CheckPermissionStatusAsync(permission)
+                CrossPermissions.Current.CheckPermissionStatusAsync<'a>()
                 |> Async.AwaitTask
                 
             if status = PermissionStatus.Granted then
                 return true
             else
-                return! requestPermissionAsync permission
+                return! requestPermissionAsync<'a> ()
         with _ ->
             return false
     }

@@ -7,9 +7,9 @@ open FabulousContacts.Components
 open FabulousContacts.Helpers
 open FabulousContacts.Models
 open FabulousContacts.Repository
-open Plugin.Permissions.Abstractions
 open Plugin.Media
 open Xamarin.Forms
+open Plugin.Permissions
 
 module EditPage =
     // Declarations
@@ -64,8 +64,8 @@ module EditPage =
             return None
     }
 
-    let doAsync action permission = async {
-        let! permissionGranted = askPermissionAsync permission
+    let doAsync<'a when 'a: (new : unit -> 'a) and 'a :> BasePermission> action = async {
+        let! permissionGranted = askPermissionAsync<'a> ()
         if permissionGranted then
             let! pictureOpt = action()
             match pictureOpt with
@@ -99,10 +99,10 @@ module EditPage =
         | s when s = Strings.EditPage_PictureContextMenu_Remove ->
             return setPicture None
         | s when s = Strings.EditPage_PictureContextMenu_TakePicture ->
-            let! bytes = doAsync takePictureAsync Permission.Camera
+            let! bytes = doAsync<CameraPermission> takePictureAsync
             return setPicture bytes
         | s when s = Strings.EditPage_PictureContextMenu_ChooseFromGallery ->
-            let! bytes = doAsync pickPictureAsync Permission.Photos
+            let! bytes = doAsync<PhotosPermission> pickPictureAsync
             return setPicture bytes
         | _ ->
             return None
